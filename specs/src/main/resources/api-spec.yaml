@@ -1,27 +1,27 @@
 openapi: '3.0.3'
 info:
   version: '0.1.0'
-  title: Fruits API
-  description: An API to demonstrate Swagger and Spring Boot
+  title: Gamificator API
+  description: A gamification engine API
 security:
-  #  - bearerAuth: []
+  - bearerAuth: []
   - apiKeyAuth: []
 paths:
-  /fruits:
+  /applications:
     post:
-      description: create a fruit
-      operationId: createFruit
+      description: create an application
+      operationId: createApplication
       requestBody:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/Fruit'
+              $ref: '#/components/schemas/ApplicationCreate'
       responses:
         '201':
           description: created
     get:
-      description: get the list of all fruits
-      operationId: getFruits
+      description: get the list of all application
+      operationId: getAllApplication
       responses:
         '200':
           description: success
@@ -30,11 +30,11 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Fruit'
-  /fruits/{id}:
+                  $ref: '#/components/schemas/ApplicationRead'
+  /applications/{id}:
     get:
-      description: get one fruit, by id
-      operationId: getFruit
+      description: get one application, by id
+      operationId: getApplication
       parameters:
         - in: path
           name: id
@@ -47,33 +47,280 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/Fruit'
+                $ref: '#/components/schemas/ApplicationRead'
+    put:
+      description: Update an application
+      operationId: updateApplication
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+      responses:
+        '200':
+          description: updated
+
+    delete:
+      description: Delete an application
+      operationId: deleteApplication
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '204':
+          description: deleted
+  /badges:
+    post:
+      description: create a badge
+      operationId: createBadge
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Badge'
+      responses:
+        '201':
+          description: created
+    get:
+      description: get the list of all badge
+      operationId: getAllbadges
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Badge'
+  /badges/{id}:
+    get:
+      description: get one badge, by id
+      operationId: getBadge
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Badge'
+    put:
+      description: Update a badge
+      operationId: updateBadge
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Badge'
+      responses:
+        '200':
+          description: updated
+
+    delete:
+      description: Delete a badge
+      operationId: deleteBadge
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '204':
+          description: deleted
+  /users:
+    get:
+      description: get all users
+      operationId: getAllUser
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{uuid}:
+    get:
+      description: get one user, by uuid
+      operationId: getUser
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/User'
+  /leaderboards:
+    get:
+      description: get a leaderboard
+      operationId: getLeaderBoard
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /rules:
+    post:
+      description: create a rule
+      operationId: createRule
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Rule'
+      responses:
+        '201':
+          description: created
+    get:
+      description: get the list of all rule
+      operationId: getAllRules
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rule'
+  /rules/{id}:
+    put:
+      description: update a rule
+      operationId: updateRule
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Rule'
+      responses:
+        '201':
+          description: created
+    delete:
+      description: Delete a rule
+      operationId: deleteRule
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '204':
+          description: deleted
+
+  /events/:
+    post:
+      description: create an event
+      operationId: createEvent
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '201':
+          description: created
 components:
   securitySchemes:
-    #    bearerAuth:            # arbitrary name for the security scheme
-    #      type: http
-    #      scheme: bearer       # warning: it HAS TO be a lowercase b for the swagger ui version used in springfox
-    #      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
     apiKeyAuth:
       type: apiKey
       in: header
       name: X-API-KEY
   schemas:
-    Fruit:
+    ApplicationCreate:
       type: object
       properties:
-        kind:
+        name:
           type: string
-        colour:
+        url:
           type: string
-        size:
+          format: uri
+    ApplicationRead:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
           type: string
-        weight:
+        url:
           type: string
-        expirationDate:
+          format:
+            uuid
+    Badge:
+      type: object
+      properties:
+        name:
           type: string
-          format: date
-          nullable: false
-        expirationDateTime:
+        applicationId:
+          type: integer
+        image:
+          type: string
+          format: binary
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+    Rule:
+      type: object
+      properties:
+        if:
+          type: string #JSON content
+        then:
+          type: string #JSON content
+    Event:
+      type: object
+      properties:
+        userUUID:
+          type: string
+          format: uuid
+        timestamp:
           type: string
           format: date-time
+        type:
+          type: string
+        properties:
+          type: string #JSON content
