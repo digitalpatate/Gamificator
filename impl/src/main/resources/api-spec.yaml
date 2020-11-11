@@ -18,7 +18,11 @@ paths:
               $ref: '#/components/schemas/ApplicationCreate'
       responses:
         '201':
-          description: created
+          description: success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApplicationRegistrationDTO'
     get:
       description: get the list of all application
       operationId: getAllApplication
@@ -324,3 +328,12 @@ components:
           type: string
         properties:
           type: string #JSON content
+    ApplicationRegistrationDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        key:
+          type: string
+        secret:
+          type: string

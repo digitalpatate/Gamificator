@@ -1,4 +1,4 @@
-package ch.heigvd.amt.gamificator.api.exceptions;
+package ch.heigvd.amt.gamificator.exceptions;
 
 public class ApiException extends Exception {
     private int code;

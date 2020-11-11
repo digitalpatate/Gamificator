@@ -1,4 +1,4 @@
-package ch.heigvd.amt.gamificator.api.exceptions;
+package ch.heigvd.amt.gamificator.exceptions;
 
 public class NotFoundException extends ApiException {
     private int code;
