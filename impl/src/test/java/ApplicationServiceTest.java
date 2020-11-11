@@ -3,8 +3,12 @@ import ch.heigvd.amt.gamificator.api.model.ApplicationCreate;
 import ch.heigvd.amt.gamificator.api.model.ApplicationRegistrationDTO;
 import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,12 +16,13 @@ import java.net.URISyntaxException;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+@RunWith(JUnit4.class)
 public class ApplicationServiceTest {
 
     ApplicationService applicationService;
 
     ApplicationRepository applicationRepository;
-    @BeforeEach
+    @BeforeClass
     public void setUp(){
         this.applicationRepository = mock(ApplicationRepository.class);
         this.applicationService = new ApplicationService(applicationRepository);
