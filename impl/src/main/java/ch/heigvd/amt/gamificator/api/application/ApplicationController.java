@@ -1,12 +1,13 @@
 package ch.heigvd.amt.gamificator.api.application;
 
 import ch.heigvd.amt.gamificator.api.ApplicationsApi;
-import ch.heigvd.amt.gamificator.api.model.ApplicationCreate;
-import ch.heigvd.amt.gamificator.api.model.ApplicationRead;
-import ch.heigvd.amt.gamificator.api.model.ApplicationRegistrationDTO;
-import ch.heigvd.amt.gamificator.entities.Application;
-import org.springframework.beans.factory.annotation.Autowired;
+import ch.heigvd.amt.gamificator.api.model.*;
+import ch.heigvd.amt.gamificator.exceptions.ApiException;
+import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -16,40 +17,64 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
+@Log
 public class ApplicationController implements ApplicationsApi {
 
-    @Autowired
-    private ApplicationService applicationService;
+    private final ApplicationService applicationService;
 
     @Override
-    public ResponseEntity<ApplicationRegistrationDTO> createApplication(@Valid @RequestBody ApplicationCreate applicationCreate) {
+    public ResponseEntity<ApplicationCreateDTO> createApplication(@Valid @RequestBody ApplicationCreateCommand applicationCreate) {
 
-        ApplicationRegistrationDTO applicationRegistrationDTO = applicationService.registerNewApplication(applicationCreate);
+        log.info(String.format("POST /applications with [%s]",applicationCreate));
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(applicationRegistrationDTO.getId()).toUri();
+        ApplicationRegistrationDTO applicationRegistrationDTO = applicationService.create(applicationCreate);
 
-        return ResponseEntity.created(location).build();
+        return new ResponseEntity(applicationRegistrationDTO,HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Void> deleteApplication(Integer id) {
-        return null;
+    public ResponseEntity<Void> deleteApplication(@PathVariable Long id) {
+
+        log.info(String.format("DELETE /applications/:id with id : %s",id));
+
+        applicationService.deleteById(id);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<List<ApplicationRead>> getAllApplication() {
-        return null;
+    public ResponseEntity<List<ApplicationDTO>> getAllApplication() {
+
+        log.info(String.format("GET /applications"));
+
+        List<ApplicationRead> application = applicationService.getAllApplication();
+
+        return new ResponseEntity(application, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<ApplicationRead> getApplication(Integer id) {
-        return null;
+    public ResponseEntity<ApplicationDTO> getApplication(@PathVariable Long id) {
+        log.info(String.format("GET /applications/:id with id : %s",id));
+
+
+        try {
+            ApplicationRead application = applicationService.getById(id);
+
+            return new ResponseEntity(application, HttpStatus.OK);
+
+        } catch (ApiException e) {
+            log.info(e.getMessage());
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
-    public ResponseEntity<Void> updateApplication(Integer id, @Valid ApplicationCreate applicationCreate) {
-        return null;
+    public ResponseEntity<Void> updateApplication(@PathVariable Long id, @Valid ApplicationCreateCommand applicationCreate) {
+        log.info(String.format("PUT /applications/:id with id : %s",id));
+
+        ApplicationRead updatedApplication = applicationService.updateById(id,applicationCreate);
+
+        return new ResponseEntity(updatedApplication,HttpStatus.OK);
     }
 }

@@ -15,14 +15,14 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/ApplicationCreate'
+              $ref: '#/components/schemas/ApplicationCreateCommand'
       responses:
         '201':
           description: success
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/ApplicationRegistrationDTO'
+                $ref: '#/components/schemas/ApplicationCreateDTO'
     get:
       description: get the list of all application
       operationId: getAllApplication
@@ -34,7 +34,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ApplicationRead'
+                  $ref: '#/components/schemas/ApplicationDTO'
   /applications/{id}:
     get:
       description: get one application, by id
@@ -44,6 +44,7 @@ paths:
           name: id
           schema:
             type: integer
+            format: int64
           required: true
       responses:
         '200':
@@ -51,7 +52,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/ApplicationRead'
+                $ref: '#/components/schemas/ApplicationDTO'
     put:
       description: Update an application
       operationId: updateApplication
@@ -60,12 +61,13 @@ paths:
           name: id
           schema:
             type: integer
+            format: int64
           required: true
       requestBody:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/ApplicationCreate'
+              $ref: '#/components/schemas/ApplicationCreateCommand'
       responses:
         '200':
           description: updated
@@ -78,6 +80,7 @@ paths:
           name: id
           schema:
             type: integer
+            format: int64
           required: true
       responses:
         '204':
@@ -273,7 +276,7 @@ components:
       in: header
       name: X-API-KEY
   schemas:
-    ApplicationCreate:
+    ApplicationCreateCommand:
       type: object
       properties:
         name:
@@ -281,7 +284,7 @@ components:
         url:
           type: string
           format: uri
-    ApplicationRead:
+    ApplicationDTO:
       type: object
       properties:
         id:
@@ -291,7 +294,7 @@ components:
         url:
           type: string
           format:
-            uuid
+            uri
     Badge:
       type: object
       properties:
@@ -328,7 +331,7 @@ components:
           type: string
         properties:
           type: string #JSON content
-    ApplicationRegistrationDTO:
+    ApplicationCreateDTO:
       type: object
       properties:
         id:
