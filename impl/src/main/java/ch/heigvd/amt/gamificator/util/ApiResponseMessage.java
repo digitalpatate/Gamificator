@@ -1,4 +1,4 @@
-package ch.heigvd.amt.gamificator.api.util;
+package ch.heigvd.amt.gamificator.util;
 
 import javax.xml.bind.annotation.XmlTransient;
 

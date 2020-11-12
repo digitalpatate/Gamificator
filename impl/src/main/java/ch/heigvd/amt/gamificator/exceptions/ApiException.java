@@ -1,5 +1,8 @@
-package ch.heigvd.amt.gamificator.api.exceptions;
+package ch.heigvd.amt.gamificator.exceptions;
 
+import lombok.Getter;
+
+@Getter
 public class ApiException extends Exception {
     private int code;
     public ApiException (int code, String msg) {
