@@ -10,10 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -30,7 +28,7 @@ public class ApplicationController implements ApplicationsApi {
 
         ApplicationRegistrationDTO applicationRegistrationDTO = applicationService.create(applicationCreate);
 
-        return new ResponseEntity(applicationRegistrationDTO,HttpStatus.OK);
+        return new ResponseEntity(applicationRegistrationDTO,HttpStatus.CREATED);
     }
 
     @Override
@@ -50,7 +48,7 @@ public class ApplicationController implements ApplicationsApi {
 
         List<ApplicationRead> application = applicationService.getAllApplication();
 
-        return new ResponseEntity(application, HttpStatus.CREATED);
+        return new ResponseEntity(application, HttpStatus.OK);
     }
 
     @Override

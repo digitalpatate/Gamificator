@@ -3,60 +3,57 @@ package ch.heigvd.amt.gamificator.api.spec.steps;
 import ch.heigvd.amt.gamificator.ApiException;
 import ch.heigvd.amt.gamificator.ApiResponse;
 import ch.heigvd.amt.gamificator.api.DefaultApi;
-import ch.heigvd.amt.gamificator.api.dto.Fruit;
+import ch.heigvd.amt.gamificator.api.dto.ApplicationCreateCommand;
+import ch.heigvd.amt.gamificator.api.dto.ApplicationCreateDTO;
 import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
+import java.net.URI;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class BasicSteps {
+public class ApplicationSteps {
 
     private Environment environment;
     private DefaultApi api;
 
-    Fruit fruit;
+    ApplicationCreateCommand applicationCreateCommand;
 
     private ApiResponse lastApiResponse;
     private ApiException lastApiException;
     private boolean lastApiCallThrewException;
     private int lastStatusCode;
 
-    private String lastReceivedLocationHeader;
-    private Fruit lastReceivedFruit;
+    ApplicationCreateDTO applicationCreateDTO;
 
-    public BasicSteps(Environment environment) {
+    private String lastReceivedLocationHeader;
+
+    public ApplicationSteps(Environment environment) {
         this.environment = environment;
         this.api = environment.getApi();
     }
 
-    @Given("there is a Fruits server")
-    public void there_is_a_Fruits_server() throws Throwable {
+    @Given("there is a Gamificator server")
+    public void there_is_a_Gamificator_server() throws Throwable {
         assertNotNull(api);
     }
 
-    @Given("I have a fruit payload")
-    public void i_have_a_fruit_payload() throws Throwable {
-        fruit = new ch.heigvd.amt.gamificator.api.dto.Fruit()
-          .kind("banana")
-          .colour("yellow")
-          .size("medium")
-          .weight("light")
-          .expirationDate(LocalDate.now())
-          .expirationDateTime(OffsetDateTime.now());
+    @Given("I have a application payload")
+    public void i_have_a_application_payload() throws Throwable {
+        applicationCreateCommand = new ch.heigvd.amt.gamificator.api.dto.ApplicationCreateCommand()
+          .name("Test app")
+          .url(new URI("http://localhost:9090"));
     }
 
-    @When("^I POST the fruit payload to the /fruits endpoint$")
-    public void i_POST_the_fruit_payload_to_the_fruits_endpoint() throws Throwable {
+    @When("^I POST the application payload to the /applications endpoint$")
+    public void i_POST_the_application_payload_to_the_fruits_endpoint() throws Throwable {
         try {
-            lastApiResponse = api.createFruitWithHttpInfo(fruit);
+            lastApiResponse = api.createApplicationWithHttpInfo(applicationCreateCommand);
             processApiResponse(lastApiResponse);
         } catch (ApiException e) {
             processApiException(e);
@@ -68,10 +65,10 @@ public class BasicSteps {
         assertEquals(expectedStatusCode, lastStatusCode);
     }
 
-    @When("^I send a GET to the /fruits endpoint$")
-    public void iSendAGETToTheFruitsEndpoint() {
+    @When("^I send a GET to the /applications endpoint$")
+    public void iSendAGETToTheApplicationEndpoint() {
         try {
-            lastApiResponse = api.getFruitsWithHttpInfo();
+            lastApiResponse = api.getAllApplicationWithHttpInfo();
             processApiResponse(lastApiResponse);
         } catch (ApiException e) {
             processApiException(e);
@@ -84,19 +81,19 @@ public class BasicSteps {
 
     @When("I send a GET to the URL in the location header")
     public void iSendAGETToTheURLInTheLocationHeader() {
-        Integer id = Integer.parseInt(lastReceivedLocationHeader.substring(lastReceivedLocationHeader.lastIndexOf('/') + 1));
+        Long id = Long.valueOf(lastReceivedLocationHeader.substring(lastReceivedLocationHeader.lastIndexOf('/') + 1));
         try {
-            lastApiResponse = api.getFruitWithHttpInfo(id);
+            lastApiResponse = api.getApplicationWithHttpInfo(id);
             processApiResponse(lastApiResponse);
-            lastReceivedFruit = (Fruit)lastApiResponse.getData();
+            applicationCreateDTO = (ApplicationCreateDTO)lastApiResponse.getData();
         } catch (ApiException e) {
             processApiException(e);
         }
     }
 
-    @And("I receive a payload that is the same as the fruit payload")
-    public void iReceiveAPayloadThatIsTheSameAsTheFruitPayload() {
-        assertEquals(fruit, lastReceivedFruit);
+    @And("I receive a payload that is the same as the application payload")
+    public void iReceiveAPayloadThatIsTheSameAsTheApplicationPayload() {
+        assertEquals(applicationCreateCommand, applicationCreateDTO);
     }
 
     private void processApiResponse(ApiResponse apiResponse) {
