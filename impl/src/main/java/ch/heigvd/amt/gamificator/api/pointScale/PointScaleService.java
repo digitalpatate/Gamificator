@@ -10,12 +10,16 @@ import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.PointScaleRepository;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import static ch.heigvd.amt.gamificator.entities.Application.toEntity;
 
 @Service
 @AllArgsConstructor
@@ -61,6 +65,18 @@ public class PointScaleService {
         return pointScaleDTO;
     }
 
+    public PointScaleDTO updatePointScale(Long id, PointScaleCreateCommand pointScaleCreateCommand) throws NotFoundException {
+        if(!pointScaleRepository.existsById(id)) {
+            throw new NotFoundException(404,"Not found");
+        }
+
+        PointScale pointScale = toEntity(pointScaleCreateCommand);
+        pointScale.setId(id);
+        pointScaleRepository.save(pointScale);
+
+        return toDTO(pointScale);
+    }
+
     public List<PointScaleDTO> getAllPointScales() {
         Iterable<PointScale> pointScales = new ArrayList<>();
         pointScales = pointScaleRepository.findAll();
@@ -89,8 +105,12 @@ public class PointScaleService {
         return pointScaleDTOs;
     }
 
-    public void deletePointScaleById(Long id) {
-        pointScaleRepository.deleteById(id);
+    public void deletePointScaleById(Long id) throws NotFoundException {
+        try {
+            pointScaleRepository.deleteById(id);
+        } catch(EmptyResultDataAccessException e) {
+            throw new NotFoundException(404,"Not found");
+        }
     }
 
     public PointScaleDTO getPointScaleById(Long id) throws NotFoundException {
