@@ -14,10 +14,8 @@ import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import static ch.heigvd.amt.gamificator.entities.Application.toEntity;
-import static ch.heigvd.amt.gamificator.util.StringGenerator.generateRandomString;
 
 @Service
 @AllArgsConstructor
