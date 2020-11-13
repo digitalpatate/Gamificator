@@ -7,11 +7,8 @@ import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,17 +38,6 @@ public class ApplicationService {
         return  applicationRegistrationDTO;
     }
 
-    @SneakyThrows
-    public ApplicationDTO toDTO(Application application) {
-
-        ApplicationDTO applicationRead = new ApplicationDTO();
-
-        applicationRead.setId((int)application.getId());
-        applicationRead.setName(application.getName());
-        applicationRead.setUrl(new URI(application.getUrl()));
-        return applicationRead;
-    }
-
     public List<ApplicationDTO> getAllApplication() {
         Iterable<Application> applications = this.applicationRepository.findAll();
 
@@ -59,7 +45,7 @@ public class ApplicationService {
         List<ApplicationDTO> applicationReads = new LinkedList<>();
 
         for(Application app : applications){
-            applicationReads.add(toDTO(app));
+            applicationReads.add(Application.toDTO(app));
         }
 
         return applicationReads;
@@ -70,7 +56,7 @@ public class ApplicationService {
 
         Application application = applicationRepository.findById(id).orElseThrow(() -> new NotFoundException(404,"Not found"));
 
-        return toDTO(application);
+        return application.toDTO(application);
     }
 
     public void deleteById(Long id) {
@@ -83,6 +69,6 @@ public class ApplicationService {
 
         applicationRepository.save(application);
 
-        return toDTO(application);
+        return application.toDTO(application);
     }
 }

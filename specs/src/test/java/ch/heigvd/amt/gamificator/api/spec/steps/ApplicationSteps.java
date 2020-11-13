@@ -2,45 +2,23 @@ package ch.heigvd.amt.gamificator.api.spec.steps;
 
 import ch.heigvd.amt.gamificator.ApiException;
 import ch.heigvd.amt.gamificator.ApiResponse;
-import ch.heigvd.amt.gamificator.api.DefaultApi;
 import ch.heigvd.amt.gamificator.api.dto.ApplicationCreateCommand;
 import ch.heigvd.amt.gamificator.api.dto.ApplicationCreateDTO;
 import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.net.URI;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-public class ApplicationSteps {
-
-    private Environment environment;
-    private DefaultApi api;
-
+public class ApplicationSteps extends Steps {
     ApplicationCreateCommand applicationCreateCommand;
-
-    private ApiResponse lastApiResponse;
-    private ApiException lastApiException;
-    private boolean lastApiCallThrewException;
-    private int lastStatusCode;
-
     ApplicationCreateDTO applicationCreateDTO;
 
-    private String lastReceivedLocationHeader;
-
     public ApplicationSteps(Environment environment) {
-        this.environment = environment;
-        this.api = environment.getApi();
-    }
-
-    @Given("there is a Gamificator server")
-    public void there_is_a_Gamificator_server() throws Throwable {
-        assertNotNull(api);
+        super(environment);
     }
 
     @Given("I have a application payload")
@@ -51,43 +29,36 @@ public class ApplicationSteps {
     }
 
     @When("^I POST the application payload to the /applications endpoint$")
-    public void i_POST_the_application_payload_to_the_fruits_endpoint() throws Throwable {
+    public void i_POST_the_application_payload_to_the_applications_endpoint() throws Throwable {
         try {
-            lastApiResponse = api.createApplicationWithHttpInfo(applicationCreateCommand);
-            processApiResponse(lastApiResponse);
+            ApiResponse apiResponse = getApi().createApplicationWithHttpInfo(applicationCreateCommand);
+            getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
-            processApiException(e);
+            getEnvironment().processApiException(e);
         }
-    }
-
-    @Then("I receive a {int} status code")
-    public void i_receive_a_status_code(int expectedStatusCode) throws Throwable {
-        assertEquals(expectedStatusCode, lastStatusCode);
     }
 
     @When("^I send a GET to the /applications endpoint$")
     public void iSendAGETToTheApplicationEndpoint() {
         try {
-            lastApiResponse = api.getAllApplicationWithHttpInfo();
-            processApiResponse(lastApiResponse);
+            ApiResponse apiResponse = getApi().getAllApplicationWithHttpInfo();
+            getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
-            processApiException(e);
+            getEnvironment().processApiException(e);
         }
-    }
-
-    @Then("I receive a {int} status code with a location header")
-    public void iReceiveAStatusCodeWithALocationHeader(int arg0) {
     }
 
     @When("I send a GET to the URL in the location header")
     public void iSendAGETToTheURLInTheLocationHeader() {
-        Long id = Long.valueOf(lastReceivedLocationHeader.substring(lastReceivedLocationHeader.lastIndexOf('/') + 1));
+        Long id = Long.valueOf(getEnvironment().getLastReceivedLocationHeader()
+                .substring(getEnvironment().getLastReceivedLocationHeader().lastIndexOf('/') + 1));
+
         try {
-            lastApiResponse = api.getApplicationWithHttpInfo(id);
-            processApiResponse(lastApiResponse);
-            applicationCreateDTO = (ApplicationCreateDTO)lastApiResponse.getData();
+            ApiResponse apiResponse = getApi().getApplicationWithHttpInfo(id);
+            getEnvironment().processApiResponse(apiResponse);
+            applicationCreateDTO = (ApplicationCreateDTO) getEnvironment().getLastApiResponse().getData();
         } catch (ApiException e) {
-            processApiException(e);
+            getEnvironment().processApiException(e);
         }
     }
 
@@ -95,21 +66,4 @@ public class ApplicationSteps {
     public void iReceiveAPayloadThatIsTheSameAsTheApplicationPayload() {
         assertEquals(applicationCreateCommand, applicationCreateDTO);
     }
-
-    private void processApiResponse(ApiResponse apiResponse) {
-        lastApiResponse = apiResponse;
-        lastApiCallThrewException = false;
-        lastApiException = null;
-        lastStatusCode = lastApiResponse.getStatusCode();
-        List<String> locationHeaderValues = (List<String>)lastApiResponse.getHeaders().get("Location");
-        lastReceivedLocationHeader = locationHeaderValues != null ? locationHeaderValues.get(0) : null;
-    }
-
-    private void processApiException(ApiException apiException) {
-        lastApiCallThrewException = true;
-        lastApiResponse = null;
-        lastApiException = apiException;
-        lastStatusCode = lastApiException.getCode();
-    }
-
 }

@@ -1,14 +1,22 @@
 package ch.heigvd.amt.gamificator.api.spec.helpers;
 
+import ch.heigvd.amt.gamificator.ApiException;
+import ch.heigvd.amt.gamificator.ApiResponse;
 import ch.heigvd.amt.gamificator.api.DefaultApi;
-
+import lombok.Getter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
 
 public class Environment {
 
-    private DefaultApi api = new DefaultApi();
+    @Getter private DefaultApi api = new DefaultApi();
+    @Getter private ApiResponse lastApiResponse;
+    @Getter private ApiException lastApiException;
+    @Getter private boolean lastApiCallThrewException;
+    @Getter private int lastStatusCode;
+    @Getter private String lastReceivedLocationHeader;
 
     public Environment() throws IOException {
         Properties properties = new Properties();
@@ -18,10 +26,20 @@ public class Environment {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
 
-    public DefaultApi getApi() {
-        return api;
+    public void processApiResponse(ApiResponse apiResponse) {
+        lastApiResponse = apiResponse;
+        lastApiCallThrewException = false;
+        lastApiException = null;
+        lastStatusCode = lastApiResponse.getStatusCode();
+        List<String> locationHeaderValues = (List<String>)lastApiResponse.getHeaders().get("Location");
+        lastReceivedLocationHeader = locationHeaderValues != null ? locationHeaderValues.get(0) : null;
     }
 
-
+    public void processApiException(ApiException apiException) {
+        lastApiCallThrewException = true;
+        lastApiResponse = null;
+        lastApiException = apiException;
+        lastStatusCode = lastApiException.getCode();
+    }
 
 }

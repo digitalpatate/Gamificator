@@ -7,6 +7,7 @@ import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
 import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.entities.PointScale;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
+import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import ch.heigvd.amt.gamificator.repositories.PointScaleRepository;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -28,39 +29,15 @@ public class PointScaleService {
     private final PointScaleRepository pointScaleRepository;
 
     @Autowired
-    private ApplicationService applicationService;
-
-    public PointScale toEntity(PointScaleCreateCommand pointScaleCreateCommand) throws NotFoundException {
-        PointScale pointScale =  new PointScale();
-        pointScale.setName(pointScaleCreateCommand.getName());
-        pointScale.setDescription(pointScaleCreateCommand.getDescription().toString());
-
-        long applicationId = pointScaleCreateCommand.getApplicationId();
-
-        Application application = getApplicationById(applicationId);
-
-        pointScale.setApplication(application);
-
-        return pointScale;
-    }
-
-    public PointScaleDTO toDTO(PointScale pointScale) {
-        PointScaleDTO pointScaleDTO =  new PointScaleDTO();
-        pointScaleDTO.setId(pointScale.getId());
-        pointScaleDTO.setName(pointScale.getName());
-        pointScaleDTO.setDescription(pointScale.getDescription().toString());
-
-        if(pointScale.getApplication() != null) {
-            pointScaleDTO.setApplicationId(pointScale.getApplication().getId());
-        }
-
-        return pointScaleDTO;
-    }
+    private ApplicationRepository applicationRepository;
 
     public PointScaleDTO createPointScale(PointScaleCreateCommand pointScaleCreateCommand) throws NotFoundException {
-        PointScale pointScale = toEntity(pointScaleCreateCommand);
+        PointScale pointScale = PointScale.toEntity(pointScaleCreateCommand);
+        Application application = getApplicationById(pointScaleCreateCommand.getApplicationId());
+        pointScale.setApplication(application);
+
         PointScale pointScaleCreated = pointScaleRepository.save(pointScale);
-        PointScaleDTO pointScaleDTO = toDTO(pointScaleCreated);
+        PointScaleDTO pointScaleDTO = PointScale.toDTO(pointScaleCreated);
 
         return pointScaleDTO;
     }
@@ -70,11 +47,13 @@ public class PointScaleService {
             throw new NotFoundException(404,"Not found");
         }
 
-        PointScale pointScale = toEntity(pointScaleCreateCommand);
+        PointScale pointScale = PointScale.toEntity(pointScaleCreateCommand);
+        Application application = getApplicationById(pointScaleCreateCommand.getApplicationId());
+        pointScale.setApplication(application);
         pointScale.setId(id);
         pointScaleRepository.save(pointScale);
 
-        return toDTO(pointScale);
+        return PointScale.toDTO(pointScale);
     }
 
     public List<PointScaleDTO> getAllPointScales() {
@@ -84,7 +63,7 @@ public class PointScaleService {
         List<PointScaleDTO> pointScaleDTOs = new LinkedList<>();
 
         for(PointScale pointScale : pointScales){
-            pointScaleDTOs.add(toDTO(pointScale));
+            pointScaleDTOs.add(PointScale.toDTO(pointScale));
         }
 
         return pointScaleDTOs;
@@ -99,7 +78,7 @@ public class PointScaleService {
         List<PointScaleDTO> pointScaleDTOs = new LinkedList<>();
 
         for(PointScale pointScale : pointScales){
-            pointScaleDTOs.add(toDTO(pointScale));
+            pointScaleDTOs.add(PointScale.toDTO(pointScale));
         }
 
         return pointScaleDTOs;
@@ -108,8 +87,8 @@ public class PointScaleService {
     public void deletePointScaleById(Long id) throws NotFoundException {
         try {
             pointScaleRepository.deleteById(id);
-        } catch(EmptyResultDataAccessException e) {
-            throw new NotFoundException(404,"Not found");
+        } catch(EmptyResultDataAccessException ignored) {
+
         }
     }
 
@@ -117,16 +96,13 @@ public class PointScaleService {
         PointScale pointScale = pointScaleRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(404,"Not found"));
 
-        PointScaleDTO pointScaleDTO = toDTO(pointScale);
-
-        return pointScaleDTO;
+        return PointScale.toDTO(pointScale);
     }
 
     private Application getApplicationById(Long applicationId) throws NotFoundException {
         // Retrieve the application with this id.
         // It will throws NotFoundException it does not exists
-        ApplicationDTO applicationDTO = applicationService.getById(applicationId);
-        Application application = Application.toEntity(applicationDTO);
-        return application;
+        return applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new NotFoundException(404, "Not found"));
     }
 }
