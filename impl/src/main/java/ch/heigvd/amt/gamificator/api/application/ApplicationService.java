@@ -8,6 +8,7 @@ import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,7 +61,11 @@ public class ApplicationService {
     }
 
     public void deleteById(Long id) {
-        applicationRepository.deleteById(id);
+        try {
+            applicationRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException ignored) {
+            // Do not leak what application exists or not
+        }
     }
 
     public ApplicationDTO updateById(Long id, ApplicationCreateCommand applicationCreate) {

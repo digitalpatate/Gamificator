@@ -86,7 +86,7 @@ public class PointScaleService {
         try {
             pointScaleRepository.deleteById(id);
         } catch(EmptyResultDataAccessException ignored) {
-
+            // Do not leak what point scales exists or not
         }
     }
 
@@ -98,8 +98,6 @@ public class PointScaleService {
     }
 
     private Application getApplicationById(Long applicationId) throws NotFoundException {
-        // Retrieve the application with this id.
-        // It will throws NotFoundException it does not exists
         return applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new NotFoundException(404, "Not found"));
     }

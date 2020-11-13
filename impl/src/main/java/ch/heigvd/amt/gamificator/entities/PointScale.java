@@ -1,12 +1,13 @@
 package ch.heigvd.amt.gamificator.entities;
 
-import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
 import ch.heigvd.amt.gamificator.api.model.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -23,6 +24,7 @@ public class PointScale {
     private String description;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Application application;
 
     public static PointScale toEntity(PointScaleCreateCommand pointScaleCreateCommand) throws NotFoundException {
