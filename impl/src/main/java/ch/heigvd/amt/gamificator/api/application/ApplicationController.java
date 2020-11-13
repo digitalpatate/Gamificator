@@ -26,7 +26,7 @@ public class ApplicationController implements ApplicationsApi {
 
         log.info(String.format("POST /applications with [%s]",applicationCreate));
 
-        ApplicationRegistrationDTO applicationRegistrationDTO = applicationService.create(applicationCreate);
+        ApplicationCreateDTO applicationRegistrationDTO = applicationService.create(applicationCreate);
 
         return new ResponseEntity(applicationRegistrationDTO,HttpStatus.CREATED);
     }
@@ -46,7 +46,7 @@ public class ApplicationController implements ApplicationsApi {
 
         log.info(String.format("GET /applications"));
 
-        List<ApplicationRead> application = applicationService.getAllApplication();
+        List<ApplicationDTO> application = applicationService.getAllApplication();
 
         return new ResponseEntity(application, HttpStatus.OK);
     }
@@ -57,7 +57,7 @@ public class ApplicationController implements ApplicationsApi {
 
 
         try {
-            ApplicationRead application = applicationService.getById(id);
+            ApplicationDTO application = applicationService.getById(id);
 
             return new ResponseEntity(application, HttpStatus.OK);
 
@@ -71,7 +71,7 @@ public class ApplicationController implements ApplicationsApi {
     public ResponseEntity<Void> updateApplication(@PathVariable Long id, @Valid ApplicationCreateCommand applicationCreate) {
         log.info(String.format("PUT /applications/:id with id : %s",id));
 
-        ApplicationRead updatedApplication = applicationService.updateById(id,applicationCreate);
+        ApplicationDTO updatedApplication = applicationService.updateById(id,applicationCreate);
 
         return new ResponseEntity(updatedApplication,HttpStatus.OK);
     }

@@ -1,7 +1,5 @@
 import ch.heigvd.amt.gamificator.api.application.ApplicationService;
-import ch.heigvd.amt.gamificator.api.model.ApplicationCreate;
 import ch.heigvd.amt.gamificator.api.model.ApplicationCreateCommand;
-import ch.heigvd.amt.gamificator.api.model.ApplicationRegistrationDTO;
 import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import org.junit.jupiter.api.Test;

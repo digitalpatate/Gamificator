@@ -1,9 +1,8 @@
 package ch.heigvd.amt.gamificator.api.application;
 
-import ch.heigvd.amt.gamificator.api.model.ApplicationCreate;
 import ch.heigvd.amt.gamificator.api.model.ApplicationCreateCommand;
-import ch.heigvd.amt.gamificator.api.model.ApplicationRead;
-import ch.heigvd.amt.gamificator.api.model.ApplicationRegistrationDTO;
+import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
+import ch.heigvd.amt.gamificator.api.model.ApplicationCreateDTO;
 import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
@@ -27,7 +26,7 @@ public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
 
-    public ApplicationRegistrationDTO create(ApplicationCreateCommand applicationCreate) {
+    public ApplicationCreateDTO create(ApplicationCreateCommand applicationCreate) {
 
         Application newApplication = toEntity(applicationCreate);
 
@@ -35,7 +34,7 @@ public class ApplicationService {
 
         log.info(newApplication.toString());
 
-        ApplicationRegistrationDTO applicationRegistrationDTO = new ApplicationRegistrationDTO();
+        ApplicationCreateDTO applicationRegistrationDTO = new ApplicationCreateDTO();
 
         applicationRegistrationDTO.setKey(newApplication.getKey());
         applicationRegistrationDTO.secret(newApplication.getSecret());
@@ -45,9 +44,9 @@ public class ApplicationService {
     }
 
     @SneakyThrows
-    public ApplicationRead toDTO(Application application) {
+    public ApplicationDTO toDTO(Application application) {
 
-        ApplicationRead applicationRead = new ApplicationRead();
+        ApplicationDTO applicationRead = new ApplicationDTO();
 
         applicationRead.setId((int)application.getId());
         applicationRead.setName(application.getName());
@@ -55,11 +54,11 @@ public class ApplicationService {
         return applicationRead;
     }
 
-    public List<ApplicationRead> getAllApplication() {
+    public List<ApplicationDTO> getAllApplication() {
         Iterable<Application> applications = this.applicationRepository.findAll();
 
 
-        List<ApplicationRead> applicationReads = new LinkedList<>();
+        List<ApplicationDTO> applicationReads = new LinkedList<>();
 
         for(Application app : applications){
             applicationReads.add(toDTO(app));
@@ -69,7 +68,7 @@ public class ApplicationService {
 
     }
 
-    public ApplicationRead getById(Long id) throws NotFoundException {
+    public ApplicationDTO getById(Long id) throws NotFoundException {
 
         Application application = applicationRepository.findById(id).orElseThrow(() -> new NotFoundException(404,"Not found"));
 
@@ -80,7 +79,7 @@ public class ApplicationService {
         applicationRepository.deleteById(id);
     }
 
-    public ApplicationRead updateById(Long id, ApplicationCreateCommand applicationCreate) {
+    public ApplicationDTO updateById(Long id, ApplicationCreateCommand applicationCreate) {
         Application application = toEntity(applicationCreate);
         application.setId(id);
 
