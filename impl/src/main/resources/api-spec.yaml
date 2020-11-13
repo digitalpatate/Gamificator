@@ -263,7 +263,7 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/Event'
+              $ref: '#/components/schemas/CreateEventCommand'
       responses:
         '201':
           description: created
@@ -340,7 +340,7 @@ components:
           $ref: '#/components/schemas/ConditionDTO'
         then:
           $ref: '#/components/schemas/ActionDTO'
-    Event:
+    CreateEventCommand:
       type: object
       properties:
         userUUID:
@@ -351,8 +351,6 @@ components:
           format: date-time
         type:
           type: string
-        properties:
-          type: string #JSON content
     ApplicationCreateDTO:
       type: object
       properties:
