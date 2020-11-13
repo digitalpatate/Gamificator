@@ -4,7 +4,6 @@ import ch.heigvd.amt.gamificator.api.ApplicationsApi;
 import ch.heigvd.amt.gamificator.api.model.ApplicationCreate;
 import ch.heigvd.amt.gamificator.api.model.ApplicationRead;
 import ch.heigvd.amt.gamificator.api.model.ApplicationRegistrationDTO;
-import ch.heigvd.amt.gamificator.entities.Application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
