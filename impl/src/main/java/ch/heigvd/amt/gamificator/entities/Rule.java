@@ -1,8 +1,7 @@
 package ch.heigvd.amt.gamificator.entities;
 
-import ch.heigvd.amt.gamificator.api.model.RuleCreateCommand;
-import ch.heigvd.amt.gamificator.api.model.RuleDTO;
-import ch.heigvd.amt.gamificator.api.model.RuleUpdateCommand;
+import ch.heigvd.amt.gamificator.api.model.*;
+import com.google.gson.Gson;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,7 +13,7 @@ public class Rule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String condition;
+    private String  condition;
     private String then;
 
     @OneToOne
@@ -22,9 +21,11 @@ public class Rule {
 
     public static Rule toEntity(RuleCreateCommand command){
         Rule rule = new Rule();
+        Gson g = new Gson();
 
-        rule.setCondition(command.getCondition());
-        rule.setThen(command.getThen());
+
+        rule.setCondition(g.toJson(command.getCondition()));
+        rule.setThen(g.toJson(command.getThen()));
 
         return rule;
     }
@@ -32,18 +33,19 @@ public class Rule {
     public static Rule toEntity(RuleUpdateCommand command,Long _id) {
         Rule rule = new Rule();
         rule.setId(_id);
-        rule.setCondition(command.getCondition());
-        rule.setThen(command.getCondition());
+        rule.setCondition(command.getCondition().toString());
+        rule.setThen(command.getCondition().toString());
 
         return rule;
     }
 
     public RuleDTO toDTO() {
+        Gson g = new Gson();
         RuleDTO ruleDTO = new RuleDTO();
 
         ruleDTO.setId(id);
-        ruleDTO.setIf(condition);
-        ruleDTO.setThen(then);
+        ruleDTO.setCondition(g.fromJson(condition,ConditionDTO.class));
+        ruleDTO.setThen(g.fromJson(then, ActionDTO.class));
 
         return ruleDTO;
     }
