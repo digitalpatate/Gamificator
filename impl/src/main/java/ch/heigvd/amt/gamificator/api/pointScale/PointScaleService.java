@@ -27,9 +27,7 @@ import static ch.heigvd.amt.gamificator.entities.Application.toEntity;
 public class PointScaleService {
 
     private final PointScaleRepository pointScaleRepository;
-
-    @Autowired
-    private ApplicationRepository applicationRepository;
+    private final ApplicationRepository applicationRepository;
 
     public PointScaleDTO createPointScale(PointScaleCreateCommand pointScaleCreateCommand) throws NotFoundException {
         PointScale pointScale = PointScale.toEntity(pointScaleCreateCommand);

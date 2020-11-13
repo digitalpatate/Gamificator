@@ -9,3 +9,5 @@ Feature: Basic operations on point scale
     When I POST the point scale payload to the /pointScales endpoint
     Then I receive a 201 status code
     And I receive the created point scale
+
+  Scenario: create a point scale with an
