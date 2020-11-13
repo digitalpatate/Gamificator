@@ -1,5 +1,6 @@
 package ch.heigvd.amt.gamificator.entities;
 
+import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

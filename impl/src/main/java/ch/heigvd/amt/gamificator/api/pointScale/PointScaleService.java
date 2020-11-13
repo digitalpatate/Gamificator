@@ -1,10 +1,16 @@
 package ch.heigvd.amt.gamificator.api.pointScale;
 
+import ch.heigvd.amt.gamificator.api.application.ApplicationService;
+import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
 import ch.heigvd.amt.gamificator.api.model.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
+import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.entities.PointScale;
+import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.PointScaleRepository;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,10 +23,22 @@ public class PointScaleService {
 
     private final PointScaleRepository pointScaleRepository;
 
-    public PointScale toEntity(PointScaleCreateCommand pointScaleCreateCommand) {
+    @Autowired
+    private ApplicationService applicationService;
+
+    public PointScale toEntity(PointScaleCreateCommand pointScaleCreateCommand) throws NotFoundException {
         PointScale pointScale =  new PointScale();
         pointScale.setName(pointScaleCreateCommand.getName());
         pointScale.setDescription(pointScaleCreateCommand.getDescription().toString());
+
+        long applicationId = pointScaleCreateCommand.getApplicationId();
+
+        // Retrieve the application with this id.
+        // It will throws NotFoundException it does not exists
+        ApplicationDTO applicationDTO = applicationService.getById(applicationId);
+        Application application = Application.toEntity(applicationDTO);
+
+        pointScale.setApplication(application);
 
         return pointScale;
     }
@@ -38,7 +56,7 @@ public class PointScaleService {
         return pointScaleDTO;
     }
 
-    public PointScaleDTO createPointScale(PointScaleCreateCommand pointScaleCreateCommand) {
+    public PointScaleDTO createPointScale(PointScaleCreateCommand pointScaleCreateCommand) throws NotFoundException {
         PointScale pointScale = toEntity(pointScaleCreateCommand);
         PointScale pointScaleCreated = pointScaleRepository.save(pointScale);
         PointScaleDTO pointScaleDTO = toDTO(pointScaleCreated);

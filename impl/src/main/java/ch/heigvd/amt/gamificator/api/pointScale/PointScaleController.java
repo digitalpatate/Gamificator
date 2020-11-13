@@ -2,6 +2,8 @@ package ch.heigvd.amt.gamificator.api.pointScale;
 import ch.heigvd.amt.gamificator.api.PointScalesApi;
 import ch.heigvd.amt.gamificator.api.application.ApplicationService;
 import ch.heigvd.amt.gamificator.api.model.*;
+import ch.heigvd.amt.gamificator.entities.Application;
+import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +21,15 @@ public class PointScaleController implements PointScalesApi {
     @Autowired
     private PointScaleService pointScaleService;
 
-    @Autowired
-    private ApplicationService applicationService;
-
     @Override
     public ResponseEntity<PointScaleDTO> createPointScale(@Valid @RequestBody PointScaleCreateCommand pointScaleCreateCommand) {
-        PointScaleDTO pointScaleDTO = pointScaleService.createPointScale(pointScaleCreateCommand);
+        PointScaleDTO pointScaleDTO = null;
 
-        long applicationId = pointScaleCreateCommand.getApplicationId();
-
-        //if(applicationService. )
+        try {
+            pointScaleDTO = pointScaleService.createPointScale(pointScaleCreateCommand);
+        } catch (NotFoundException e) {
+            return ResponseEntity.unprocessableEntity().build();
+        }
 
         return new ResponseEntity<>(pointScaleDTO, HttpStatus.CREATED);
     }

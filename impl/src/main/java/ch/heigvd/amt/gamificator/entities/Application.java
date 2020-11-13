@@ -1,6 +1,7 @@
 package ch.heigvd.amt.gamificator.entities;
 
 import ch.heigvd.amt.gamificator.api.model.ApplicationCreateCommand;
+import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,7 +31,6 @@ public class Application {
     private String key;
     private String secret;
 
-
     public static Application toEntity(ApplicationCreateCommand command) {
 
         UUID key = UUID.randomUUID();;
@@ -42,6 +42,16 @@ public class Application {
         application.setUrl(command.getUrl().toString());
         application.setKey(key.toString());
         application.setSecret(secret);
+
+        return application;
+    }
+
+    public static Application toEntity(ApplicationDTO dto) {
+        Application application =  new Application();
+
+        application.setId(dto.getId());
+        application.setName(dto.getName());
+        application.setUrl(dto.getUrl().toString());
 
         return application;
     }
