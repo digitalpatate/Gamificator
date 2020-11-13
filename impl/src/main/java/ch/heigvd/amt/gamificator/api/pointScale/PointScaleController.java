@@ -45,7 +45,18 @@ public class PointScaleController implements PointScalesApi {
 
     @Override
     public ResponseEntity<List<PointScaleDTO>> getAllPointScales(@Valid @RequestParam(value = "applicationId", required = false) Long applicationId) {
-        List<PointScaleDTO> pointScaleDTOs = pointScaleService.getAllPointScales();
+        List<PointScaleDTO> pointScaleDTOs = null;
+
+        if(applicationId != null) {
+            try {
+                pointScaleDTOs = pointScaleService.getAllPointScaleOfApplication(applicationId);
+            } catch (NotFoundException e) {
+                return ResponseEntity.notFound().build();
+            }
+        } else {
+            pointScaleDTOs = pointScaleService.getAllPointScales();
+        }
+
         return new ResponseEntity<>(pointScaleDTOs, HttpStatus.OK);
     }
 

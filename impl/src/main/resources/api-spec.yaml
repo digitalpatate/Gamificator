@@ -247,7 +247,7 @@ paths:
         '204':
           description: deleted
 
-  /pointScales/:
+  /pointScales:
     get:
       description: get the list of all point scales
       operationId: getAllPointScales
