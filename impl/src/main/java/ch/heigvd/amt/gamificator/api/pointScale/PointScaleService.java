@@ -80,4 +80,13 @@ public class PointScaleService {
     public void deletePointScaleById(Long id) {
         pointScaleRepository.deleteById(id);
     }
+
+    public PointScaleDTO getPointScaleById(Long id) throws NotFoundException {
+        PointScale pointScale = pointScaleRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(404,"Not found"));
+
+        PointScaleDTO pointScaleDTO = toDTO(pointScale);
+
+        return pointScaleDTO;
+    }
 }
