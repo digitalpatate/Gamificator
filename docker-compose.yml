@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+
+  db:
+    image: mysql
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: gamificator_db
+      MYSQL_USER: springuser
+      MYSQL_PASSWORD : secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/database/:/docker-entrypoint-initdb.d/
+      - gamificator_vol:/var/lib/mysql
+
+
+# for debug
+  adminer:
+    image: adminer
+    container_name: admirer
+    restart: always
+    ports:
+      - 8888:8080
+
+
+volumes:
+  gamificator_vol:
+    external: false
