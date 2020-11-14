@@ -16,6 +16,8 @@ services:
     volumes:
       - ./docker/database/:/docker-entrypoint-initdb.d/
       - gamificator_vol:/var/lib/mysql
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
 
 
 # for debug
