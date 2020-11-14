@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import java.util.Optional;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -24,8 +26,15 @@ public class EventService {
 
     public void createEvent(@Valid CreateEventCommand createEventCommand) throws NotFoundException {
         Event event = Event.toEntity(createEventCommand);
-        Player player = playerRepository.findByUUID(createEventCommand.getUserUUID()).orElseThrow(() -> new NotFoundException("Not found"));
+        Optional<Player> oPlayer = playerRepository.findByUUID(createEventCommand.getUserUUID().toString());
+        Player player = new Player();
 
+        if(oPlayer.isEmpty()){
+            player.setUUID(UUID.randomUUID().toString());
+            playerRepository.save(player);
+        }else{
+            player =  oPlayer.get();
+        }
         event.setPlayer(player);
 
         eventProcessor.process(event);

@@ -7,6 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PlayerRepository extends CrudRepository<Player, Long> {
-    Optional<Player> findByUUID(UUID uuid);
 
+    Optional<Player> findByUUID(String uuid);
 }

@@ -255,7 +255,7 @@ paths:
         '204':
           description: deleted
 
-  /events/:
+  /events:
     post:
       description: create an event
       operationId: createEvent
@@ -368,11 +368,7 @@ components:
         path:
           type: string
         payload:
-          type: object
-          properties:
-            id:
-              type: integer
-              format: int64
+          type: string
     ConditionDTO:
       type: object
       properties:

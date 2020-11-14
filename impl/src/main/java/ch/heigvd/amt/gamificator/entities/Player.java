@@ -15,5 +15,5 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private UUID userUUID;
+    private String UUID;
 }
