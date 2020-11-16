@@ -96,6 +96,18 @@ public class ApplicationSteps {
         assertEquals(applicationCreateCommand, applicationCreateDTO);
     }
 
+    @When("I send a DELETE to the application endpoint")
+    public void iSendDeleteApplicationEnpoint(){
+        Long id = Long.valueOf(lastReceivedLocationHeader.substring(lastReceivedLocationHeader.lastIndexOf('/') + 1));
+        try {
+            lastApiResponse = api.deleteApplicationWithHttpInfo(id);
+            processApiResponse(lastApiResponse);
+        } catch (ApiException e) {
+            processApiException(e);
+        }
+
+    }
+
     private void processApiResponse(ApiResponse apiResponse) {
         lastApiResponse = apiResponse;
         lastApiCallThrewException = false;

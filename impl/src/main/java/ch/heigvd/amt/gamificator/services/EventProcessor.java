@@ -6,7 +6,6 @@ import ch.heigvd.amt.gamificator.entities.Event;
 import ch.heigvd.amt.gamificator.entities.Rule;
 import ch.heigvd.amt.gamificator.repositories.RuleRepository;
 import com.google.gson.Gson;
-import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
