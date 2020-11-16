@@ -70,7 +70,7 @@ public class ApplicationService {
 
     public ApplicationDTO getById(Long id) throws NotFoundException {
 
-        Application application = applicationRepository.findById(id).orElseThrow(() -> new NotFoundException(404,"Not found"));
+        Application application = applicationRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
 
         return toDTO(application);
     }
