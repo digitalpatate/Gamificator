@@ -11,7 +11,7 @@ import java.util.TimeZone;
 
 public class Environment {
 
-    @Getter private DefaultApi api = new DefaultApi();
+    @Getter private DefaultApi api;
     @Getter private ApiResponse lastApiResponse;
     @Getter private ApiException lastApiException;
     @Getter private boolean lastApiCallThrewException;
@@ -22,6 +22,7 @@ public class Environment {
         Properties properties = new Properties();
         properties.load(this.getClass().getClassLoader().getResourceAsStream("environment.properties"));
         String url = properties.getProperty("ch.heigvd.amt.gamificator.server.url");
+        api = new DefaultApi();
         api.getApiClient().setBasePath(url);
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
@@ -42,4 +43,7 @@ public class Environment {
         lastStatusCode = lastApiException.getCode();
     }
 
+    public void reset() {
+
+    }
 }

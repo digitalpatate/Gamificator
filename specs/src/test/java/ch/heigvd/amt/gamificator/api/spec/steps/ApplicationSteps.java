@@ -8,8 +8,8 @@ import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -65,5 +65,29 @@ public class ApplicationSteps extends Steps {
     @And("I receive a payload that is the same as the application payload")
     public void iReceiveAPayloadThatIsTheSameAsTheApplicationPayload() {
         assertEquals(applicationCreateCommand, applicationCreateDTO);
+    }
+
+    @And("there is an application with the id 1")
+    public void thereIsAnApplicationWithTheId1() throws URISyntaxException {
+        ApplicationCreateCommand applicationCreateCommand = new ApplicationCreateCommand()
+                .name("Test app")
+                .url(new URI("http://localhost:9090"));
+
+        try {
+            ApiResponse apiResponse = getApi().createApplicationWithHttpInfo(applicationCreateCommand);
+            getEnvironment().processApiResponse(apiResponse);
+        } catch (ApiException e) {
+            getEnvironment().processApiException(e);
+        }
+    }
+
+    @And("there isn't an application with an id of {long}")
+    public void thereIsnTAnApplicationWithAnIdOf(Long id) {
+        try {
+            ApiResponse apiResponse = getApi().deleteApplicationWithHttpInfo(id);
+            getEnvironment().processApiResponse(apiResponse);
+        } catch (ApiException e) {
+            getEnvironment().processApiException(e);
+        }
     }
 }
