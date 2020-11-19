@@ -49,9 +49,10 @@ public class PointScaleService {
         Application application = getApplicationById(pointScaleCreateCommand.getApplicationId());
         pointScale.setApplication(application);
         pointScale.setId(id);
-        pointScaleRepository.save(pointScale);
 
-        return PointScale.toDTO(pointScale);
+        PointScale updatedPointScale = pointScaleRepository.save(pointScale);
+
+        return PointScale.toDTO(updatedPointScale);
     }
 
     public List<PointScaleDTO> getAllPointScales() {
@@ -70,8 +71,7 @@ public class PointScaleService {
     public List<PointScaleDTO> getAllPointScaleOfApplication(Long applicationId) throws NotFoundException {
         Iterable<PointScale> pointScales = new ArrayList<>();
 
-        Application application = getApplicationById(applicationId);
-        pointScales = pointScaleRepository.findByApplication(application);
+        pointScales = pointScaleRepository.findByApplicationId(applicationId);
 
         List<PointScaleDTO> pointScaleDTOs = new LinkedList<>();
 
@@ -82,7 +82,7 @@ public class PointScaleService {
         return pointScaleDTOs;
     }
 
-    public void deletePointScaleById(Long id) throws NotFoundException {
+    public void deletePointScaleById(Long id) {
         try {
             pointScaleRepository.deleteById(id);
         } catch(EmptyResultDataAccessException ignored) {

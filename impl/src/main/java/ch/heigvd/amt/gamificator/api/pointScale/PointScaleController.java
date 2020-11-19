@@ -36,11 +36,7 @@ public class PointScaleController implements PointScalesApi {
 
     @Override
     public ResponseEntity<Void> deletePointScale(@PathVariable Long id) {
-        try {
-            pointScaleService.deletePointScaleById(id);
-        } catch(NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        pointScaleService.deletePointScaleById(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -82,7 +78,7 @@ public class PointScaleController implements PointScalesApi {
         try {
             pointScaleDTO = pointScaleService.updatePointScale(id, pointScaleCreateCommand);
         } catch (NotFoundException e) {
-            return ResponseEntity.unprocessableEntity().build();
+            return ResponseEntity.notFound().build();
         }
 
         return new ResponseEntity<>(pointScaleDTO, HttpStatus.CREATED);

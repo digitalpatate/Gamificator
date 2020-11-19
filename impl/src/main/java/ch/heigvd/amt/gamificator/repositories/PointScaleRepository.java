@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface PointScaleRepository extends CrudRepository<PointScale, Long> {
-    List<PointScale> findByApplication(Application application);
+    List<PointScale> findByApplicationId(Long applicationId);
 }

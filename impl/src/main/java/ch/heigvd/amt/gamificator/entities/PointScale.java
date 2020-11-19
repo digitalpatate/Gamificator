@@ -27,12 +27,10 @@ public class PointScale {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Application application;
 
-    public static PointScale toEntity(PointScaleCreateCommand pointScaleCreateCommand) throws NotFoundException {
+    public static PointScale toEntity(PointScaleCreateCommand pointScaleCreateCommand) {
         PointScale pointScale = new PointScale();
         pointScale.setName(pointScaleCreateCommand.getName());
         pointScale.setDescription(pointScaleCreateCommand.getDescription().toString());
-
-        long applicationId = pointScaleCreateCommand.getApplicationId();
 
         return pointScale;
     }
