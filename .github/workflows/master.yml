@@ -29,7 +29,7 @@ jobs:
           java-version: 11
       - name: Build with Maven
         run: mvn clean package
-        working-directory: /impl
+        working-directory: ./impl
       - name: Upload builded jar
         uses: actions/upload-artifact@v2
         with:
@@ -64,4 +64,4 @@ jobs:
         with:
           java-version: 11
       - run: mvn clean test
-        working-directory: /specs
+        working-directory: ./specs
