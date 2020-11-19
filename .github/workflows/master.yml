@@ -14,9 +14,9 @@ jobs:
         with:
           java-version: 11
       - run: mvn clean install
-        working-directory: /impl
+        working-directory: ./impl
       - run: mvn test
-        working-directory: /impl
+        working-directory: ./impl
   build-jar:
     needs: [ unit-test ]
     runs-on: ubuntu-latest
