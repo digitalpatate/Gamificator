@@ -1,7 +1,7 @@
 name: Main workflow
 on:
   push:
-    branches: [ master ]
+    branches: [ pipeline ]
     
 jobs:
   unit-test:
@@ -52,3 +52,16 @@ jobs:
           echo ${{ secrets.REGISTRY_TOKEN }} | docker login ghcr.io -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
           docker build -t ghcr.io/digitalpatate/gamificator .
           docker push ghcr.io/digitalpatate/gamificator
+  cucumber-test:
+    needs: [ build-docker-image ]
+    name: cucumber tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run cucumber tests
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - run: mvn clean test
+        working-directory: /specs
