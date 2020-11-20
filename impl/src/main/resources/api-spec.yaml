@@ -18,11 +18,7 @@ paths:
               $ref: '#/components/schemas/ApplicationCreate'
       responses:
         '201':
-          description: success
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ApplicationRegistrationDTO'
+          description: created
     get:
       description: get the list of all application
       operationId: getAllApplication
@@ -88,7 +84,7 @@ paths:
       operationId: createBadge
       requestBody:
         content:
-          'application/json':
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/Badge'
       responses:
@@ -328,12 +324,3 @@ components:
           type: string
         properties:
           type: string #JSON content
-    ApplicationRegistrationDTO:
-      type: object
-      properties:
-        id:
-          type: integer
-        key:
-          type: string
-        secret:
-          type: string

@@ -1,16 +1,17 @@
 package ch.heigvd.amt.gamificator.api.badge;
 
 import ch.heigvd.amt.gamificator.api.BadgesApi;
-import ch.heigvd.amt.gamificator.api.model.ApplicationRead;
 import ch.heigvd.amt.gamificator.api.model.Badge;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -20,9 +21,8 @@ public class BadgeController implements BadgesApi {
     private BadgeService badgeService;
 
     @Override
-    public ResponseEntity<Void> createBadge(@Valid @RequestBody Badge badge) {
-
-        ch.heigvd.amt.gamificator.entities.Badge badgeRegistrationDTO = badgeService.registerNewBadge(badge);
+    public ResponseEntity<Void> createBadge(@ApiParam(value = "") @RequestPart(value="name", required=false)  String name, @ApiParam(value = "") @RequestPart(value="applicationId", required=false)  Integer applicationId, @ApiParam(value = "") @Valid @RequestPart(value = "image") MultipartFile image) {
+        ch.heigvd.amt.gamificator.entities.Badge badgeRegistrationDTO = badgeService.registerNewBadge(name, applicationId, image);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/badges/{id}")

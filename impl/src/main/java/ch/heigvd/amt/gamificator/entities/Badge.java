@@ -20,5 +20,5 @@ public class Badge {
 
     private String name;
     private long applicationId;
-    private byte[] image;
+    private String url;
 }
