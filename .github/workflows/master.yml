@@ -1,7 +1,7 @@
 name: Main workflow
 on:
   push:
-    branches: [ pipeline ]
+    branches: [ master ]
     
 jobs:
   unit-test:
