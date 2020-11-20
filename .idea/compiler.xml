@@ -8,16 +8,17 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="specs" />
-        <module name="impl" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="fruits-impl" target="11" />
       <module name="impl" target="11" />
       <module name="specs" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="fruits-impl" options="-parameters" />
       <module name="impl" options="-parameters" />
     </option>
   </component>

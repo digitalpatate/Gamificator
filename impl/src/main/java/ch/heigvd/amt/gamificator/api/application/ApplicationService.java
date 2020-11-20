@@ -7,17 +7,13 @@ import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.java.Log;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import static ch.heigvd.amt.gamificator.entities.Application.toEntity;
-import static ch.heigvd.amt.gamificator.util.StringGenerator.generateRandomString;
 
 @Service
 @AllArgsConstructor
@@ -43,17 +39,6 @@ public class ApplicationService {
         return  applicationRegistrationDTO;
     }
 
-    @SneakyThrows
-    public ApplicationDTO toDTO(Application application) {
-
-        ApplicationDTO applicationRead = new ApplicationDTO();
-
-        applicationRead.setId((int)application.getId());
-        applicationRead.setName(application.getName());
-        applicationRead.setUrl(new URI(application.getUrl()));
-        return applicationRead;
-    }
-
     public List<ApplicationDTO> getAllApplication() {
         Iterable<Application> applications = this.applicationRepository.findAll();
 
@@ -61,7 +46,7 @@ public class ApplicationService {
         List<ApplicationDTO> applicationReads = new LinkedList<>();
 
         for(Application app : applications){
-            applicationReads.add(toDTO(app));
+            applicationReads.add(Application.toDTO(app));
         }
 
         return applicationReads;
@@ -72,11 +57,15 @@ public class ApplicationService {
 
         Application application = applicationRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
 
-        return toDTO(application);
+        return application.toDTO(application);
     }
 
     public void deleteById(Long id) {
-        applicationRepository.deleteById(id);
+        try {
+            applicationRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException ignored) {
+            // Do not leak what application exists or not
+        }
     }
 
     public ApplicationDTO updateById(Long id, ApplicationCreateCommand applicationCreate) {
@@ -85,6 +74,6 @@ public class ApplicationService {
 
         applicationRepository.save(application);
 
-        return toDTO(application);
+        return application.toDTO(application);
     }
 }
