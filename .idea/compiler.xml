@@ -8,8 +8,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="specs" />
-        <module name="impl" />
-        <module name="fruits-impl" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
