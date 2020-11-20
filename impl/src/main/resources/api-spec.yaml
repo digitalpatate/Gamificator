@@ -91,9 +91,9 @@ paths:
       operationId: createBadge
       requestBody:
         content:
-          multipart/form-data:
+          'application/json':
             schema:
-              $ref: '#/components/schemas/Badge'
+              $ref: '#/components/schemas/BadgeDTO'
       responses:
         '201':
           description: created
@@ -108,7 +108,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Badge'
+                  $ref: '#/components/schemas/BadgeDTO'
   /badges/{id}:
     get:
       description: get one badge, by id
@@ -125,7 +125,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/Badge'
+                $ref: '#/components/schemas/BadgeDTO'
     put:
       description: Update a badge
       operationId: updateBadge
@@ -139,23 +139,10 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/Badge'
+              $ref: '#/components/schemas/BadgeDTO'
       responses:
         '200':
           description: updated
-
-    delete:
-      description: Delete a badge
-      operationId: deleteBadge
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-      responses:
-        '204':
-          description: deleted
   /users:
     get:
       description: get all users
@@ -374,16 +361,14 @@ components:
           type: string
           format:
             uri
-    Badge:
+    BadgeDTO:
       type: object
       properties:
         name:
           type: string
-        applicationId:
-          type: integer
-        image:
+        ImageUrl:
           type: string
-          format: binary
+          format: uri
     User:
       type: object
       properties:

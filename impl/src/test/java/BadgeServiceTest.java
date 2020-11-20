@@ -1,12 +1,13 @@
 import ch.heigvd.amt.gamificator.api.badge.BadgeService;
-import ch.heigvd.amt.gamificator.api.model.Badge;
+import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
+import ch.heigvd.amt.gamificator.entities.Badge;
 import ch.heigvd.amt.gamificator.repositories.BadgeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,39 +28,37 @@ public class BadgeServiceTest {
 
     @Test
     public void toEntityShouldReturnAWellFormedEntity() {
-        Badge newBadge = new Badge();
+        BadgeDTO newBadge = new BadgeDTO();
 
         newBadge.setName("demon lord");
-        newBadge.setApplicationId(666);
+        try {
+            newBadge.setImageUrl(new URI("www.google.com/Pikachu.png"));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
-        ResourceLoader resourceLoader = new DefaultResourceLoader();
-        Resource resource = resourceLoader.getResource("classpath:Pikachu.png");
-        newBadge.setImage(resource);
-
-        ch.heigvd.amt.gamificator.entities.Badge badge = this.badgeService.toEntity(newBadge);
+        Badge badge = this.badgeService.toEntity(newBadge);
 
         assertEquals(badge.getName(),"demon lord");
-        assertEquals(badge.getApplicationId(), 666);
-        assertEquals(badge.getUrl(), "Pikachu.png");
+        assertEquals(badge.getImageUrl(), "www.google.com/Pikachu.png");
         assertNotNull(badge.getId());
     }
 
     @Test
     public void createShouldReturnAnId() {
-        Badge newBadge = new Badge();
+        BadgeDTO newBadge = new BadgeDTO();
 
         newBadge.setName("demon lord");
-        newBadge.setApplicationId(666);
-
-        ResourceLoader resourceLoader = new DefaultResourceLoader();
-        Resource resource = resourceLoader.getResource("classpath:Pikachu.png");
-        newBadge.setImage(resource);
+        try {
+            newBadge.setImageUrl(new URI("www.google.com/Pikachu.png"));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
         ch.heigvd.amt.gamificator.entities.Badge badge = new ch.heigvd.amt.gamificator.entities.Badge();
 
         badge.setName("demon lord");
-        badge.setApplicationId(666);
-        badge.setUrl("Pikachu.png");
+        badge.setImageUrl("www.google.com/Pikachu.png");
         badge.setId(1);
 
         when(badgeRepository.save(any())).thenReturn(badge);
