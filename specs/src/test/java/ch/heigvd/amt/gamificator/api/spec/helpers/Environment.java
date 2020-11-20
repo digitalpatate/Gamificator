@@ -1,8 +1,8 @@
 package ch.heigvd.amt.gamificator.api.spec.helpers;
 
-import ch.heigvd.amt.gamificator.ApiException;
 import ch.heigvd.amt.gamificator.ApiResponse;
 import ch.heigvd.amt.gamificator.api.DefaultApi;
+import ch.heigvd.amt.gamificator.ApiException;
 import lombok.Getter;
 import java.io.IOException;
 import java.util.List;

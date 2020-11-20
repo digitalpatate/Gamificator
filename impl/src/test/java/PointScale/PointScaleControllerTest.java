@@ -83,7 +83,7 @@ public class PointScaleControllerTest {
         pointScaleCreateCommand.setApplicationId(1L);
 
         when(pointScaleService.createPointScale(any(PointScaleCreateCommand.class)))
-                .thenThrow(new NotFoundException(400, "Not found"));
+                .thenThrow(new NotFoundException( "Not found"));
 
         ResponseEntity responseEntity = pointScaleController.createPointScale(pointScaleCreateCommand);
         PointScaleDTO pointScaleDTOGot = (PointScaleDTO) responseEntity.getBody();
@@ -102,7 +102,7 @@ public class PointScaleControllerTest {
     @Test
     public void gettingAllPointScaleWithAnApplicationIdThatDoesNotExistsShouldRespondNotFound() {
         when(pointScaleService.getAllPointScaleOfApplication(1L))
-                .thenThrow(new NotFoundException(400, "Not found"));
+                .thenThrow(new NotFoundException("Not found"));
 
         ResponseEntity responseEntity = pointScaleController.getAllPointScales(1L);
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -170,7 +170,7 @@ public class PointScaleControllerTest {
         pointScaleDTO.setApplicationId(1L);
 
         when(pointScaleService.getPointScaleById(1L))
-                .thenThrow(new NotFoundException(400, "Not found"));
+                .thenThrow(new NotFoundException("Not found"));
 
         ResponseEntity responseEntity = pointScaleController.getPointScale(1L);
         assertNull(responseEntity.getBody());
@@ -221,7 +221,7 @@ public class PointScaleControllerTest {
         pointScaleCreateCommand.setApplicationId(1L);
 
         when(pointScaleService.updatePointScale(1L, pointScaleCreateCommand))
-                .thenThrow(new NotFoundException(400, "Not found"));
+                .thenThrow(new NotFoundException("Not found"));
 
         ResponseEntity responseEntity = pointScaleController.updatePointScale(1L, pointScaleCreateCommand);
 

@@ -42,7 +42,7 @@ public class PointScaleService {
 
     public PointScaleDTO updatePointScale(Long id, PointScaleCreateCommand pointScaleCreateCommand) throws NotFoundException {
         if(!pointScaleRepository.existsById(id)) {
-            throw new NotFoundException(404,"Not found");
+            throw new NotFoundException("Not found");
         }
 
         PointScale pointScale = PointScale.toEntity(pointScaleCreateCommand);
@@ -92,13 +92,13 @@ public class PointScaleService {
 
     public PointScaleDTO getPointScaleById(Long id) throws NotFoundException {
         PointScale pointScale = pointScaleRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(404,"Not found"));
+                .orElseThrow(() -> new NotFoundException("Not found"));
 
         return PointScale.toDTO(pointScale);
     }
 
     private Application getApplicationById(Long applicationId) throws NotFoundException {
         return applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new NotFoundException(404, "Not found"));
+                .orElseThrow(() -> new NotFoundException("Not found"));
     }
 }

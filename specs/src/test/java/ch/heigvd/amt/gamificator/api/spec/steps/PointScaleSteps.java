@@ -1,10 +1,10 @@
 package ch.heigvd.amt.gamificator.api.spec.steps;
 
-import ch.heigvd.amt.gamificator.ApiException;
 import ch.heigvd.amt.gamificator.ApiResponse;
 import ch.heigvd.amt.gamificator.api.dto.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.dto.PointScaleDTO;
 import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
+import ch.heigvd.amt.gamificator.ApiException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
