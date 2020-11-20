@@ -63,7 +63,7 @@ jobs:
         with:
           java-version: 11
       - run: docker-compose pull
-      - run: docker-compose up
+      - run: docker-compose up -d
   cucumber-test:
     needs: [ server-up ]
     runs-on: ubuntu-latest
