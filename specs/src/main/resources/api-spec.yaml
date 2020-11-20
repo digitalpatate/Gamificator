@@ -15,10 +15,14 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/ApplicationCreate'
+              $ref: '#/components/schemas/ApplicationCreateCommand'
       responses:
         '201':
-          description: created
+          description: success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ApplicationCreateDTO'
     get:
       description: get the list of all application
       operationId: getAllApplication
@@ -30,7 +34,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ApplicationRead'
+                  $ref: '#/components/schemas/ApplicationDTO'
   /applications/{id}:
     get:
       description: get one application, by id
@@ -40,6 +44,7 @@ paths:
           name: id
           schema:
             type: integer
+            format: int64
           required: true
       responses:
         '200':
@@ -47,7 +52,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/ApplicationRead'
+                $ref: '#/components/schemas/ApplicationDTO'
     put:
       description: Update an application
       operationId: updateApplication
@@ -56,12 +61,13 @@ paths:
           name: id
           schema:
             type: integer
+            format: int64
           required: true
       requestBody:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/ApplicationCreate'
+              $ref: '#/components/schemas/ApplicationCreateCommand'
       responses:
         '200':
           description: updated
@@ -74,6 +80,7 @@ paths:
           name: id
           schema:
             type: integer
+            format: int64
           required: true
       responses:
         '204':
@@ -199,7 +206,7 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/Rule'
+              $ref: '#/components/schemas/RuleCreateCommand'
       responses:
         '201':
           description: created
@@ -214,8 +221,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Rule'
+                  $ref: '#/components/schemas/RuleDTO'
   /rules/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
     put:
       description: update a rule
       operationId: updateRule
@@ -224,29 +237,101 @@ paths:
           name: id
           schema:
             type: integer
+            format: int64
           required: true
       requestBody:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/Rule'
+              $ref: '#/components/schemas/RuleUpdateCommand'
       responses:
         '201':
           description: created
     delete:
       description: Delete a rule
       operationId: deleteRule
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
       responses:
         '204':
           description: deleted
 
-  /events/:
+  /pointScales:
+    get:
+      description: get the list of all point scales
+      operationId: getAllPointScales
+      parameters:
+        - in: query
+          name: applicationId
+          schema:
+            type: integer
+            format: int64
+            description: The id of the application from which to retrieve point scales
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PointScaleDTO'
+    post:
+      description: create a point scale
+      operationId: createPointScale
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PointScaleCreateCommand'
+      responses:
+        '201':
+          description: created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PointScaleDTO'
+
+  /pointScales/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+          format: int64
+        required: true
+    get:
+      description: get one point scale by id
+      operationId: getPointScale
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PointScaleDTO'
+    put:
+      description: update a point scale
+      operationId: updatePointScale
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PointScaleCreateCommand'
+      responses:
+        '201':
+          description: updated
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/PointScaleDTO'
+
+    delete:
+      description: delete a point scale
+      operationId: deletePointScale
+      responses:
+        '204':
+          description: deleted
+
+  /events:
     post:
       description: create an event
       operationId: createEvent
@@ -254,7 +339,7 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/Event'
+              $ref: '#/components/schemas/CreateEventCommand'
       responses:
         '201':
           description: created
@@ -269,7 +354,7 @@ components:
       in: header
       name: X-API-KEY
   schemas:
-    ApplicationCreate:
+    ApplicationCreateCommand:
       type: object
       properties:
         name:
@@ -277,7 +362,7 @@ components:
         url:
           type: string
           format: uri
-    ApplicationRead:
+    ApplicationDTO:
       type: object
       properties:
         id:
@@ -287,7 +372,7 @@ components:
         url:
           type: string
           format:
-            uuid
+            uri
     Badge:
       type: object
       properties:
@@ -304,14 +389,34 @@ components:
         id:
           type: string
           format: uuid
-    Rule:
+    RuleCreateCommand:
       type: object
       properties:
-        if:
-          type: string #JSON content
+        applicationId:
+          type: integer
+          format: int64
+        condition:
+          $ref: '#/components/schemas/ConditionDTO'
         then:
-          type: string #JSON content
-    Event:
+          $ref: '#/components/schemas/ActionDTO'
+    RuleUpdateCommand:
+      type: object
+      properties:
+        condition:
+          $ref: '#/components/schemas/ConditionDTO'
+        then:
+          $ref: '#/components/schemas/ActionDTO'
+    RuleDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        condition:
+          $ref: '#/components/schemas/ConditionDTO'
+        then:
+          $ref: '#/components/schemas/ActionDTO'
+    CreateEventCommand:
       type: object
       properties:
         userUUID:
@@ -322,5 +427,49 @@ components:
           format: date-time
         type:
           type: string
-        properties:
-          type: string #JSON content
+    ApplicationCreateDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        key:
+          type: string
+        secret:
+          type: string
+    ActionDTO:
+      type: object
+      properties:
+        methode:
+          type: string
+        path:
+          type: string
+        payload:
+          type: string
+    ConditionDTO:
+      type: object
+      properties:
+        type:
+          type: string
+    PointScaleDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        applicationId:
+          type: integer
+          format: int64
+    PointScaleCreateCommand:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        applicationId:
+          type: integer
+          format: int64
