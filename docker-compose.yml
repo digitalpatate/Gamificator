@@ -27,6 +27,27 @@ services:
     restart: always
     ports:
       - 8888:8080
+  
+  
+  app:
+    image: ghcr.io/digitalpatate/gamificator:latest
+    container_name: gamificator_app
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: mysql
+      DB_USER: springuser
+      DB_PASSWORD: secret
+    depends_on:
+      - db
+    ports:
+     - "9081:9081"
+    networks:
+      - backend
+      
+networks:
+  backend:
+    external: false
 
 
 volumes:
