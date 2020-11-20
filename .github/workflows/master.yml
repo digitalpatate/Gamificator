@@ -33,7 +33,7 @@ jobs:
       - name: Upload builded jar
         uses: actions/upload-artifact@v2
         with:
-          name: fruits-impl-1.0.0.jar
+          name: gamificator.jar
           path: impl/target/fruits-impl-1.0.0.jar
   build-docker-image:
     needs: [ build-jar ]
@@ -45,8 +45,8 @@ jobs:
       - name: Download builded jar
         uses: actions/download-artifact@v2
         with:
-          name: fruits-impl-1.0.0.jar
-          path: impl/target/fruits-impl-1.0.0.jar
+          name: gamificator.jar
+          path: impl/target/
       - name: Build Docker image
         run: |
           echo ${{ secrets.REGISTRY_TOKEN }} | docker login ghcr.io -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
