@@ -46,4 +46,5 @@ public class ApplicationServiceTest {
         assertNotNull(application.getKey());
         assertNotNull(application.getSecret());
     }
+
 }
