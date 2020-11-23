@@ -42,7 +42,6 @@ public class ApplicationService {
     public List<ApplicationDTO> getAllApplication() {
         Iterable<Application> applications = this.applicationRepository.findAll();
 
-
         List<ApplicationDTO> applicationReads = new LinkedList<>();
 
         for(Application app : applications){
@@ -55,9 +54,26 @@ public class ApplicationService {
 
     public ApplicationDTO getById(Long id) throws NotFoundException {
 
-        Application application = applicationRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
+        Application application = applicationRepository.f(id).orElseThrow(() -> new NotFoundException("Not found"));
 
         return application.toDTO(application);
+    }
+
+    public ApplicationDTO getByKey(String key) throws NotFoundException {
+        Application application = null;
+        Iterable<Application> applications = this.applicationRepository.findAll();
+
+        for(Application app : applications){
+            if(app.getKey().equals(key)) {
+                application = app;
+            }
+        }
+
+        if(application == null) {
+            throw new NotFoundException("Not Found");
+        }
+
+        return Application.toDTO(application);
     }
 
     public void deleteById(Long id) {
