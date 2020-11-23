@@ -28,25 +28,29 @@ public class ApiKeyFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
 
-        if (!req.getRequestURI().startsWith("/")) {
+        if (!req.getRequestURI().startsWith("/") || (req.getRequestURI().startsWith("/applications") && req.getMethod().startsWith("POST"))) {
             filterChain.doFilter(servletRequest, servletResponse);
+            return;
         }
 
         String apiKey = req.getHeader("X-API-KEY");
         log.info("API key: " + apiKey);
 
-        ApplicationDTO application;
+        String msg = "API Key not valid!";
+        ApplicationDTO application = null;
         try {
             application = this.applicationService.getByKey(apiKey);
         } catch (NotFoundException e) {
-            e.printStackTrace();
-            String msg = "API Key not valid!";
+            log.info(msg);
+        }
 
+        if(application == null){
             HttpServletResponse res = (HttpServletResponse) servletResponse;
             res.reset();
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             servletResponse.setContentLength(msg.length());
             servletResponse.getWriter().write(msg);
+            return;
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
