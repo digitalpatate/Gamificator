@@ -6,6 +6,7 @@ info:
 security:
   - bearerAuth: []
   - apiKeyAuth: []
+  - apiKeyCrypted: []
 paths:
   /applications:
     post:
@@ -341,6 +342,10 @@ components:
       type: apiKey
       in: header
       name: X-API-KEY
+    apiKeyCrypted:
+      type: apiKey
+      in: header
+      name: X-API-SECRET
   schemas:
     ApplicationCreateCommand:
       type: object

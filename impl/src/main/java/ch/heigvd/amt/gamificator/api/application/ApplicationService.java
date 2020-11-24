@@ -59,12 +59,12 @@ public class ApplicationService {
         return application.toDTO(application);
     }
 
-    public ApplicationDTO getByKey(String key) throws NotFoundException {
+    public ApplicationDTO getByKey(String key, String secret) throws NotFoundException {
         Application application = null;
         Iterable<Application> applications = this.applicationRepository.findAll();
 
         for(Application app : applications){
-            if(app.getKey().equals(key)) {
+            if(app.getKey().equals(key) && app.getSecret().equals(secret)) {
                 application = app;
             }
         }

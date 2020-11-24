@@ -34,12 +34,13 @@ public class ApiKeyFilter extends GenericFilterBean {
         }
 
         String apiKey = req.getHeader("X-API-KEY");
+        String secret = req.getHeader("X-API-SECRET");
         log.info("API key: " + apiKey);
 
         String msg = "API Key not valid!";
         ApplicationDTO application = null;
         try {
-            application = this.applicationService.getByKey(apiKey);
+            application = this.applicationService.getByKey(apiKey, secret);
         } catch (NotFoundException e) {
             log.info(msg);
         }
