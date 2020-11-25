@@ -64,10 +64,12 @@ jobs:
           java-version: 11
       - run: docker-compose pull
       - run: docker-compose up -d
-      - name: Sleep for 1 minute
-        uses: jakejarvis/wait-action@master
-        with:
-            time: '1m' 
+      uses: nev7n/wait_for_response@v1
+      with:
+        url: 'http://localhost:8080/'
+        responseCode: 200
+        timeout: 300000
+        interval: 2000 
   cucumber-test:
     needs: [ server-up ]
     runs-on: ubuntu-latest
