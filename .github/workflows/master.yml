@@ -55,7 +55,7 @@ jobs:
   cucumber-test:
     needs: [ build-docker-image ]
     runs-on: ubuntu-latest
-    name: Server up
+    name: Cucumber-test
     steps:
       - name: Checkout
         uses: actions/checkout@v2
