@@ -40,35 +40,6 @@ public class ApplicationService {
         return  applicationRegistrationDTO;
     }
 
-    public List<ApplicationDTO> getAllApplication() {
-        Iterable<Application> applications = this.applicationRepository.findAll();
-
-
-        List<ApplicationDTO> applicationReads = new LinkedList<>();
-
-        for(Application app : applications){
-            applicationReads.add(toDTO(app));
-        }
-
-        return applicationReads;
-
-    }
-
-    public ApplicationDTO getById(Long id) throws NotFoundException {
-
-        Application application = applicationRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
-
-        return toDTO(application);
-    }
-
-    public void deleteById(Long id) {
-        try {
-            applicationRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException ignored) {
-            // Do not leak what application exists or not
-        }
-    }
-
     public ApplicationDTO updateById(Long id, ApplicationCreateCommand applicationCreate) {
         Application application = toEntity(applicationCreate);
         application.setId(id);

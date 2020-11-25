@@ -2,7 +2,6 @@ package ch.heigvd.amt.gamificator.api.application;
 
 import ch.heigvd.amt.gamificator.api.ApplicationsApi;
 import ch.heigvd.amt.gamificator.api.model.*;
-import ch.heigvd.amt.gamificator.exceptions.ApiException;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -32,40 +30,11 @@ public class ApplicationController implements ApplicationsApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteApplication(@PathVariable Long id) {
-
-        log.info(String.format("DELETE /applications/:id with id : %s",id));
-
-        applicationService.deleteById(id);
-
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<ApplicationDTO> getApplication() {
+        //TODO: Wait for Guillaume
+        return null;
     }
 
-    @Override
-    public ResponseEntity<List<ApplicationDTO>> getAllApplication() {
-
-        log.info(String.format("GET /applications"));
-
-        List<ApplicationDTO> application = applicationService.getAllApplication();
-
-        return new ResponseEntity(application, HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<ApplicationDTO> getApplication(@PathVariable Long id) {
-        log.info(String.format("GET /applications/:id with id : %s",id));
-
-
-        try {
-            ApplicationDTO application = applicationService.getById(id);
-
-            return new ResponseEntity(application, HttpStatus.OK);
-
-        } catch (ApiException e) {
-            log.info(e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
-        }
-    }
 
     @Override
     public ResponseEntity<Void> updateApplication(@PathVariable Long id, @Valid ApplicationCreateCommand applicationCreate) {
