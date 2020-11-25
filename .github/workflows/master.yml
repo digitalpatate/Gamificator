@@ -52,7 +52,7 @@ jobs:
           echo ${{ secrets.REGISTRY_TOKEN }} | docker login ghcr.io -u ${{ secrets.REGISTRY_USERNAME }} --password-stdin
           docker build -t ghcr.io/digitalpatate/gamificator .
           docker push ghcr.io/digitalpatate/gamificator
-  server-up and cucumber-test:
+  cucumber-test:
     needs: [ build-docker-image ]
     runs-on: ubuntu-latest
     name: Server up
