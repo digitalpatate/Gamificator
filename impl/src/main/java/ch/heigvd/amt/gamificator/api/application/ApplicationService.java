@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.List;
 
-import static ch.heigvd.amt.gamificator.entities.Application.toEntity;
+import static ch.heigvd.amt.gamificator.api.application.ApplicationMapper.toDTO;
+import static ch.heigvd.amt.gamificator.api.application.ApplicationMapper.toEntity;
 
 @Service
 @AllArgsConstructor
@@ -46,7 +47,7 @@ public class ApplicationService {
         List<ApplicationDTO> applicationReads = new LinkedList<>();
 
         for(Application app : applications){
-            applicationReads.add(Application.toDTO(app));
+            applicationReads.add(toDTO(app));
         }
 
         return applicationReads;
@@ -57,7 +58,7 @@ public class ApplicationService {
 
         Application application = applicationRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
 
-        return application.toDTO(application);
+        return toDTO(application);
     }
 
     public void deleteById(Long id) {
@@ -74,6 +75,6 @@ public class ApplicationService {
 
         applicationRepository.save(application);
 
-        return application.toDTO(application);
+        return toDTO(application);
     }
 }

@@ -1,7 +1,5 @@
 package ch.heigvd.amt.gamificator.api.pointScale;
 
-import ch.heigvd.amt.gamificator.api.application.ApplicationService;
-import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
 import ch.heigvd.amt.gamificator.api.model.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
 import ch.heigvd.amt.gamificator.entities.Application;
@@ -10,9 +8,6 @@ import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import ch.heigvd.amt.gamificator.repositories.PointScaleRepository;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import org.aspectj.weaver.ast.Not;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +15,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static ch.heigvd.amt.gamificator.entities.Application.toEntity;
 
 @Service
 @AllArgsConstructor
