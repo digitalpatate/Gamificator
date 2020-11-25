@@ -24,35 +24,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationCreateDTO'
     get:
-      description: get the list of all application
-      operationId: getAllApplication
-      responses:
-        '200':
-          description: success
-          content:
-            'application/json':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ApplicationDTO'
-  /applications/{id}:
-    get:
-      description: get one application, by id
+      description: get the application for currrent API-KEY
       operationId: getApplication
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-            format: int64
-          required: true
       responses:
         '200':
           description: success
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/ApplicationDTO'
+               $ref: '#/components/schemas/ApplicationDTO'
     put:
       description: Update an application
       operationId: updateApplication
@@ -71,20 +51,6 @@ paths:
       responses:
         '200':
           description: updated
-
-    delete:
-      description: Delete an application
-      operationId: deleteApplication
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-            format: int64
-          required: true
-      responses:
-        '204':
-          description: deleted
   /badges:
     post:
       description: create a badge
@@ -228,6 +194,7 @@ paths:
         name: id
         schema:
           type: integer
+          format: int64
         required: true
     put:
       description: update a rule
