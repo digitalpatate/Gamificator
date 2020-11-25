@@ -37,14 +37,4 @@ public class ApplicationMapper {
 
         return application;
     }
-
-    public static Application toEntity(ApplicationDTO dto) {
-        Application application =  new Application();
-
-        application.setId(dto.getId());
-        application.setName(dto.getName());
-        application.setUrl(dto.getUrl().toString());
-
-        return application;
-    }
 }
