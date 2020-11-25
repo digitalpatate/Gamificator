@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import static ch.heigvd.amt.gamificator.entities.Application.toEntity;
 
@@ -89,9 +90,11 @@ public class ApplicationService {
         return application.toDTO(application);
     }
 
-    public boolean checkAPIKey(String[] creds) throws NotFoundException {
-        Application application = applicationRepository.findByKey(creds[0]).orElseThrow(() -> new NotFoundException(""));
-
-        return application.getKey().equals(creds[1]);
+    public boolean canBeAuthenticated(String[] creds) {
+        Optional<Application> oApplication = applicationRepository.findByKey(creds[0]);
+        if(oApplication.isEmpty()){
+            return false;
+        }
+        return oApplication.get().getSecret().equals(creds[1]);
     }
 }
