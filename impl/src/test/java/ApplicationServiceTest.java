@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static ch.heigvd.amt.gamificator.entities.Application.toEntity;
+import static ch.heigvd.amt.gamificator.api.application.ApplicationMapper.toEntity;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
