@@ -4,6 +4,7 @@ import ch.heigvd.amt.gamificator.api.model.ApplicationCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
 import ch.heigvd.amt.gamificator.api.model.ApplicationCreateDTO;
 import ch.heigvd.amt.gamificator.entities.Application;
+import ch.heigvd.amt.gamificator.exceptions.NotAuthorizedException;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import lombok.AllArgsConstructor;
@@ -59,21 +60,14 @@ public class ApplicationService {
         return application.toDTO(application);
     }
 
-    public ApplicationDTO getByKey(String key, String secret) throws NotFoundException {
-        Application application = null;
-        Iterable<Application> applications = this.applicationRepository.findAll();
+    public long hasGoodCredential(String key, String secret) throws NotFoundException, NotAuthorizedException {
+        Application application = this.applicationRepository.findByKey(key).orElseThrow(() -> new NotFoundException("Not found"));
 
-        for(Application app : applications){
-            if(app.getKey().equals(key) && app.getSecret().equals(secret)) {
-                application = app;
-            }
+        if(!application.getSecret().equals(secret)) {
+            throw new NotAuthorizedException("Not authorized");
         }
 
-        if(application == null) {
-            throw new NotFoundException("Not Found");
-        }
-
-        return Application.toDTO(application);
+        return application.getId();
     }
 
     public void deleteById(Long id) {

@@ -4,20 +4,25 @@ import ch.heigvd.amt.gamificator.api.BadgesApi;
 import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
 import ch.heigvd.amt.gamificator.entities.Badge;
 import ch.heigvd.amt.gamificator.exceptions.ApiException;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
+@Log
 public class BadgeController implements BadgesApi {
     @Autowired
     private BadgeService badgeService;
 
     @Override
     public ResponseEntity<Void> createBadge(BadgeDTO badgeDTO) {
+        long applicationId = (long) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        log.info(String.valueOf(applicationId));
         Badge badgeRegistrationDTO = badgeService.registerNewBadge(badgeDTO);
 
         return new ResponseEntity(badgeRegistrationDTO, HttpStatus.CREATED);
