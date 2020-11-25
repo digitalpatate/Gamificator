@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -85,5 +87,11 @@ public class ApplicationService {
         applicationRepository.save(application);
 
         return application.toDTO(application);
+    }
+
+    public boolean checkAPIKey(String[] creds) throws NotFoundException {
+        Application application = applicationRepository.findByKey(creds[0]).orElseThrow(() -> new NotFoundException(""));
+
+        return application.getKey().equals(creds[1]);
     }
 }
