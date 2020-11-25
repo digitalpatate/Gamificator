@@ -11,12 +11,14 @@ services:
       - MYSQL_USER=springuser
       - MYSQL_PASSWORD=secret
     ports:
-      - 3306:8080
+      - 3306:3306
     volumes:
       - ./docker/database/:/docker-entrypoint-initdb.d/
       - gamificator_vol:/var/lib/mysql
     cap_add:
       - SYS_NICE  # CAP_SYS_NICE
+    networks:
+      - backend
 
 
 # for debug
@@ -32,21 +34,19 @@ services:
     image: ghcr.io/digitalpatate/gamificator:latest
     restart: on-failure
     environment:
-      - DATABASE_HOST=db
-      - DATABASE_PORT=3306
-      - DATABASE_NAME=gamificator_db
-      - DATABASE_USER=springuser
-      - DATABASE_PASSWORD=secret
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/gamificator_db
+      - SPRING_DATASOURCE_USERNAME=springuser
+      - SPRING_DATASOURCE_PASSWORD=secret
     depends_on:
       - db
     ports:
      - 8080:8080
-#    networks:
-#      - backend
+    networks:
+      - backend
       
-#networks:
-#  backend:
-#    external: false
+networks:
+  backend:
+    external: false
 
 
 volumes:
