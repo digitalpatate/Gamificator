@@ -41,7 +41,7 @@ public class ApplicationSteps extends Steps {
     @When("^I send a GET to the /applications endpoint$")
     public void iSendAGETToTheApplicationEndpoint() {
         try {
-            ApiResponse apiResponse = getApi().getAllApplicationWithHttpInfo();
+            ApiResponse apiResponse = getApi().getApplicationWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
@@ -54,7 +54,7 @@ public class ApplicationSteps extends Steps {
                 .substring(getEnvironment().getLastReceivedLocationHeader().lastIndexOf('/') + 1));
 
         try {
-            ApiResponse apiResponse = getApi().getApplicationWithHttpInfo(id);
+            ApiResponse apiResponse = getApi().getApplicationWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
             applicationCreateDTO = (ApplicationCreateDTO) getEnvironment().getLastApiResponse().getData();
         } catch (ApiException e) {
@@ -75,27 +75,6 @@ public class ApplicationSteps extends Steps {
 
         try {
             ApiResponse apiResponse = getApi().createApplicationWithHttpInfo(applicationCreateCommand);
-            getEnvironment().processApiResponse(apiResponse);
-        } catch (ApiException e) {
-            getEnvironment().processApiException(e);
-        }
-    }
-
-    @When("I send a DELETE to the application endpoint")
-    public void iSendDeleteApplicationEnpoint(){
-        Long id = Long.valueOf(getEnvironment().getLastReceivedLocationHeader().substring(getEnvironment().getLastReceivedLocationHeader().lastIndexOf('/') + 1));
-        try {
-            ApiResponse lastApiResponse = getApi().deleteApplicationWithHttpInfo(id);
-            getEnvironment().processApiResponse(lastApiResponse);
-        } catch (ApiException e) {
-            getEnvironment().processApiException(e);
-        }
-
-    }
-    @And("there isn't an application with an id of {long}")
-    public void thereIsnTAnApplicationWithAnIdOf(Long id) {
-        try {
-            ApiResponse apiResponse = getApi().deleteApplicationWithHttpInfo(id);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
