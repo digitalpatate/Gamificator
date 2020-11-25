@@ -64,10 +64,10 @@ jobs:
           java-version: 11
       - run: docker-compose pull
       - run: docker-compose up -d
-      - name: Sleep for 30 seconds
+      - name: Sleep for 1 minute
         uses: jakejarvis/wait-action@master
         with:
-            time: '30s' 
+            time: '1m' 
   cucumber-test:
     needs: [ server-up ]
     runs-on: ubuntu-latest
