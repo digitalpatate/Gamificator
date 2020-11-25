@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: gamificator.jar
-          path: impl/target/fruits-impl-1.0.0.jar
+          path: impl/target/impl-1.0.0.jar
   build-docker-image:
     needs: [ build-jar ]
     runs-on: ubuntu-latest
