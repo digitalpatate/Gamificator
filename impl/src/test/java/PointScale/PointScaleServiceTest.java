@@ -1,7 +1,9 @@
 package PointScale;
 
+import ch.heigvd.amt.gamificator.api.application.ApplicationService;
 import ch.heigvd.amt.gamificator.api.model.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
+import ch.heigvd.amt.gamificator.api.pointScale.PointScaleController;
 import ch.heigvd.amt.gamificator.api.pointScale.PointScaleService;
 import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.entities.PointScale;
@@ -10,6 +12,8 @@ import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import ch.heigvd.amt.gamificator.repositories.PointScaleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
@@ -27,31 +31,35 @@ public class PointScaleServiceTest {
 
     PointScaleService pointScaleService;
 
-    @MockBean
-    ApplicationRepository applicationRepository;
+    @InjectMocks
+    ApplicationService applicationService;
 
     @MockBean
     PointScaleRepository pointScaleRepository;
+
+    @MockBean
+    ApplicationRepository applicationRepository;
 
     @Autowired
     ApplicationContext context;
 
     @BeforeEach
     public void init(){
-        this.pointScaleRepository = mock(PointScaleRepository.class);
         this.applicationRepository = mock(ApplicationRepository.class);
-        this.pointScaleService = new PointScaleService(pointScaleRepository, applicationRepository);
+        this.pointScaleRepository = mock(PointScaleRepository.class);
+        this.applicationService = new ApplicationService(applicationRepository);
+        MockitoAnnotations.initMocks(this);
+
+        this.pointScaleService = new PointScaleService(pointScaleRepository, applicationService);
     }
 
     @Test
     public void toEntityShouldReturnAWellFormedEntity() throws URISyntaxException {
         String name = "CommunityScore";
         String description = "Rewards users help to the community";
-        long applicationId = 1;
         PointScaleCreateCommand pointScaleCreateCommand = new PointScaleCreateCommand();
         pointScaleCreateCommand.setName(name);
         pointScaleCreateCommand.setDescription(description);
-        pointScaleCreateCommand.setApplicationId(applicationId);
 
         PointScale pointScale = PointScale.toEntity(pointScaleCreateCommand);
         assertEquals(name, pointScale.getName());
@@ -66,10 +74,10 @@ public class PointScaleServiceTest {
         PointScaleCreateCommand pointScaleCreateCommand = new PointScaleCreateCommand();
         pointScaleCreateCommand.setName(name);
         pointScaleCreateCommand.setDescription(description);
-        pointScaleCreateCommand.setApplicationId(applicationId);
 
         Application application = new Application();
-        application.setId(1);
+        application.setId(applicationId);
+        application.setUrl("http://localhost:6969/");
 
         when(applicationRepository.findById(applicationId)).thenReturn(Optional.of(application));
         when(pointScaleRepository.save(any(PointScale.class))).then(returnsFirstArg());
@@ -77,20 +85,21 @@ public class PointScaleServiceTest {
         PointScaleDTO createdPointScaleDTO = null;
 
         try {
-            createdPointScaleDTO = pointScaleService.createPointScale(pointScaleCreateCommand);
+            createdPointScaleDTO = pointScaleService.createPointScale(pointScaleCreateCommand, applicationId);
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
 
         assertEquals(name, createdPointScaleDTO.getName());
         assertEquals(description, createdPointScaleDTO.getDescription());
-        assertEquals(applicationId, createdPointScaleDTO.getApplicationId());
     }
 
     @Test
     public void updatePointScaleShouldReturnsTheUpdatedPointScaleDTO() {
+        long applicationId = 1;
         Application application = new Application();
-        application.setId(1);
+        application.setId(applicationId);
+        application.setUrl("http://localhost:6969/");
 
         when(pointScaleRepository.save(any(PointScale.class))).then(returnsFirstArg());
         when(pointScaleRepository.existsById(1L)).thenReturn(true);
@@ -99,10 +108,9 @@ public class PointScaleServiceTest {
         PointScaleCreateCommand oldPointScaleCreateCommand = new PointScaleCreateCommand();
         oldPointScaleCreateCommand.setName("not this name...");
         oldPointScaleCreateCommand.setDescription("not this description...");
-        oldPointScaleCreateCommand.setApplicationId(2L);
 
         try {
-            pointScaleService.createPointScale(oldPointScaleCreateCommand);
+            pointScaleService.createPointScale(oldPointScaleCreateCommand, applicationId);
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
@@ -114,60 +122,17 @@ public class PointScaleServiceTest {
         PointScaleCreateCommand pointScaleCreateCommand = new PointScaleCreateCommand();
         pointScaleCreateCommand.setName(newName);
         pointScaleCreateCommand.setDescription(newDescription);
-        pointScaleCreateCommand.setApplicationId(newApplicationId);
 
         PointScaleDTO updatedPointScaleDTO = null;
 
         try {
-            updatedPointScaleDTO = pointScaleService.updatePointScale(newId, pointScaleCreateCommand);
+            updatedPointScaleDTO = pointScaleService.updatePointScale(newId, pointScaleCreateCommand, applicationId);
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
 
         assertEquals(newName, updatedPointScaleDTO.getName());
         assertEquals(newDescription, updatedPointScaleDTO.getDescription());
-        assertEquals(newApplicationId, updatedPointScaleDTO.getApplicationId());
-    }
-
-    @Test
-    public void getAllWithoutApplicationIdShouldReturnAllPointScales() {
-        Application application1 = new Application();
-        application1.setId(1);
-
-        PointScale pointScale1 = new PointScale();
-        pointScale1.setId(1);
-        pointScale1.setApplication(application1);
-        pointScale1.setName("Point Scale 1");
-        pointScale1.setDescription("Description of Point Scale 1");
-
-        Application application2 = new Application();
-        application2.setId(2);
-
-        PointScale pointScale2 = new PointScale();
-        pointScale2.setId(2);
-        pointScale2.setApplication(application2);
-        pointScale2.setName("Point Scale 2");
-        pointScale2.setDescription("Description of Point Scale 2");
-
-        PointScale pointScale3 = new PointScale();
-        pointScale3.setId(3);
-        pointScale3.setApplication(application2);
-        pointScale3.setName("Point Scale 3");
-        pointScale3.setDescription("Description of Point Scale 3");
-
-        List<PointScale> pointScales = new ArrayList<>();
-        pointScales.add(pointScale1);
-        pointScales.add(pointScale2);
-        pointScales.add(pointScale3);
-
-        when(pointScaleRepository.findAll()).thenReturn(pointScales);
-
-        List<PointScaleDTO> pointScalesDTOs = pointScaleService.getAllPointScales();
-
-        assertEquals(3, pointScalesDTOs.size());
-        assertNotNull(pointScalesDTOs.get(0));
-        assertNotNull(pointScalesDTOs.get(1));
-        assertNotNull(pointScalesDTOs.get(2));
     }
 
     @Test
@@ -237,19 +202,16 @@ public class PointScaleServiceTest {
 
         assertEquals(1, pointScalesDTOsOfApplication1Got.size());
         assertNotNull(pointScalesDTOsOfApplication1Got.get(0));
-        assertEquals(1, pointScalesDTOsOfApplication1Got.get(0).getApplicationId());
         assertEquals(2, pointScalesDTOsOfApplication2Got.size());
         assertNotNull(pointScalesDTOsOfApplication2Got.get(0));
-        assertEquals(2, pointScalesDTOsOfApplication2Got.get(0).getApplicationId());
         assertNotNull(pointScalesDTOsOfApplication2Got.get(1));
-        assertEquals(2, pointScalesDTOsOfApplication2Got.get(1).getApplicationId());
         assertEquals(0, pointScalesDTOsOfApplication3Got.size());
     }
 
     @Test
     public void findByIdShouldReturnsThePointScaleWithThisId() {
         Application application = new Application();
-        application.setId(5);
+        application.setId(1L);
 
         PointScale pointScale = new PointScale();
         pointScale.setId(1);
@@ -269,7 +231,6 @@ public class PointScaleServiceTest {
         assertEquals(1L, pointScaleDTO.getId());
         assertEquals("Awesomeness", pointScaleDTO.getName());
         assertEquals("Awesoooooooome !!!!", pointScaleDTO.getDescription());
-        assertEquals(5, pointScaleDTO.getApplicationId());
     }
 
     @Test

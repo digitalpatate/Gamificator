@@ -41,9 +41,9 @@ public class PointScale {
         pointScaleDTO.setName(pointScale.getName());
         pointScaleDTO.setDescription(pointScale.getDescription().toString());
 
-        if(pointScale.getApplication() != null) {
+        /*if(pointScale.getApplication() != null) {
             pointScaleDTO.setApplicationId(pointScale.getApplication().getId());
-        }
+        }*/
 
         return pointScaleDTO;
     }

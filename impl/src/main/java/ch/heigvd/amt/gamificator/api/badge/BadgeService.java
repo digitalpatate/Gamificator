@@ -1,18 +1,14 @@
 package ch.heigvd.amt.gamificator.api.badge;
 
-import ch.heigvd.amt.gamificator.api.model.Badge;
+import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
+import ch.heigvd.amt.gamificator.entities.Badge;
+import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.BadgeRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -20,51 +16,46 @@ public class BadgeService {
 
     private final BadgeRepository badgeRepository;
 
-    public ch.heigvd.amt.gamificator.entities.Badge registerNewBadge(String name, Integer applicationId, MultipartFile image) {
-        ch.heigvd.amt.gamificator.entities.Badge newBadge = toEntity(name, applicationId, image);
-
+    public Badge registerNewBadge(BadgeDTO badge) {
+        Badge newBadge = toEntity(badge);
         newBadge = badgeRepository.save(newBadge);
 
         return newBadge;
     }
 
-    public ch.heigvd.amt.gamificator.entities.Badge registerNewBadge(Badge badge) {
-        ch.heigvd.amt.gamificator.entities.Badge newBadge = null;
-        try {
-            newBadge = registerNewBadge(badge.getName(), badge.getApplicationId(), new MockMultipartFile(Objects.requireNonNull(badge.getImage().getFilename()), badge.getImage().getInputStream().readAllBytes()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return newBadge;
-    }
-
-    public ch.heigvd.amt.gamificator.entities.Badge toEntity(Badge badge) {
-        ch.heigvd.amt.gamificator.entities.Badge newBadge = null;
-        try {
-            newBadge = toEntity(badge.getName(), badge.getApplicationId(), new MockMultipartFile(Objects.requireNonNull(badge.getImage().getFilename()), badge.getImage().getInputStream().readAllBytes()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return newBadge;
-    }
-
-    public ch.heigvd.amt.gamificator.entities.Badge toEntity(String name, Integer applicationId, MultipartFile image) {
-        ch.heigvd.amt.gamificator.entities.Badge badge = new ch.heigvd.amt.gamificator.entities.Badge();
-
-        badge.setName(name);
-        badge.setApplicationId(applicationId);
-        badge.setUrl(image.getName());
-
-        try {
-            if (!image.isEmpty()) {
-                ByteArrayInputStream bis = new ByteArrayInputStream(image.getBytes());
-                BufferedImage bImage = ImageIO.read(bis);
-                ImageIO.write(bImage, "png", new File("src/main/resources/badges/" + image.getName()));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public Badge toEntity(BadgeDTO newBadge) {
+        Badge badge = new Badge();
+        badge.setName(newBadge.getName());
+        badge.setImageUrl(newBadge.getImageUrl().toString());
 
         return badge;
+    }
+
+    public List<BadgeDTO> getAllBadges() {
+        Iterable<Badge> badges = badgeRepository.findAll();
+        List<BadgeDTO> badgesDTO = new LinkedList<>();
+
+        for(Badge badge : badges){
+            badgesDTO.add(Badge.toDTO(badge));
+        }
+
+        return badgesDTO;
+    }
+
+    public BadgeDTO getById(Long id) throws NotFoundException {
+        Badge badge = badgeRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
+
+        return Badge.toDTO(badge);
+    }
+
+    public BadgeDTO updateById(long id, BadgeDTO badgeDTO) {
+        Badge badge = toEntity(badgeDTO);
+        badge.setId(id);
+        badge.setName(badgeDTO.getName());
+        badge.setImageUrl(badgeDTO.getImageUrl().toString());
+
+        badgeRepository.save(badge);
+
+        return Badge.toDTO(badge);
     }
 }
