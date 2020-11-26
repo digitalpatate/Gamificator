@@ -6,6 +6,7 @@ info:
 security:
   - bearerAuth: []
   - apiKeyAuth: []
+  - apiKeySecret: []
 paths:
   /applications:
     post:
@@ -24,28 +25,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationCreateDTO'
     get:
-      description: get the list of all application
-      operationId: getAllApplication
-      responses:
-        '200':
-          description: success
-          content:
-            'application/json':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ApplicationDTO'
-  /applications/{id}:
-    get:
-      description: get one application, by id
+      description: get the application for currrent API-KEY
       operationId: getApplication
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-            format: int64
-          required: true
       responses:
         '200':
           description: success
@@ -71,20 +52,6 @@ paths:
       responses:
         '200':
           description: updated
-
-    delete:
-      description: Delete an application
-      operationId: deleteApplication
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-            format: int64
-          required: true
-      responses:
-        '204':
-          description: deleted
   /badges:
     post:
       description: create a badge
@@ -93,7 +60,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Badge'
+              $ref: '#/components/schemas/BadgeDTO'
       responses:
         '201':
           description: created
@@ -108,7 +75,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Badge'
+                  $ref: '#/components/schemas/BadgeDTO'
   /badges/{id}:
     get:
       description: get one badge, by id
@@ -125,7 +92,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/Badge'
+                $ref: '#/components/schemas/BadgeDTO'
     put:
       description: Update a badge
       operationId: updateBadge
@@ -139,23 +106,10 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/Badge'
+              $ref: '#/components/schemas/BadgeDTO'
       responses:
         '200':
           description: updated
-
-    delete:
-      description: Delete a badge
-      operationId: deleteBadge
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-      responses:
-        '204':
-          description: deleted
   /users:
     get:
       description: get all users
@@ -228,6 +182,7 @@ paths:
         name: id
         schema:
           type: integer
+          format: int64
         required: true
     put:
       description: update a rule
@@ -258,13 +213,6 @@ paths:
     get:
       description: get the list of all point scales
       operationId: getAllPointScales
-      parameters:
-        - in: query
-          name: applicationId
-          schema:
-            type: integer
-            format: int64
-            description: The id of the application from which to retrieve point scales
       responses:
         '200':
           description: success
@@ -324,13 +272,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/PointScaleDTO'
 
-    delete:
-      description: delete a point scale
-      operationId: deletePointScale
-      responses:
-        '204':
-          description: deleted
-
   /events:
     post:
       description: create an event
@@ -353,6 +294,10 @@ components:
       type: apiKey
       in: header
       name: X-API-KEY
+    apiKeySecret:
+      type: apiKey
+      in: header
+      name: X-API-SECRET
   schemas:
     ApplicationCreateCommand:
       type: object
@@ -373,16 +318,14 @@ components:
           type: string
           format:
             uri
-    Badge:
+    BadgeDTO:
       type: object
       properties:
         name:
           type: string
-        applicationId:
-          type: integer
-        image:
+        ImageUrl:
           type: string
-          format: binary
+          format: uri
     User:
       type: object
       properties:
@@ -460,9 +403,6 @@ components:
           type: string
         description:
           type: string
-        applicationId:
-          type: integer
-          format: int64
     PointScaleCreateCommand:
       type: object
       properties:
@@ -470,6 +410,3 @@ components:
           type: string
         description:
           type: string
-        applicationId:
-          type: integer
-          format: int64

@@ -20,14 +20,6 @@ public class PointScaleSteps extends Steps {
         super(environment);
     }
 
-    @Given("there is a point scale payload with an application id of {long}")
-    public void thereIsAPointScalePayloadWithAnApplicationIdOf(long id) {
-        pointScaleCreateCommand = new PointScaleCreateCommand();
-        pointScaleCreateCommand.setName("CommunityScore");
-        pointScaleCreateCommand.setDescription("Rewards users help to the community");
-        pointScaleCreateCommand.setApplicationId(id);
-    }
-
     @When("I POST the point scale payload to the /pointScales endpoint$")
     public void iPOSTThePointScalePayloadToThePointScalesEndpoint() {
         try {
@@ -43,23 +35,12 @@ public class PointScaleSteps extends Steps {
         PointScaleDTO pointScaleDTO = (PointScaleDTO) getEnvironment().getLastApiResponse().getData();
         assertEquals(pointScaleDTO.getName(), pointScaleCreateCommand.getName());
         assertEquals(pointScaleDTO.getDescription(), pointScaleCreateCommand.getDescription());
-        assertEquals(pointScaleDTO.getApplicationId(), pointScaleCreateCommand.getApplicationId());
     }
 
     @When("I GET the point scale with the id {long}")
     public void iGETThePointScaleWithTheId(long id) {
         try {
             ApiResponse apiResponse = getApi().getPointScaleWithHttpInfo(id);
-            getEnvironment().processApiResponse(apiResponse);
-        } catch (ApiException e) {
-            getEnvironment().processApiException(e);
-        }
-    }
-
-    @When("a DELETE is sent to the pointscales endpoint with the id {long}")
-    public void aDELETEIsSentToThePointscalesEndpointWithTheId(long id) {
-        try {
-            ApiResponse apiResponse = getApi().deletePointScaleWithHttpInfo(id);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
@@ -75,7 +56,7 @@ public class PointScaleSteps extends Steps {
     @When("I send a GET to the pointscales endpoint")
     public void iSendAGETToThePointscalesEndpoint() {
         try {
-            ApiResponse apiResponse = getApi().getAllPointScalesWithHttpInfo(null);
+            ApiResponse apiResponse = getApi().getAllPointScalesWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
@@ -92,13 +73,10 @@ public class PointScaleSteps extends Steps {
         assertNotEquals(pointScaleDTOList.get(0).getId(), pointScaleDTOList.get(1).getId());
     }
 
-    @When("I send a GET to the pointscales endpoint with an application id of {long}")
-    public void iSendAGETToThePointscalesEndpointWithAnApplicationIdOf(long id) {
-        try {
-            ApiResponse apiResponse = getApi().getAllPointScalesWithHttpInfo(id);
-            getEnvironment().processApiResponse(apiResponse);
-        } catch (ApiException e) {
-            getEnvironment().processApiException(e);
-        }
+    @Given("there is a point scale payload")
+    public void thereIsAPointScalePayload() {
+        pointScaleCreateCommand = new PointScaleCreateCommand();
+        pointScaleCreateCommand.setName("CommunityScore");
+        pointScaleCreateCommand.setDescription("Rewards users help to the community");
     }
 }
