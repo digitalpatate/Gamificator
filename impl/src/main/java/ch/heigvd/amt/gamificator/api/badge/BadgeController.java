@@ -19,14 +19,14 @@ public class BadgeController implements BadgesApi {
     @Autowired
     private BadgeService badgeService;
 
-    /*@Override
+    @Override
     public ResponseEntity<Void> createBadge(BadgeDTO badgeDTO) {
         long applicationId = (long) SecurityContextHolder.getContext().getAuthentication().getDetails();
         log.info(String.valueOf(applicationId));
         Badge badgeRegistrationDTO = badgeService.registerNewBadge(badgeDTO);
 
         return new ResponseEntity(badgeRegistrationDTO, HttpStatus.CREATED);
-    }*/
+    }
 
     @Override
     public ResponseEntity<List<BadgeDTO>> getAllbadges() {
