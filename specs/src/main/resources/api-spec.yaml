@@ -33,7 +33,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/ApplicationDTO'
+               $ref: '#/components/schemas/ApplicationDTO'
     put:
       description: Update an application
       operationId: updateApplication
