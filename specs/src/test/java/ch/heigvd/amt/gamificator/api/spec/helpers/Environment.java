@@ -4,6 +4,8 @@ import ch.heigvd.amt.gamificator.ApiResponse;
 import ch.heigvd.amt.gamificator.api.DefaultApi;
 import ch.heigvd.amt.gamificator.ApiException;
 import lombok.Getter;
+import lombok.Setter;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -17,6 +19,8 @@ public class Environment {
     @Getter private boolean lastApiCallThrewException;
     @Getter private int lastStatusCode;
     @Getter private String lastReceivedLocationHeader;
+    @Getter @Setter private String apiKey;
+    @Getter @Setter private String apiSecret;
 
     public Environment() throws IOException {
         Properties properties = new Properties();
