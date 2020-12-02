@@ -60,10 +60,14 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/BadgeDTO'
+              $ref: '#/components/schemas/BadgeCreateCommand'
       responses:
         '201':
-          description: created
+          description: success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/BadgeCreateDTO'
     get:
       description: get the list of all badge
       operationId: getAllbadges
@@ -106,7 +110,7 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/BadgeDTO'
+              $ref: '#/components/schemas/BadgeCreateCommand'
       responses:
         '200':
           description: updated
@@ -326,6 +330,22 @@ components:
         ImageUrl:
           type: string
           format: uri
+    BadgeCreateCommand:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    BadgeCreateDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        key:
+          type: string
+        secret:
+          type: string
     User:
       type: object
       properties:
