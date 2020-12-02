@@ -23,17 +23,13 @@ import java.util.List;
 public class RuleService {
 
     private final RuleRepository ruleRepository;
-
     private final ApplicationRepository applicationRepository;
 
-
     public long create(RuleCreateCommand ruleCreateCommand) throws RelatedObjectNotFound {
-
-        Rule rule = Rule.toEntity(ruleCreateCommand);
+        Rule rule = RuleMapper.toEntity(ruleCreateCommand);
         Application application = applicationRepository.findById(ruleCreateCommand.getApplicationId()).orElseThrow(() -> new RelatedObjectNotFound("Application"));
 
         rule.setApplication(application);
-
         rule = ruleRepository.save(rule);
 
         return rule.getId();
@@ -47,7 +43,7 @@ public class RuleService {
 
         List<RuleDTO> rules = new LinkedList<>();
         for (Rule rule : ruleRepository.findAll()){
-            rules.add(rule.toDTO());
+            rules.add(RuleMapper.toDTO(rule));
         }
 
         return rules;
@@ -58,11 +54,11 @@ public class RuleService {
         if(!ruleExists(id)){
             throw new NotFoundException("asd");
         }
-        Rule rule = Rule.toEntity(command,id);
+        Rule rule = RuleMapper.toEntity(command,id);
 
         rule = ruleRepository.save(rule);
 
-        return rule.toDTO();
+        return RuleMapper.toDTO(rule);
     }
 
     private boolean ruleExists(long id){

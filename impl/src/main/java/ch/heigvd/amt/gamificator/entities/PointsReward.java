@@ -6,16 +6,9 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class PointsAward {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
+public class PointsReward extends Reward {
     @OneToOne
     public PointScale pointScale;
-
-    @OneToOne
-    public User user;
 
     public int points;
 }

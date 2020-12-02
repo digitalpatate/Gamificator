@@ -6,14 +6,14 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class Rule {
+public class Reputation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String condition;
+    @OneToOne
+    User user;
 
     @OneToOne
-    private Application application;
+    Rule rule;
 }
-

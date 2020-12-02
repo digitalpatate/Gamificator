@@ -1,7 +1,11 @@
 package ch.heigvd.amt.gamificator.repositories;
 
-import ch.heigvd.amt.gamificator.entities.BadgeAward;
+import ch.heigvd.amt.gamificator.entities.BadgeReward;
 import org.springframework.data.repository.CrudRepository;
 
-public interface BadgeRewardRepository extends CrudRepository<BadgeAward, Long> {
+import java.util.List;
+
+public interface BadgeRewardRepository extends CrudRepository<BadgeReward, Long> {
+
+    List<BadgeReward> findAllByRuleId(Long ruleId);
 }
