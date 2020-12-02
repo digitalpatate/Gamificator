@@ -3,9 +3,19 @@ info:
   version: '0.1.0'
   title: Gamificator API
   description: A gamification engine API
+
+servers:
+  - url: http://localhost/
+
 security:
   - bearerAuth: []
   - apiKeyAuth: []
+#servers: [
+#    {
+#      "url": "localhost",
+#      "description": "Development server",
+#      "schemes": ["http"]
+#    }]
 paths:
   /applications:
     post:
