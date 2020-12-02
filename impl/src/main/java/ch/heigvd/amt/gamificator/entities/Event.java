@@ -16,7 +16,7 @@ public class Event {
     private long id;
 
     @OneToOne
-    private Player player;
+    private User user;
 
     private Date timestamp;
     private String type;

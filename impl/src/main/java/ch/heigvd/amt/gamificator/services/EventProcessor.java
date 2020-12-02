@@ -1,67 +1,69 @@
 package ch.heigvd.amt.gamificator.services;
 
 import ch.heigvd.amt.gamificator.api.model.ActionDTO;
+import ch.heigvd.amt.gamificator.api.model.AwardPointDTO;
 import ch.heigvd.amt.gamificator.api.model.ConditionDTO;
-import ch.heigvd.amt.gamificator.entities.Event;
-import ch.heigvd.amt.gamificator.entities.Rule;
+import ch.heigvd.amt.gamificator.entities.*;
+import ch.heigvd.amt.gamificator.repositories.BadgeRepository;
+import ch.heigvd.amt.gamificator.repositories.PointScaleRepository;
 import ch.heigvd.amt.gamificator.repositories.RuleRepository;
-import com.google.gson.Gson;
 import lombok.extern.java.Log;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Log
 public class EventProcessor {
 
-    private RestTemplate restTemplate;
+    @Autowired
+    private RewardService rewardService;
 
     private final RuleRepository ruleRepository;
+    private final BadgeRepository badgeRepository;
+    private final  PointScaleRepository pointScaleRepository;
 
-    public EventProcessor(RuleRepository ruleRepository, RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
+    public EventProcessor(RuleRepository ruleRepository, BadgeRepository badgeRepository, PointScaleRepository pointScaleRepository) {
         this.ruleRepository = ruleRepository;
+        this.badgeRepository = badgeRepository;
+        this.pointScaleRepository = pointScaleRepository;
     }
 
     public void process(Event event) {
-        Gson g  = new Gson();
-
-
         List<Rule> rules = (List<Rule>) ruleRepository.findAll();
 
         rules = rules.stream().filter(rule ->  {
-            ConditionDTO conditionDTO = g.fromJson(rule.getCondition(),ConditionDTO.class);
+            ConditionDTO conditionDTO = rule.toDTO().getCondition();
 
             return conditionDTO.getType().equals(event.getType());
         }).collect(Collectors.toList());
 
-
-
         for (Rule rule: rules) {
-            ActionDTO actionDTO = g.fromJson(rule.getThen(),ActionDTO.class);
-            proccessAction(actionDTO);
+            ActionDTO actionDTO = rule.toDTO().getThen();
+            processAction(actionDTO, event.getUser());
         }
     }
 
-    private void proccessAction(ActionDTO actionDTO){
+    private void processAction(ActionDTO actionDTO, User user){
+        for(String badge : actionDTO.getAwardBadges()){
+            Optional<Badge> b = badgeRepository.findByName(badge);
+            if(b.isPresent()) {
+                rewardService.addBadgeToUser(b.get(), user);
+            } else {
+                log.severe("badge " + badge + " as not been found!");
+            }
+        }
 
-        HttpMethod method = HttpMethod.resolve(actionDTO.getMethode());
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-        HttpEntity<Object> entity = new HttpEntity(actionDTO.getPayload(),headers);
-        try {
-
-            restTemplate.exchange(String.format("http://localhost:8080%s",actionDTO.getPath()),method,entity, (Class<Object>) null);
-        }catch (Exception e){
-            log.info(e.getMessage());
+        for(AwardPointDTO awardPointDTO : actionDTO.getAwardPoints()){
+            Optional<PointScale> p = pointScaleRepository.findByName(awardPointDTO.getPointScaleName());
+            if(p.isPresent()) {
+                rewardService.addPointsToUser(p.get(), awardPointDTO.getValue(), user);
+            } else {
+                log.severe("pointscale " + awardPointDTO.getPointScaleName() + " as not been found!");
+            }
         }
     }
 }

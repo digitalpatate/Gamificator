@@ -1,7 +1,6 @@
 package ch.heigvd.amt.gamificator.entities;
 
 import ch.heigvd.amt.gamificator.api.model.*;
-import com.google.gson.Gson;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,40 +12,54 @@ public class Rule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String  condition;
-    private String then;
+    private String condition;
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long then;
 
     @OneToOne
     private Application application;
 
     public static Rule toEntity(RuleCreateCommand command){
-        Rule rule = new Rule();
-        Gson g = new Gson();
-
-
-        rule.setCondition(g.toJson(command.getCondition()));
-        rule.setThen(g.toJson(command.getThen()));
-
+        Rule rule = toEntityFromConditionAndAction(command.getCondition(), command.getThen());
         return rule;
     }
 
-    public static Rule toEntity(RuleUpdateCommand command,Long _id) {
-        Rule rule = new Rule();
+    public static Rule toEntity(RuleUpdateCommand command, Long _id) {
+        Rule rule = toEntityFromConditionAndAction(command.getCondition(), command.getThen());
         rule.setId(_id);
-        rule.setCondition(command.getCondition().toString());
-        rule.setThen(command.getCondition().toString());
+        return rule;
+    }
 
+    private static Rule toEntityFromConditionAndAction(ConditionDTO conditionDTO, ActionDTO actionDTO){
+        Rule rule = new Rule();
+        rule.setCondition(conditionDTO.getType());
         return rule;
     }
 
     public RuleDTO toDTO() {
-        Gson g = new Gson();
         RuleDTO ruleDTO = new RuleDTO();
 
         ruleDTO.setId(id);
-        ruleDTO.setCondition(g.fromJson(condition,ConditionDTO.class));
-        ruleDTO.setThen(g.fromJson(then, ActionDTO.class));
+
+        /*ConditionDTO conditionDTO = new ConditionDTO();
+        conditionDTO.setType(condition);
+        ruleDTO.setCondition(conditionDTO);
+
+        ActionDTO actionDTO = new ActionDTO();
+        //actionDTO.setAwardBadges(then.awardBadges);
+
+        List<AwardPointDTO> listPointScaleDTO = new ArrayList<>();
+        for (AwardPoint awardPoints : then.awardPoints){
+            AwardPointDTO awardPointDTO = new AwardPointDTO();
+            awardPointDTO.setPointScaleName(awardPoints.pointScale);
+            awardPointDTO.setValue(awardPoints.points);
+            listPointScaleDTO.add(awardPointDTO);
+        }
+        actionDTO.setAwardPoints(listPointScaleDTO);
+        ruleDTO.setThen(actionDTO);*/
 
         return ruleDTO;
     }
 }
+

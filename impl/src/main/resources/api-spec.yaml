@@ -382,12 +382,21 @@ components:
     ActionDTO:
       type: object
       properties:
-        methode:
+        awardBadges:
+          type: array
+          items:
+            type: string
+        awardPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/AwardPointDTO'
+    AwardPointDTO:
+      type: object
+      properties:
+        pointScaleName:
           type: string
-        path:
-          type: string
-        payload:
-          type: string
+        value:
+          type: integer
     ConditionDTO:
       type: object
       properties:
