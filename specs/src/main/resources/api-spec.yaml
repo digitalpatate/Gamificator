@@ -89,6 +89,7 @@ paths:
           name: id
           schema:
             type: integer
+            format: int64
           required: true
       responses:
         '200':
@@ -105,6 +106,7 @@ paths:
           name: id
           schema:
             type: integer
+            format: int64
           required: true
       requestBody:
         content:
@@ -327,6 +329,9 @@ components:
       properties:
         name:
           type: string
+        id:
+          type: integer
+          format: int64
         ImageUrl:
           type: string
           format: uri
@@ -335,13 +340,15 @@ components:
       properties:
         name:
           type: string
-        description:
+        ImageUrl:
           type: string
+          format: uri
     BadgeCreateDTO:
       type: object
       properties:
         id:
           type: integer
+          format: int64
         key:
           type: string
         secret:
