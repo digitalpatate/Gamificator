@@ -47,7 +47,7 @@ public class PointScaleControllerTest {
         this.pointScaleController = new PointScaleController();
 
         MockitoAnnotations.initMocks(this);
-        when(securityContextService.retrieveApplicationIdFromAuthentifiedApp()).thenReturn(authentifiedApplicationId);
+        when(securityContextService.getApplicationIdFromAuthentifiedApp()).thenReturn(authentifiedApplicationId);
     }
 
     @SneakyThrows

@@ -1,8 +1,11 @@
 package ch.heigvd.amt.gamificator.entities;
 
 import lombok.Data;
+import org.springframework.web.bind.annotation.InitBinder;
 
 import javax.persistence.*;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 @Data
@@ -12,8 +15,12 @@ public class Reputation {
     private long id;
 
     @OneToOne
-    User user;
+    private User user;
 
-    @OneToOne
-    Rule rule;
+    @OneToMany
+    private List<Reward> reward = new LinkedList<>();
+
+    public void addAll(List<Reward> rewards) {
+        this.reward.addAll(rewards);
+    }
 }

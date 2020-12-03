@@ -2,13 +2,8 @@ package ch.heigvd.amt.gamificator.api.rule;
 
 import ch.heigvd.amt.gamificator.api.model.*;
 import ch.heigvd.amt.gamificator.entities.Rule;
-import ch.heigvd.amt.gamificator.services.RewardService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class RuleMapper {
-
-    @Autowired
-    static RewardService rewardService;
 
     public static Rule toEntity(RuleCreateCommand command){
         Rule rule = toEntityFromCondition(command.getCondition());
@@ -35,10 +30,6 @@ public class RuleMapper {
         ConditionDTO conditionDTO = new ConditionDTO();
         conditionDTO.setType(rule.getCondition());
         ruleDTO.setCondition(conditionDTO);
-
-        ActionDTO actionDTO = new ActionDTO();
-        actionDTO.setAwardPoints(rewardService.getAllPointsWithRuleId(rule.getId()));
-        actionDTO.setAwardBadges(rewardService.getAllBadgesWithRuleId(rule.getId()));
 
         return ruleDTO;
     }

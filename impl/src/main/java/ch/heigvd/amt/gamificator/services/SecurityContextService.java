@@ -14,7 +14,7 @@ public class SecurityContextService {
     @Autowired
     private ApplicationService applicationService;
 
-    public long retrieveApplicationIdFromAuthentifiedApp() {
+    public long getApplicationIdFromAuthentifiedApp() {
         String[] principals = (String[]) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         long applicationId = 0;

@@ -1,5 +1,6 @@
 package ch.heigvd.amt.gamificator.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -8,5 +9,5 @@ import javax.persistence.*;
 @Data
 public class BadgeReward extends Reward{
     @OneToOne
-    public Badge badge;
+    private Badge badge;
 }

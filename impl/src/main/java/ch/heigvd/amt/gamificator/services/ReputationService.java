@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Log
 @AllArgsConstructor
@@ -16,9 +18,9 @@ public class ReputationService {
 
     private final ReputationRepository reputationRepository;
 
-    public void addRewardToUser(Rule rule, User user){
-        Reputation reputation = new Reputation();
-        reputation.setRule(rule);
+    public void addRewardToUser(List<Reward> rewards, User user){
+        Reputation reputation = reputationRepository.findByUser(user).orElse(new Reputation());
+        reputation.addAll(rewards);
         reputation.setUser(user);
         reputationRepository.save(reputation);
     }

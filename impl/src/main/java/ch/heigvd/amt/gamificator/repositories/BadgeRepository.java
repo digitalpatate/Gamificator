@@ -7,5 +7,9 @@ import java.util.Optional;
 
 public interface BadgeRepository extends CrudRepository<Badge, Long> {
 
-    Optional<Badge> findByName(String name);
+    Optional<Badge> findByNameAndApplicationId(String name, Long applicationId);
+
+    Iterable<Badge> findByApplicationId(Long applicationId);
+
+    Optional<Badge> findByIdAndApplicationId(Long id, Long applicationId);
 }

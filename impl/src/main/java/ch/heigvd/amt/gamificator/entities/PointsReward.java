@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Data
 public class PointsReward extends Reward {
     @OneToOne
-    public PointScale pointScale;
+    private PointScale pointScale;
 
-    public int points;
+    private int points;
 }

@@ -14,5 +14,5 @@ public class Reward {
 
     @ManyToOne
     @Cascade(org.hibernate.annotations.CascadeType.REMOVE)
-    public Rule rule;
+    private Rule rule;
 }
