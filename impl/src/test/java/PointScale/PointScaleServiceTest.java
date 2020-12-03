@@ -4,6 +4,7 @@ import ch.heigvd.amt.gamificator.api.application.ApplicationService;
 import ch.heigvd.amt.gamificator.api.model.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
 import ch.heigvd.amt.gamificator.api.pointScale.PointScaleController;
+import ch.heigvd.amt.gamificator.api.pointScale.PointScaleMapper;
 import ch.heigvd.amt.gamificator.api.pointScale.PointScaleService;
 import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.entities.PointScale;
@@ -61,7 +62,7 @@ public class PointScaleServiceTest {
         pointScaleCreateCommand.setName(name);
         pointScaleCreateCommand.setDescription(description);
 
-        PointScale pointScale = PointScale.toEntity(pointScaleCreateCommand);
+        PointScale pointScale = PointScaleMapper.toEntity(pointScaleCreateCommand);
         assertEquals(name, pointScale.getName());
         assertEquals(description, pointScale.getDescription());
     }
