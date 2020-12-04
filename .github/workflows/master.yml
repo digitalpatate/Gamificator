@@ -63,8 +63,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - run: run-application.sh
-        shell: bash
+      - run: docker-compose pull
+        working-directory: ./docker/environment/prod
+      - run: docker-compose up -d
+        working-directory: ./docker/environment/prod
       - uses: nev7n/wait_for_response@v1
         with:
           url: 'http://localhost:8080/'
