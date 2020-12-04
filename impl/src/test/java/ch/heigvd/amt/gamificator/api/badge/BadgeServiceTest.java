@@ -1,8 +1,12 @@
-import ch.heigvd.amt.gamificator.api.badge.BadgeMapper;
-import ch.heigvd.amt.gamificator.api.badge.BadgeService;
+package ch.heigvd.amt.gamificator.api.badge;
+
+import ch.heigvd.amt.gamificator.api.model.BadgeCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
+import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.entities.Badge;
+import ch.heigvd.amt.gamificator.exceptions.AlreadyExistException;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
+import ch.heigvd.amt.gamificator.exceptions.RelatedObjectNotFound;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import ch.heigvd.amt.gamificator.repositories.BadgeRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +18,9 @@ import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,10 +33,13 @@ public class BadgeServiceTest {
 
     @BeforeEach
     public void setUp(){
+        badgeRepository = mock(BadgeRepository.class);
+        applicationRepository = mock(ApplicationRepository.class);
+
         this.badgeService = new BadgeService(badgeRepository, applicationRepository);
     }
 
-    /*@Test
+    @Test
     public void toEntityShouldReturnAWellFormedEntity() {
         BadgeDTO newBadge = new BadgeDTO();
 
@@ -50,7 +59,7 @@ public class BadgeServiceTest {
 
     @Test
     public void createShouldReturnAnId() {
-        BadgeDTO newBadge = new BadgeDTO();
+        BadgeCreateCommand newBadge = new BadgeCreateCommand();
 
         newBadge.setName("demon lord");
         try {
@@ -59,21 +68,25 @@ public class BadgeServiceTest {
             e.printStackTrace();
         }
 
-        ch.heigvd.amt.gamificator.entities.Badge badge = new ch.heigvd.amt.gamificator.entities.Badge();
+        Badge badge = new Badge();
 
         badge.setName("demon lord");
         badge.setImageUrl("www.google.com/Pikachu.png");
         badge.setId(1);
 
-        when(badgeRepository.save(any())).thenReturn(badge);
+        Application application = new Application();
+        application.setId(5);
 
-        Badge createdBadge = null;
+        when(applicationRepository.findById(any(Long.class))).thenReturn(java.util.Optional.of(application));
+        when(badgeRepository.save(any(Badge.class))).thenReturn(badge);
+
+        BadgeDTO createdBadge = null;
         try {
             createdBadge = badgeService.registerNewBadge(newBadge, 5l);
-        } catch (NotFoundException e) {
+        } catch (AlreadyExistException | RelatedObjectNotFound e) {
             e.printStackTrace();
         }
 
-        assertEquals(badge.getId(), (int)createdBadge.getId());
-    }*/
+        assertEquals(badge.getId(), createdBadge.getId().longValue());
+    }
 }

@@ -60,8 +60,8 @@ public class BadgeService {
         Badge badge = BadgeMapper.toEntity(badgeDTO);
         badge.setId(id);
 
-        Optional<Badge> b = badgeRepository.findByNameAndApplicationId(badge.getName(), applicationId);
-        if (!b.isPresent()){
+        Optional<Badge> b = badgeRepository.findByIdAndApplicationId(id, applicationId);
+        if (b.isEmpty()){
             throw new NotFoundException("Badge not found");
         }
 

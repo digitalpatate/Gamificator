@@ -1,9 +1,7 @@
-package PointScale;
+package ch.heigvd.amt.gamificator.api.pointScale;
 
 import ch.heigvd.amt.gamificator.api.model.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
-import ch.heigvd.amt.gamificator.api.pointScale.PointScaleController;
-import ch.heigvd.amt.gamificator.api.pointScale.PointScaleService;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.services.SecurityContextService;
 import lombok.SneakyThrows;
