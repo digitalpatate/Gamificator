@@ -20,7 +20,8 @@ public class RuleService {
 
     private final RuleRepository ruleRepository;
     private final ApplicationRepository applicationRepository;
-    private final RewardRepository rewardRepository;
+    private final PointsRewardRepository pointsRewardRepository;
+    private final BadgeRewardRepository badgeRewardRepository;
     private final BadgeRepository badgeRepository;
     private final PointScaleRepository pointScaleRepository;
 
@@ -39,6 +40,7 @@ public class RuleService {
             badgeReward.setBadge(badge);
             badgeReward.setRule(rule);
             rewards.add(badgeReward);
+            badgeRewardRepository.save(badgeReward);
         }
 
         for(AwardPointDTO awardPointDTO : ruleCreateCommand.getThen().getAwardPoints()){
@@ -48,9 +50,10 @@ public class RuleService {
             pointsReward.setPoints(awardPointDTO.getValue());
             pointsReward.setRule(rule);
             rewards.add(pointsReward);
+            pointsRewardRepository.save(pointsReward);
         }
 
-        rewardRepository.saveAll(rewards);
+        //rewardRepository.saveAll(rewards);
 
         return rule.getId();
     }
