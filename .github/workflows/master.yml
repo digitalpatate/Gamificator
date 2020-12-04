@@ -64,6 +64,7 @@ jobs:
         with:
           java-version: 11
       - run: run-application.sh
+        shell: bash
       - uses: nev7n/wait_for_response@v1
         with:
           url: 'http://localhost:8080/'
