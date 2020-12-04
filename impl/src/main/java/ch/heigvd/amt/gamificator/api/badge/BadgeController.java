@@ -1,10 +1,10 @@
 package ch.heigvd.amt.gamificator.api.badge;
 
 import ch.heigvd.amt.gamificator.api.BadgesApi;
-import ch.heigvd.amt.gamificator.api.model.BadgeCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
-import ch.heigvd.amt.gamificator.exceptions.AlreadyExistException;
 import ch.heigvd.amt.gamificator.exceptions.ApiException;
+import ch.heigvd.amt.gamificator.api.model.BadgeCreateCommand;
+import ch.heigvd.amt.gamificator.exceptions.AlreadyExistException;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.exceptions.RelatedObjectNotFound;
 import ch.heigvd.amt.gamificator.services.SecurityContextService;
@@ -49,6 +49,7 @@ public class BadgeController implements BadgesApi {
     }
 
     @Override
+
     public ResponseEntity<BadgeDTO> getBadge(Long id) {
         long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 

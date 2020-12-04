@@ -59,7 +59,7 @@ public class PointScaleServiceTest {
         pointScaleCreateCommand.setName(name);
         pointScaleCreateCommand.setDescription(description);
 
-        PointScale pointScale = PointScale.toEntity(pointScaleCreateCommand);
+        PointScale pointScale = PointScaleMapper.toEntity(pointScaleCreateCommand);
         assertEquals(name, pointScale.getName());
         assertEquals(description, pointScale.getDescription());
     }

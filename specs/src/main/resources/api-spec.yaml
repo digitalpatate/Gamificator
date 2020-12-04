@@ -10,7 +10,7 @@ security:
 paths:
   /applications:
     post:
-      description: create an ch.heigvd.amt.gamificator.api.application
+      description: create an application
       operationId: createApplication
       requestBody:
         content:
@@ -25,7 +25,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationCreateDTO'
     get:
-      description: get the ch.heigvd.amt.gamificator.api.application for currrent API-KEY
+      description: get the application for currrent API-KEY
       operationId: getApplication
       responses:
         '200':
@@ -33,9 +33,9 @@ paths:
           content:
             'application/json':
               schema:
-               $ref: '#/components/schemas/ApplicationDTO'
+                $ref: '#/components/schemas/ApplicationDTO'
     put:
-      description: Update an ch.heigvd.amt.gamificator.api.application
+      description: Update an application
       operationId: updateApplication
       parameters:
         - in: path
@@ -54,22 +54,18 @@ paths:
           description: updated
   /badges:
     post:
-      description: create a ch.heigvd.amt.gamificator.api.badge
+      description: create a badge
       operationId: createBadge
       requestBody:
         content:
-          multipart/form-data:
+          'application/json':
             schema:
               $ref: '#/components/schemas/BadgeCreateCommand'
       responses:
         '201':
-          description: success
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/BadgeCreateDTO'
+          description: created
     get:
-      description: get the list of all ch.heigvd.amt.gamificator.api.badge
+      description: get the list of all badge
       operationId: getAllbadges
       responses:
         '200':
@@ -82,7 +78,7 @@ paths:
                   $ref: '#/components/schemas/BadgeDTO'
   /badges/{id}:
     get:
-      description: get one ch.heigvd.amt.gamificator.api.badge, by id
+      description: get one badge, by id
       operationId: getBadge
       parameters:
         - in: path
@@ -99,7 +95,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadgeDTO'
     put:
-      description: Update a ch.heigvd.amt.gamificator.api.badge
+      description: Update a badge
       operationId: updateBadge
       parameters:
         - in: path
@@ -112,7 +108,7 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/BadgeCreateCommand'
+              $ref: '#/components/schemas/BadgeDTO'
       responses:
         '200':
           description: updated
@@ -327,12 +323,12 @@ components:
     BadgeDTO:
       type: object
       properties:
-        name:
-          type: string
         id:
           type: integer
           format: int64
-        ImageUrl:
+        name:
+          type: string
+        imageUrl:
           type: string
           format: uri
     BadgeCreateCommand:
@@ -340,19 +336,9 @@ components:
       properties:
         name:
           type: string
-        ImageUrl:
+        imageUrl:
           type: string
           format: uri
-    BadgeCreateDTO:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        key:
-          type: string
-        secret:
-          type: string
     User:
       type: object
       properties:
@@ -362,9 +348,6 @@ components:
     RuleCreateCommand:
       type: object
       properties:
-        applicationId:
-          type: integer
-          format: int64
         condition:
           $ref: '#/components/schemas/ConditionDTO'
         then:
@@ -409,12 +392,21 @@ components:
     ActionDTO:
       type: object
       properties:
-        methode:
+        awardBadges:
+          type: array
+          items:
+            type: string
+        awardPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/AwardPointDTO'
+    AwardPointDTO:
+      type: object
+      properties:
+        pointScaleName:
           type: string
-        path:
-          type: string
-        payload:
-          type: string
+        value:
+          type: integer
     ConditionDTO:
       type: object
       properties:

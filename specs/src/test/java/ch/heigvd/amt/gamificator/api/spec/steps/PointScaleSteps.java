@@ -64,10 +64,10 @@ public class PointScaleSteps extends Steps {
 
     }
 
-    @And("I receive {int} pointscales with differents id")
-    public void iReceiveTwoPointscalesWithDifferentsId(int nbPointScale) {
+    @And("I receive 2 pointscales with differents id")
+    public void iReceiveTwoPointscalesWithDifferentsId() {
         List<PointScaleDTO> pointScaleDTOList = (List<PointScaleDTO>) getEnvironment().getLastApiResponse().getData();
-        assertEquals(nbPointScale, pointScaleDTOList.size());
+        assertEquals(2, pointScaleDTOList.size());
         assertNotNull(pointScaleDTOList.get(0));
         assertNotNull(pointScaleDTOList.get(1));
         assertNotEquals(pointScaleDTOList.get(0).getId(), pointScaleDTOList.get(1).getId());
