@@ -7,7 +7,9 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class Reward {
+@DiscriminatorColumn(name="reward_type")
+@Inheritance(strategy=InheritanceType.JOINED)
+public abstract class Reward {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
