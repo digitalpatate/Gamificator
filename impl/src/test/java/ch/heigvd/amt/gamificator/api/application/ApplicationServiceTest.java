@@ -1,6 +1,5 @@
-package application;
+package ch.heigvd.amt.gamificator.api.application;
 
-import ch.heigvd.amt.gamificator.api.application.ApplicationService;
 import ch.heigvd.amt.gamificator.api.model.ApplicationCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.ApplicationCreateDTO;
 import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;

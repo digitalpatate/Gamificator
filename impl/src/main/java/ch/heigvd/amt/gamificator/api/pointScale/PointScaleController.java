@@ -1,15 +1,13 @@
 package ch.heigvd.amt.gamificator.api.pointScale;
 import ch.heigvd.amt.gamificator.api.PointScalesApi;
-import ch.heigvd.amt.gamificator.api.application.ApplicationService;
 import ch.heigvd.amt.gamificator.api.model.*;
-import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
+import ch.heigvd.amt.gamificator.services.SecurityContextService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -21,12 +19,17 @@ public class PointScaleController implements PointScalesApi {
     @Autowired
     private PointScaleService pointScaleService;
 
+    @Autowired
+    private SecurityContextService securityContextService;
+
     @Override
     public ResponseEntity<PointScaleDTO> createPointScale(@Valid @RequestBody PointScaleCreateCommand pointScaleCreateCommand) {
         PointScaleDTO pointScaleDTO = null;
 
+        long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
+
         try {
-            pointScaleDTO = pointScaleService.createPointScale(pointScaleCreateCommand);
+            pointScaleDTO = pointScaleService.createPointScale(pointScaleCreateCommand, applicationId);
         } catch (NotFoundException e) {
             return ResponseEntity.unprocessableEntity().build();
         }
@@ -35,24 +38,15 @@ public class PointScaleController implements PointScalesApi {
     }
 
     @Override
-    public ResponseEntity<Void> deletePointScale(@PathVariable Long id) {
-        pointScaleService.deletePointScaleById(id);
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    @Override
-    public ResponseEntity<List<PointScaleDTO>> getAllPointScales(@Valid @RequestParam(value = "applicationId", required = false) Long applicationId) {
+    public ResponseEntity<List<PointScaleDTO>> getAllPointScales() {
         List<PointScaleDTO> pointScaleDTOs = null;
 
-        if(applicationId != null) {
-            try {
-                pointScaleDTOs = pointScaleService.getAllPointScaleOfApplication(applicationId);
-            } catch (NotFoundException e) {
-                return ResponseEntity.notFound().build();
-            }
-        } else {
-            pointScaleDTOs = pointScaleService.getAllPointScales();
+        long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
+
+        try {
+            pointScaleDTOs = pointScaleService.getAllPointScaleOfApplication(applicationId);
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
 
         return new ResponseEntity<>(pointScaleDTOs, HttpStatus.OK);
@@ -62,10 +56,20 @@ public class PointScaleController implements PointScalesApi {
     public ResponseEntity<PointScaleDTO> getPointScale(@PathVariable Long id) {
         PointScaleDTO pointScaleDTO = null;
 
+        long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
+
+        try {
+            if (!pointScaleService.isPointScaleFromThisApplication(id, applicationId)) {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+
         try {
             pointScaleDTO = pointScaleService.getPointScaleById(id);
         } catch(NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.notFound().build();
         }
 
         return new ResponseEntity<>(pointScaleDTO, HttpStatus.OK);
@@ -75,8 +79,18 @@ public class PointScaleController implements PointScalesApi {
     public ResponseEntity<PointScaleDTO> updatePointScale(@PathVariable Long id, @Valid PointScaleCreateCommand pointScaleCreateCommand) {
         PointScaleDTO pointScaleDTO = null;
 
+        long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
+
         try {
-            pointScaleDTO = pointScaleService.updatePointScale(id, pointScaleCreateCommand);
+            if (!pointScaleService.isPointScaleFromThisApplication(id, applicationId)) {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            pointScaleDTO = pointScaleService.updatePointScale(id, pointScaleCreateCommand, applicationId);
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }

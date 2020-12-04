@@ -6,6 +6,7 @@ import ch.heigvd.amt.gamificator.entities.Application;
 import lombok.SneakyThrows;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.UUID;
 
 import static ch.heigvd.amt.gamificator.util.StringGenerator.generateRandomString;
@@ -21,6 +22,15 @@ public class ApplicationMapper {
         applicationDTO.setName(application.getName());
         applicationDTO.setUrl(new URI(application.getUrl()));
         return applicationDTO;
+    }
+
+    public static Application toEntity(ApplicationDTO dto) {
+        Application application =  new Application();
+        application.setId(dto.getId());
+        application.setName(dto.getName());
+        application.setUrl(dto.getUrl().toString());
+
+        return application;
     }
 
     public static Application toEntity(ApplicationCreateCommand command) {
