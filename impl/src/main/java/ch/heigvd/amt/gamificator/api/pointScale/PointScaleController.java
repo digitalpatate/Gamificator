@@ -26,7 +26,7 @@ public class PointScaleController implements PointScalesApi {
     public ResponseEntity<PointScaleDTO> createPointScale(@Valid @RequestBody PointScaleCreateCommand pointScaleCreateCommand) {
         PointScaleDTO pointScaleDTO = null;
 
-        long applicationId = securityContextService.retrieveApplicationIdFromAuthentifiedApp();
+        long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 
         try {
             pointScaleDTO = pointScaleService.createPointScale(pointScaleCreateCommand, applicationId);
@@ -41,7 +41,7 @@ public class PointScaleController implements PointScalesApi {
     public ResponseEntity<List<PointScaleDTO>> getAllPointScales() {
         List<PointScaleDTO> pointScaleDTOs = null;
 
-        long applicationId = securityContextService.retrieveApplicationIdFromAuthentifiedApp();
+        long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 
         try {
             pointScaleDTOs = pointScaleService.getAllPointScaleOfApplication(applicationId);
@@ -56,7 +56,7 @@ public class PointScaleController implements PointScalesApi {
     public ResponseEntity<PointScaleDTO> getPointScale(@PathVariable Long id) {
         PointScaleDTO pointScaleDTO = null;
 
-        long applicationId = securityContextService.retrieveApplicationIdFromAuthentifiedApp();
+        long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 
         try {
             if (!pointScaleService.isPointScaleFromThisApplication(id, applicationId)) {
@@ -79,7 +79,7 @@ public class PointScaleController implements PointScalesApi {
     public ResponseEntity<PointScaleDTO> updatePointScale(@PathVariable Long id, @Valid PointScaleCreateCommand pointScaleCreateCommand) {
         PointScaleDTO pointScaleDTO = null;
 
-        long applicationId = securityContextService.retrieveApplicationIdFromAuthentifiedApp();
+        long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 
         try {
             if (!pointScaleService.isPointScaleFromThisApplication(id, applicationId)) {

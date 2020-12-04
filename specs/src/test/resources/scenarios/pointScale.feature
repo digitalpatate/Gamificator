@@ -26,3 +26,4 @@ Feature: Basic operations on point scale
     When I send a GET to the pointscales endpoint
     Then I receive a 200 status code
     And I receive 2 pointscales with differents id
+

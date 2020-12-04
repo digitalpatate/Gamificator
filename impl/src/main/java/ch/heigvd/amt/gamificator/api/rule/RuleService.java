@@ -1,18 +1,14 @@
 package ch.heigvd.amt.gamificator.api.rule;
 
-import ch.heigvd.amt.gamificator.api.model.RuleDTO;
-import ch.heigvd.amt.gamificator.api.model.RuleUpdateCommand;
-import ch.heigvd.amt.gamificator.entities.Application;
-import ch.heigvd.amt.gamificator.entities.Rule;
+import ch.heigvd.amt.gamificator.api.model.*;
+import ch.heigvd.amt.gamificator.entities.*;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.exceptions.RelatedObjectNotFound;
-import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
-import ch.heigvd.amt.gamificator.repositories.RuleRepository;
+import ch.heigvd.amt.gamificator.repositories.*;
 import lombok.AllArgsConstructor;
+import lombok.Synchronized;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import ch.heigvd.amt.gamificator.api.model.RuleCreateCommand;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -23,18 +19,38 @@ import java.util.List;
 public class RuleService {
 
     private final RuleRepository ruleRepository;
-
     private final ApplicationRepository applicationRepository;
+    private final RewardRepository rewardRepository;
+    private final BadgeRepository badgeRepository;
+    private final PointScaleRepository pointScaleRepository;
 
-
-    public long create(RuleCreateCommand ruleCreateCommand) throws RelatedObjectNotFound {
-
-        Rule rule = Rule.toEntity(ruleCreateCommand);
-        Application application = applicationRepository.findById(ruleCreateCommand.getApplicationId()).orElseThrow(() -> new RelatedObjectNotFound("Application"));
+    @Synchronized
+    public long create(RuleCreateCommand ruleCreateCommand, Long applicationId) throws RelatedObjectNotFound {
+        Rule rule = RuleMapper.toEntity(ruleCreateCommand);
+        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new RelatedObjectNotFound("Application"));
 
         rule.setApplication(application);
-
         rule = ruleRepository.save(rule);
+
+        List<Reward> rewards = new LinkedList<>();
+        for(String badgeName : ruleCreateCommand.getThen().getAwardBadges()){
+            Badge badge = badgeRepository.findByNameAndApplicationId(badgeName, application.getId()).orElseThrow(() -> new RelatedObjectNotFound("Badge"));
+            BadgeReward badgeReward = new BadgeReward();
+            badgeReward.setBadge(badge);
+            badgeReward.setRule(rule);
+            rewards.add(badgeReward);
+        }
+
+        for(AwardPointDTO awardPointDTO : ruleCreateCommand.getThen().getAwardPoints()){
+            PointScale pointScale = pointScaleRepository.findByName(awardPointDTO.getPointScaleName()).orElseThrow(() -> new RelatedObjectNotFound("PointScale"));
+            PointsReward pointsReward = new PointsReward();
+            pointsReward.setPointScale(pointScale);
+            pointsReward.setPoints(awardPointDTO.getValue());
+            pointsReward.setRule(rule);
+            rewards.add(pointsReward);
+        }
+
+        rewardRepository.saveAll(rewards);
 
         return rule.getId();
     }
@@ -47,7 +63,7 @@ public class RuleService {
 
         List<RuleDTO> rules = new LinkedList<>();
         for (Rule rule : ruleRepository.findAll()){
-            rules.add(rule.toDTO());
+            rules.add(RuleMapper.toDTO(rule));
         }
 
         return rules;
@@ -58,11 +74,11 @@ public class RuleService {
         if(!ruleExists(id)){
             throw new NotFoundException("asd");
         }
-        Rule rule = Rule.toEntity(command,id);
+        Rule rule = RuleMapper.toEntity(command,id);
 
         rule = ruleRepository.save(rule);
 
-        return rule.toDTO();
+        return RuleMapper.toDTO(rule);
     }
 
     private boolean ruleExists(long id){

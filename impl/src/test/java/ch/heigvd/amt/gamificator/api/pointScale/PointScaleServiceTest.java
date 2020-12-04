@@ -1,10 +1,8 @@
-package PointScale;
+package ch.heigvd.amt.gamificator.api.pointScale;
 
 import ch.heigvd.amt.gamificator.api.application.ApplicationService;
 import ch.heigvd.amt.gamificator.api.model.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
-import ch.heigvd.amt.gamificator.api.pointScale.PointScaleController;
-import ch.heigvd.amt.gamificator.api.pointScale.PointScaleService;
 import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.entities.PointScale;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
