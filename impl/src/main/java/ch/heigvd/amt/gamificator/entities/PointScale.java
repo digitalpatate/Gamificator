@@ -41,9 +41,9 @@ public class PointScale {
         pointScaleDTO.setName(pointScale.getName());
         pointScaleDTO.setDescription(pointScale.getDescription().toString());
 
-        if(pointScale.getApplication() != null) {
-            pointScaleDTO.setApplicationId(pointScale.getApplication().getId());
-        }
+        /*if(ch.heigvd.amt.gamificator.api.pointScale.getApplication() != null) {
+            pointScaleDTO.setApplicationId(ch.heigvd.amt.gamificator.api.pointScale.getApplication().getId());
+        }*/
 
         return pointScaleDTO;
     }

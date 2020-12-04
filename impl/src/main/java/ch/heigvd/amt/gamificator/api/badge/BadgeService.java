@@ -1,18 +1,20 @@
 package ch.heigvd.amt.gamificator.api.badge;
 
-import ch.heigvd.amt.gamificator.api.model.Badge;
+import ch.heigvd.amt.gamificator.api.model.BadgeCreateCommand;
+import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
+import ch.heigvd.amt.gamificator.entities.Application;
+import ch.heigvd.amt.gamificator.entities.Badge;
+import ch.heigvd.amt.gamificator.exceptions.AlreadyExistException;
+import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
+import ch.heigvd.amt.gamificator.exceptions.RelatedObjectNotFound;
+import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import ch.heigvd.amt.gamificator.repositories.BadgeRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -20,51 +22,54 @@ public class BadgeService {
 
     private final BadgeRepository badgeRepository;
 
-    public ch.heigvd.amt.gamificator.entities.Badge registerNewBadge(String name, Integer applicationId, MultipartFile image) {
-        ch.heigvd.amt.gamificator.entities.Badge newBadge = toEntity(name, applicationId, image);
+    private final ApplicationRepository applicationRepository;
 
+    public BadgeDTO registerNewBadge(BadgeCreateCommand badge, Long applicationId) throws AlreadyExistException, RelatedObjectNotFound {
+        Badge newBadge = BadgeMapper.toEntity(badge);
+
+        Optional<Badge> b = badgeRepository.findByNameAndApplicationId(newBadge.getName(), applicationId);
+        if (b.isPresent()){
+            throw new AlreadyExistException("Badge already exist");
+        }
+
+        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new RelatedObjectNotFound("Application not found"));
+        newBadge.setApplication(application);
         newBadge = badgeRepository.save(newBadge);
 
-        return newBadge;
+        return BadgeMapper.toDTO(newBadge);
     }
 
-    public ch.heigvd.amt.gamificator.entities.Badge registerNewBadge(Badge badge) {
-        ch.heigvd.amt.gamificator.entities.Badge newBadge = null;
-        try {
-            newBadge = registerNewBadge(badge.getName(), badge.getApplicationId(), new MockMultipartFile(Objects.requireNonNull(badge.getImage().getFilename()), badge.getImage().getInputStream().readAllBytes()));
-        } catch (IOException e) {
-            e.printStackTrace();
+    public List<BadgeDTO> getAllBadges(Long applicationId) {
+        Iterable<Badge> badges = badgeRepository.findByApplicationId(applicationId);
+        List<BadgeDTO> badgesDTO = new LinkedList<>();
+
+        for(Badge badge : badges){
+            badgesDTO.add(BadgeMapper.toDTO(badge));
         }
-        return newBadge;
+
+        return badgesDTO;
     }
 
-    public ch.heigvd.amt.gamificator.entities.Badge toEntity(Badge badge) {
-        ch.heigvd.amt.gamificator.entities.Badge newBadge = null;
-        try {
-            newBadge = toEntity(badge.getName(), badge.getApplicationId(), new MockMultipartFile(Objects.requireNonNull(badge.getImage().getFilename()), badge.getImage().getInputStream().readAllBytes()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return newBadge;
+    public BadgeDTO getById(Long id, Long applicationId) throws NotFoundException {
+        Badge badge = badgeRepository.findByIdAndApplicationId(id, applicationId).orElseThrow(() -> new NotFoundException("Not found"));
+
+        return BadgeMapper.toDTO(badge);
     }
 
-    public ch.heigvd.amt.gamificator.entities.Badge toEntity(String name, Integer applicationId, MultipartFile image) {
-        ch.heigvd.amt.gamificator.entities.Badge badge = new ch.heigvd.amt.gamificator.entities.Badge();
+    public BadgeDTO updateById(Long id, BadgeDTO badgeDTO, Long applicationId) throws RelatedObjectNotFound, NotFoundException {
+        Badge badge = BadgeMapper.toEntity(badgeDTO);
+        badge.setId(id);
 
-        badge.setName(name);
-        badge.setApplicationId(applicationId);
-        badge.setUrl(image.getName());
-
-        try {
-            if (!image.isEmpty()) {
-                ByteArrayInputStream bis = new ByteArrayInputStream(image.getBytes());
-                BufferedImage bImage = ImageIO.read(bis);
-                ImageIO.write(bImage, "png", new File("src/main/resources/badges/" + image.getName()));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        Optional<Badge> b = badgeRepository.findByIdAndApplicationId(id, applicationId);
+        if (b.isEmpty()){
+            throw new NotFoundException("Badge not found");
         }
 
-        return badge;
+        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new RelatedObjectNotFound("Application not found"));
+        badge.setApplication(application);
+
+        badgeRepository.save(badge);
+
+        return BadgeMapper.toDTO(badge);
     }
 }
