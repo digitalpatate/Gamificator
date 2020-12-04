@@ -63,8 +63,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - run: docker-compose pull
-      - run: docker-compose up -d
+      - run: run-application.sh
       - uses: nev7n/wait_for_response@v1
         with:
           url: 'http://localhost:8080/'
