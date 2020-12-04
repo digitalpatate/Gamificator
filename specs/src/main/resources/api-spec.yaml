@@ -10,7 +10,7 @@ security:
 paths:
   /applications:
     post:
-      description: create an application
+      description: create an ch.heigvd.amt.gamificator.api.application
       operationId: createApplication
       requestBody:
         content:
@@ -25,7 +25,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationCreateDTO'
     get:
-      description: get the application for currrent API-KEY
+      description: get the ch.heigvd.amt.gamificator.api.application for currrent API-KEY
       operationId: getApplication
       responses:
         '200':
@@ -35,7 +35,7 @@ paths:
               schema:
                $ref: '#/components/schemas/ApplicationDTO'
     put:
-      description: Update an application
+      description: Update an ch.heigvd.amt.gamificator.api.application
       operationId: updateApplication
       parameters:
         - in: path
@@ -54,7 +54,7 @@ paths:
           description: updated
   /badges:
     post:
-      description: create a badge
+      description: create a ch.heigvd.amt.gamificator.api.badge
       operationId: createBadge
       requestBody:
         content:
@@ -69,7 +69,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadgeCreateDTO'
     get:
-      description: get the list of all badge
+      description: get the list of all ch.heigvd.amt.gamificator.api.badge
       operationId: getAllbadges
       responses:
         '200':
@@ -82,7 +82,7 @@ paths:
                   $ref: '#/components/schemas/BadgeDTO'
   /badges/{id}:
     get:
-      description: get one badge, by id
+      description: get one ch.heigvd.amt.gamificator.api.badge, by id
       operationId: getBadge
       parameters:
         - in: path
@@ -99,7 +99,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadgeDTO'
     put:
-      description: Update a badge
+      description: Update a ch.heigvd.amt.gamificator.api.badge
       operationId: updateBadge
       parameters:
         - in: path
