@@ -1,21 +1,15 @@
 package ch.heigvd.amt.gamificator.api.application;
 
 import ch.heigvd.amt.gamificator.api.model.ApplicationCreateCommand;
-import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
 import ch.heigvd.amt.gamificator.api.model.ApplicationCreateDTO;
+import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
 import ch.heigvd.amt.gamificator.entities.Application;
-import ch.heigvd.amt.gamificator.exceptions.NotAuthorizedException;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 
 import static ch.heigvd.amt.gamificator.api.application.ApplicationMapper.toDTO;

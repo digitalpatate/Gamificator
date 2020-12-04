@@ -1,7 +1,6 @@
 package ch.heigvd.amt.gamificator.entities;
 
 import lombok.Data;
-import org.springframework.web.bind.annotation.InitBinder;
 
 import javax.persistence.*;
 import java.util.LinkedList;

@@ -1,9 +1,12 @@
 package ch.heigvd.amt.gamificator.api.badge;
 
 import ch.heigvd.amt.gamificator.api.BadgesApi;
+import ch.heigvd.amt.gamificator.api.model.BadgeCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
+import ch.heigvd.amt.gamificator.exceptions.AlreadyExistException;
 import ch.heigvd.amt.gamificator.exceptions.ApiException;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
+import ch.heigvd.amt.gamificator.exceptions.RelatedObjectNotFound;
 import ch.heigvd.amt.gamificator.services.SecurityContextService;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +26,14 @@ public class BadgeController implements BadgesApi {
     private SecurityContextService securityContextService;
 
     @Override
-    public ResponseEntity<Void> createBadge(BadgeDTO badgeDTO) {
+    public ResponseEntity<Void> createBadge(BadgeCreateCommand badgeCreateCommand) {
         long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 
         BadgeDTO badgeRegistrationDTO = null;
         try {
-            badgeRegistrationDTO = badgeService.registerNewBadge(badgeDTO, applicationId);
-        } catch (NotFoundException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+            badgeRegistrationDTO = badgeService.registerNewBadge(badgeCreateCommand, applicationId);
+        } catch (AlreadyExistException | RelatedObjectNotFound e) {
+            return new ResponseEntity(e.getMessage(), e.getCode());
         }
 
         return new ResponseEntity(badgeRegistrationDTO, HttpStatus.CREATED);
@@ -64,8 +67,8 @@ public class BadgeController implements BadgesApi {
         BadgeDTO badgeDTO = null;
         try {
             badgeDTO = badgeService.updateById(id, badge, applicationId);
-        } catch (NotFoundException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+        } catch (RelatedObjectNotFound | NotFoundException e) {
+            return new ResponseEntity(e.getMessage(), e.getCode());
         }
 
         return new ResponseEntity(badgeDTO, HttpStatus.OK);

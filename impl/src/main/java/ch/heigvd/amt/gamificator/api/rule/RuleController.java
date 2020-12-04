@@ -35,7 +35,7 @@ public class RuleController implements RulesApi {
         try {
             ruleService.create(ruleCreateCommand, applicationId);
         } catch (RelatedObjectNotFound e) {
-            return new ResponseEntity(e.getMessage(),e.getCode());
+            return new ResponseEntity(e.getMessage(), e.getCode());
 
         }
         return new ResponseEntity(HttpStatus.CREATED);
@@ -59,7 +59,7 @@ public class RuleController implements RulesApi {
             RuleDTO ruleDTO = ruleService.update(id, ruleUpdateCommand);
             return new ResponseEntity(ruleDTO,HttpStatus.OK);
         } catch (NotFoundException e) {
-            return new ResponseEntity(e.getMessage(),e.getCode());
+            return new ResponseEntity(e.getMessage(), e.getCode());
         }
     }
 }
