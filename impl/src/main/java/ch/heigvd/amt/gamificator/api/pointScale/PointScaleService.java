@@ -3,6 +3,7 @@ package ch.heigvd.amt.gamificator.api.pointScale;
 import ch.heigvd.amt.gamificator.api.application.ApplicationMapper;
 import ch.heigvd.amt.gamificator.api.application.ApplicationService;
 import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
+import ch.heigvd.amt.gamificator.api.model.LeaderBoardDTO;
 import ch.heigvd.amt.gamificator.api.model.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
 import ch.heigvd.amt.gamificator.entities.Application;

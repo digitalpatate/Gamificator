@@ -33,7 +33,7 @@ paths:
           content:
             'application/json':
               schema:
-               $ref: '#/components/schemas/ApplicationDTO'
+                $ref: '#/components/schemas/ApplicationDTO'
     put:
       description: Update an application
       operationId: updateApplication
@@ -122,7 +122,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDTO'
   /users/{uuid}:
     get:
       description: get one user, by uuid
@@ -140,7 +140,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDTO'
   /leaderboards:
     get:
       description: get a leaderboard
@@ -153,7 +153,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/UserDTO'
   /rules:
     post:
       description: create a rule
@@ -286,6 +286,27 @@ paths:
       responses:
         '201':
           description: created
+
+  /leaderboard/{pointScaleId}:
+    parameters:
+      - in: path
+        name: pointScaleId
+        schema:
+          type: integer
+          format: int64
+        required: true
+    get:
+      description: get the leaderboard of a point scale
+      operationId: getLeaderboard
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/LeaderBoardDTO'
+
+
 components:
   securitySchemes:
     bearerAuth:
@@ -339,10 +360,10 @@ components:
         imageUrl:
           type: string
           format: uri
-    User:
+    UserDTO:
       type: object
       properties:
-        id:
+        uuid:
           type: string
           format: uuid
     RuleCreateCommand:
@@ -429,3 +450,16 @@ components:
           type: string
         description:
           type: string
+    UserScoreDTO:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserDTO'
+        score:
+          type: integer
+    LeaderBoardDTO:
+      type: object
+      properties:
+        leaderboard:
+          items:
+            $ref: '#/components/schemas/UserScoreDTO'
