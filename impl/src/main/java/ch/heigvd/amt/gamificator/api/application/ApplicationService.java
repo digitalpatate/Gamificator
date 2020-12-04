@@ -9,7 +9,6 @@ import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 import static ch.heigvd.amt.gamificator.api.application.ApplicationMapper.toDTO;

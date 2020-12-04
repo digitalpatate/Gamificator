@@ -21,14 +21,14 @@ public class ApplicationSteps extends Steps {
         super(environment);
     }
 
-    @Given("I have a ch.heigvd.amt.gamificator.api.application payload")
+    @Given("I have a application payload")
     public void i_have_a_application_payload() throws Throwable {
         applicationCreateCommand = new ch.heigvd.amt.gamificator.api.dto.ApplicationCreateCommand()
                 .name("Test app")
                 .url(new URI("http://localhost:9090"));
     }
 
-    @When("^I POST the ch.heigvd.amt.gamificator.api.application payload to the /applications endpoint$")
+    @When("^I POST the application payload to the /applications endpoint$")
     public void i_POST_the_application_payload_to_the_applications_endpoint() throws Throwable {
         try {
             ApiResponse apiResponse = getApi().createApplicationWithHttpInfo(applicationCreateCommand);
@@ -62,12 +62,12 @@ public class ApplicationSteps extends Steps {
         }
     }
 
-    @And("I receive a payload that is the same as the ch.heigvd.amt.gamificator.api.application payload")
+    @And("I receive a payload that is the same as the application payload")
     public void iReceiveAPayloadThatIsTheSameAsTheApplicationPayload() {
         assertEquals(applicationCreateCommand, applicationCreateDTO);
     }
 
-    @And("there is an ch.heigvd.amt.gamificator.api.application with the id 1")
+    @And("there is an application with the id 1")
     public void thereIsAnApplicationWithTheId1() throws URISyntaxException {
         ApplicationCreateCommand applicationCreateCommand = new ApplicationCreateCommand()
                 .name("Test app")

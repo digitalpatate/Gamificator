@@ -30,7 +30,7 @@ public class PointScaleService {
     private ApplicationService applicationService;
 
     public PointScaleDTO createPointScale(PointScaleCreateCommand pointScaleCreateCommand, long applicationId) throws NotFoundException {
-        PointScale pointScale = PointScale.toEntity(pointScaleCreateCommand);
+        PointScale pointScale = PointScaleMapper.toEntity(pointScaleCreateCommand);
 
         ApplicationDTO applicationDTO = applicationService.getApplicationById(applicationId);
         Application application = ApplicationMapper.toEntity(applicationDTO);
@@ -38,7 +38,7 @@ public class PointScaleService {
         pointScale.setApplication(application);
 
         PointScale pointScaleCreated = pointScaleRepository.save(pointScale);
-        PointScaleDTO pointScaleDTO = PointScale.toDTO(pointScaleCreated);
+        PointScaleDTO pointScaleDTO = PointScaleMapper.toDTO(pointScaleCreated);
 
         return pointScaleDTO;
     }
@@ -48,7 +48,7 @@ public class PointScaleService {
             throw new NotFoundException("Not found");
         }
 
-        PointScale pointScale = PointScale.toEntity(pointScaleCreateCommand);
+        PointScale pointScale = PointScaleMapper.toEntity(pointScaleCreateCommand);
         ApplicationDTO applicationDTO = applicationService.getApplicationById(applicationId);
         Application application = ApplicationMapper.toEntity(applicationDTO);
 
@@ -57,7 +57,7 @@ public class PointScaleService {
 
         PointScale updatedPointScale = pointScaleRepository.save(pointScale);
 
-        return PointScale.toDTO(updatedPointScale);
+        return PointScaleMapper.toDTO(updatedPointScale);
     }
 
     public List<PointScaleDTO> getAllPointScaleOfApplication(Long applicationId) throws NotFoundException {
@@ -68,7 +68,7 @@ public class PointScaleService {
         List<PointScaleDTO> pointScaleDTOs = new LinkedList<>();
 
         for(PointScale pointScale : pointScales){
-            pointScaleDTOs.add(PointScale.toDTO(pointScale));
+            pointScaleDTOs.add(PointScaleMapper.toDTO(pointScale));
         }
 
         return pointScaleDTOs;
@@ -86,7 +86,7 @@ public class PointScaleService {
         PointScale pointScale = pointScaleRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Not found"));
 
-        return PointScale.toDTO(pointScale);
+        return PointScaleMapper.toDTO(pointScale);
     }
 
     public boolean isPointScaleFromThisApplication(long pointScaleId, long applicationId) throws NotFoundException {
