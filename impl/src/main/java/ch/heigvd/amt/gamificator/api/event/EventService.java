@@ -29,7 +29,7 @@ public class EventService {
         User user = new User();
 
         if(oUser.isEmpty()){
-            user.setUUID(UUID.randomUUID().toString());
+            user.setUUID(UUID.randomUUID());
             userRepository.save(user);
         }else{
             user =  oUser.get();
