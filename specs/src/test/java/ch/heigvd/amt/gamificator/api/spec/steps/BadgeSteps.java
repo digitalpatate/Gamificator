@@ -25,15 +25,13 @@ public class BadgeSteps extends Steps {
 
     @Given("I POST the badge payload to the /badges endpoints")
     public void iPOSTTheBadgePayloadToTheBadgesEndpoints() throws Throwable {
-        /*try {
+        try {
             ApiResponse apiResponse =
-                    getApi().createBadgeWithHttpInfo(badgeCreateCommand.getName(), badgeCreateCommand.getImageUrl());
+                    getApi().createBadgeWithHttpInfo(badgeCreateCommand);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
-        }*/
-
-        // FIXME: createBadgeWithHttpInfo takes only one arg now
+        }
     }
 
     @Given("there is a badge payload")
