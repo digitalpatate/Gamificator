@@ -46,8 +46,14 @@ public class BadgeController implements BadgesApi {
     @Override
     public ResponseEntity<List<BadgeDTO>> getAllbadges() {
         long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
+        List<BadgeDTO> badges = null;
 
-        List<BadgeDTO> badges = badgeService.getAllBadges(applicationId);
+
+        try {
+        badges = badgeService.getAllBadgeOfApplication(applicationId);
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
 
         return new ResponseEntity(badges, HttpStatus.OK);
     }

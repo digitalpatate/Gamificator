@@ -20,10 +20,10 @@ Feature: Basic operations on badges
     And I receive the created badge
 
 
-#  Scenario: get all badge
-#    Given there is a badge payload
-#    And I POST the badge payload to the /badges endpoint
-#    And I POST the badge payload to the /badges endpoint
-#    When I send a GET to the badge endpoint
-#    Then I receive a 200 status code
+  Scenario: get all badge
+    Given there is a badge payload
+    And I POST the badge payload to the /badges endpoints
+    And I POST the badge payload to the /badges endpoints
+    When I send a GET to the badges endpoint
+    Then I receive a 200 status code
 #    And I receive 2 badges with differents id

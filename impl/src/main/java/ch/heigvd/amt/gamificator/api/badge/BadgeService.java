@@ -15,6 +15,8 @@ import ch.heigvd.amt.gamificator.repositories.BadgeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +56,20 @@ public class BadgeService {
         }
 
         return badgesDTO;
+    }
+
+    public List<BadgeDTO> getAllBadgeOfApplication(Long applicationId) throws NotFoundException {
+        Iterable<Badge> badges = new ArrayList<>();
+
+        badges = badgeRepository.findByApplicationId(applicationId);
+
+        List<BadgeDTO> badgesDTOs = new LinkedList<>();
+
+        for(Badge badge : badges){
+            badgesDTOs.add(BadgeMapper.toDTO(badge));
+        }
+
+        return badgesDTOs;
     }
 
     public BadgeDTO getById(Long id, Long applicationId) throws NotFoundException {

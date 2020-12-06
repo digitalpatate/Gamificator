@@ -4,6 +4,7 @@ import ch.heigvd.amt.gamificator.ApiException;
 import ch.heigvd.amt.gamificator.ApiResponse;
 import ch.heigvd.amt.gamificator.api.dto.BadgeCreateCommand;
 import ch.heigvd.amt.gamificator.api.dto.BadgeDTO;
+import ch.heigvd.amt.gamificator.api.dto.PointScaleDTO;
 import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -67,22 +68,24 @@ public class BadgeSteps extends Steps {
     }
 
 
-    @When("I send a GET to the badge endpoint")
-    public void iSendAGETToTheBadgeEndpoint() {
+    @When("I send a GET to the badges endpoint")
+    public void iSendAGETToTheBadgesEndpoint() {
         try {
-            ApiResponse apiResponse = getApi().getAllPointScalesWithHttpInfo();
+            ApiResponse apiResponse = getApi().getAllbadgesWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
         }
     }
 
-    @And("I receive {int} badges with differents id")
-    public void iReceiveTwoBadgesWithDifferentsId(int nbPointScale) {
+    @And("I receive {int} badges with different id")
+    public void iReceiveTwoBadgesWithDifferentId(int nbBadge) {
         List<BadgeDTO> badgeDTOList = (List<BadgeDTO>) getEnvironment().getLastApiResponse().getData();
-        assertEquals(nbPointScale, badgeDTOList.size());
+        assertEquals(nbBadge, badgeDTOList.size());
         assertNotNull(badgeDTOList.get(0));
         assertNotNull(badgeDTOList.get(1));
         assertNotEquals(badgeDTOList.get(0).getId(), badgeDTOList.get(1).getId());
     }
+
+
 }
