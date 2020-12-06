@@ -1,15 +1,19 @@
 package ch.heigvd.amt.gamificator.api.badge;
 
-import ch.heigvd.amt.gamificator.api.model.BadgeCreateCommand;
-import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
+import ch.heigvd.amt.gamificator.api.application.ApplicationMapper;
+import ch.heigvd.amt.gamificator.api.application.ApplicationService;
+import ch.heigvd.amt.gamificator.api.model.*;
+import ch.heigvd.amt.gamificator.api.pointScale.PointScaleMapper;
 import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.entities.Badge;
+import ch.heigvd.amt.gamificator.entities.PointScale;
 import ch.heigvd.amt.gamificator.exceptions.AlreadyExistException;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.exceptions.RelatedObjectNotFound;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import ch.heigvd.amt.gamificator.repositories.BadgeRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +26,9 @@ public class BadgeService {
     private final BadgeRepository badgeRepository;
 
     private final ApplicationRepository applicationRepository;
+
+    @Autowired
+    private ApplicationService applicationService;
 
     public BadgeDTO registerNewBadge(BadgeCreateCommand badge, Long applicationId) throws AlreadyExistException, RelatedObjectNotFound {
         Badge newBadge = BadgeMapper.toEntity(badge);
@@ -55,6 +62,24 @@ public class BadgeService {
         return BadgeMapper.toDTO(badge);
     }
 
+    public BadgeDTO updateBadge(Long id, BadgeCreateCommand badgeCreateCommand, long applicationId) throws NotFoundException {
+        if(!badgeRepository.existsById(id)) {
+            throw new NotFoundException("Not found");
+        }
+
+        Badge badge = BadgeMapper.toEntity(badgeCreateCommand);
+        ApplicationDTO applicationDTO = applicationService.getApplicationById(applicationId);
+        Application application = ApplicationMapper.toEntity(applicationDTO);
+
+        badge.setApplication(application);
+        badge.setId(id);
+
+        Badge updatedbadge =  badgeRepository.save(badge);
+
+        return BadgeMapper.toDTO(updatedbadge);
+    }
+
+
     public BadgeDTO updateById(Long id, BadgeDTO badgeDTO, Long applicationId) throws RelatedObjectNotFound, NotFoundException {
         Badge badge = BadgeMapper.toEntity(badgeDTO);
         badge.setId(id);
@@ -70,5 +95,12 @@ public class BadgeService {
         badgeRepository.save(badge);
 
         return BadgeMapper.toDTO(badge);
+    }
+
+    public boolean isBadgeFromThisApplication(long badgeId, long applicationId) throws NotFoundException {
+        Badge badge = badgeRepository.findById(badgeId)
+                .orElseThrow(() -> new NotFoundException("Not found"));
+
+        return badge.getApplication().getId() == applicationId;
     }
 }

@@ -58,17 +58,6 @@ paths:
         '200':
           description: updated
   /badges:
-    post:
-      description: create a badge
-      operationId: createBadge
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              $ref: '#/components/schemas/BadgeCreateCommand'
-      responses:
-        '201':
-          description: created
     get:
       description: get the list of all badge
       operationId: getAllbadges
@@ -81,17 +70,34 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/BadgeDTO'
+
+    post:
+      description: create a badge
+      operationId: createBadge
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/BadgeCreateCommand'
+      responses:
+        '201':
+          description: created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/BadgeDTO'
+
   /badges/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+          format: int64
+        required: true
     get:
       description: get one badge, by id
       operationId: getBadge
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-            format: int64
-          required: true
       responses:
         '200':
           description: success
@@ -102,21 +108,19 @@ paths:
     put:
       description: Update a badge
       operationId: updateBadge
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-            format: int64
-          required: true
       requestBody:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/BadgeDTO'
+              $ref: '#/components/schemas/BadgeCreateCommand'
       responses:
         '200':
           description: updated
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/BadgeDTO'
+
   /users:
     get:
       description: get all users

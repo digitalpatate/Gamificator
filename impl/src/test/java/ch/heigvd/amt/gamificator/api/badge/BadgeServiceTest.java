@@ -1,5 +1,6 @@
 package ch.heigvd.amt.gamificator.api.badge;
 
+import ch.heigvd.amt.gamificator.api.application.ApplicationService;
 import ch.heigvd.amt.gamificator.api.model.BadgeCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
 import ch.heigvd.amt.gamificator.entities.Application;
@@ -11,6 +12,7 @@ import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import ch.heigvd.amt.gamificator.repositories.BadgeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.net.URI;
@@ -26,6 +28,8 @@ import static org.mockito.Mockito.when;
 
 public class BadgeServiceTest {
     static BadgeService badgeService;
+    @InjectMocks
+    ApplicationService applicationService;
     @MockBean
     static BadgeRepository badgeRepository;
     @MockBean
@@ -36,7 +40,7 @@ public class BadgeServiceTest {
         badgeRepository = mock(BadgeRepository.class);
         applicationRepository = mock(ApplicationRepository.class);
 
-        this.badgeService = new BadgeService(badgeRepository, applicationRepository);
+        this.badgeService = new BadgeService(badgeRepository, applicationRepository, applicationService);
     }
 
     @Test
