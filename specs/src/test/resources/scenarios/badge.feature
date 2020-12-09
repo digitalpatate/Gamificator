@@ -28,3 +28,13 @@ Feature: Basic operations on badges
     When I send a GET to the badge endpoint
     Then I receive a 200 status code
     And I receive 2 badges with different id
+
+
+  Scenario: update a badge
+    Given there is a badge payload
+    And I POST the badge payload one to the /badges endpoints
+    Then I receive a 201 status code
+    Given there is a second badge payload
+    Given I PUT the second badge payload to the /badges endpoints
+    Then I receive a 200 status code
+    And I receive the updated badge
