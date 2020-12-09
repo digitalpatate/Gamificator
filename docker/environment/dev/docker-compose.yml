@@ -14,7 +14,7 @@ services:
       - 3306:3306
     volumes:
       - ./docker/database/:/docker-entrypoint-initdb.d/
-      - gamificator_vol:/var/lib/mysql
+#      - gamificator_vol:/var/lib/mysql
     cap_add:
       - SYS_NICE  # CAP_SYS_NICE
     networks:
@@ -28,6 +28,8 @@ services:
     restart: always
     ports:
       - 8888:8080
+    networks:
+      - backend
 
 
 networks:
