@@ -74,10 +74,5 @@ public class ApplicationServiceTest {
         assertEquals(resultDto.getUrl(),command.getUrl());
         assertEquals(resultDto.getName(),command.getName());
         assertEquals(resultDto.getId(),0);
-
-
-
     }
-
-
 }
