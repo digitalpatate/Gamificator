@@ -117,8 +117,11 @@ public class BadgeSteps extends Steps {
     @Given("I PUT the second badge payload to the /badges endpoints")
     public void iPUTTheSecondBadgePayloadToTheBadgesEndpoints() {
         try {
+            BadgeDTO badgeDTO = new BadgeDTO();
+            badgeDTO.setName(badgeCreateCommand_2.getName());
+            badgeDTO.setImageUrl(badgeCreateCommand_2.getImageUrl());
             ApiResponse apiResponse =
-                    getApi().updateBadgeWithHttpInfo(5L, badgeCreateCommand_2);
+                    getApi().updateBadgeWithHttpInfo(5L, badgeDTO);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
