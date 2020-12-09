@@ -24,7 +24,7 @@ public class BadgeSteps extends Steps {
         super(environment);
     }
 
-    @Given("I POST the badge payload one to the /badges endpoints")
+    @And("I POST the badge payload one to the /badges endpoints")
     public void iPOSTTheBadgePayloadOneToTheBadgesEndpoints() throws Throwable {
         try {
             ApiResponse apiResponse =
@@ -35,7 +35,7 @@ public class BadgeSteps extends Steps {
         }
     }
 
-    @Given("I POST the badge payload two to the /badges endpoints")
+    @And("I POST the badge payload two to the /badges endpoints")
     public void iPOSTTheBadgePayloadTwoToTheBadgesEndpoints() throws Throwable {
         try {
             ApiResponse apiResponse =
