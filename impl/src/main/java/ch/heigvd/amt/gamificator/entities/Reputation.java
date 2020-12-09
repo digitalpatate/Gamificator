@@ -16,7 +16,7 @@ public class Reputation {
     @OneToOne
     private User user;
 
-    @OneToMany
+    @ManyToMany
     private List<Reward> reward = new LinkedList<>();
 
     public void addAll(List<Reward> rewards) {
