@@ -18,6 +18,6 @@ public class Event {
     @OneToOne
     private User user;
 
-    private Date timestamp;
+    private OffsetDateTime timestamp;
     private String type;
 }
