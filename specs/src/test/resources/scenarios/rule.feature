@@ -15,3 +15,8 @@ Feature: Basic operations on rules
     And I POST the badge payload to the /badges endpoints
     Then I receive a 201 status code
     And I receive the created badge
+    Given I GET all point scales and badges created
+    And there is 1 rule payload
+    When I POST the rule payload to the /rules endpoint
+    Then I receive a 201 status code
+    And I receive the last created rule
