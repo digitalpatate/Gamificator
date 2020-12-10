@@ -59,19 +59,13 @@
           const key = apiKeyheader.split(":")[0];
           const secret = apiKeyheader.split(":")[1];
 
-          console.log(key);
-          console.log(secret);
-
           const shaObj = new jsSHA("SHA-1", "TEXT", {
             hmacKey: { value: secret, format: "TEXT" },
           });
           const data = `${key}${req.url}`;
-          console.log(data);
           shaObj.update(data);
           const hmacHEX = shaObj.getHash("HEX");
-          console.log(hmacHEX);
           const hmac64 = window.btoa(hmacHEX);
-          console.log(hmac64);
 
           req.headers['x-api-key']= key;
           req.headers.signature = hmac64;
