@@ -1,6 +1,7 @@
 package ch.heigvd.amt.gamificator.api.pointScale;
 import ch.heigvd.amt.gamificator.api.PointScalesApi;
 import ch.heigvd.amt.gamificator.api.model.*;
+import ch.heigvd.amt.gamificator.exceptions.AlreadyExistException;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.services.SecurityContextService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class PointScaleController implements PointScalesApi {
 
         try {
             pointScaleDTO = pointScaleService.createPointScale(pointScaleCreateCommand, applicationId);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | AlreadyExistException e) {
             return ResponseEntity.unprocessableEntity().build();
         }
 

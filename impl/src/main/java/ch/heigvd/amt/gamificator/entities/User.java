@@ -7,10 +7,10 @@ import javax.persistence.*;
 @Data
 public class User {
 
-    @Id
-    //@Generated(GenerationTime.NEVER)
-    //@GeneratedValue(generator = "uuid")
-    //@GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Column(name="id", length=36)
-    public String UUID;
+    @EmbeddedId
+    UserId userId;
+
+    @ManyToOne
+    @MapsId("applicationId")
+    private Application application;
 }

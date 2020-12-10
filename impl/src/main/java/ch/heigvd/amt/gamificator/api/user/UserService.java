@@ -15,8 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public List<UserDTO> findAllUserOfApplication(long applicationId) {
-        // FIXME: restrict results to this application
-        Iterable<User> users = userRepository.findAll();
+        Iterable<User> users = userRepository.findAllByApplicationId(applicationId);
         List<UserDTO> userDTOs = new LinkedList<>();
 
         users.forEach(user -> {

@@ -44,7 +44,7 @@ public class RuleService {
         }
 
         for(AwardPointDTO awardPointDTO : ruleCreateCommand.getThen().getAwardPoints()){
-            PointScale pointScale = pointScaleRepository.findByName(awardPointDTO.getPointScaleName()).orElseThrow(() -> new RelatedObjectNotFound("PointScale"));
+            PointScale pointScale = pointScaleRepository.findByNameAndApplicationId(awardPointDTO.getPointScaleName(), application.getId()).orElseThrow(() -> new RelatedObjectNotFound("PointScale"));
             PointsReward pointsReward = new PointsReward();
             pointsReward.setPointScale(pointScale);
             pointsReward.setPoints(awardPointDTO.getValue());

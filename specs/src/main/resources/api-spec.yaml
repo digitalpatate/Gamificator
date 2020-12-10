@@ -11,7 +11,6 @@ security:
   - bearerAuth: []
   - apiKeyAuth: []
   - apiKeySecret: []
-
 paths:
   /applications:
     post:
@@ -358,6 +357,9 @@ components:
         uuid:
           type: string
           format: uuid
+        applicationId:
+          type: integer
+          format: int64
     RuleCreateCommand:
       type: object
       properties:
