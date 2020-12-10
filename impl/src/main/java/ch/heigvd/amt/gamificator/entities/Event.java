@@ -20,12 +20,4 @@ public class Event {
 
     private Date timestamp;
     private String type;
-
-    public static Event toEntity(CreateEventCommand createEventCommand) {
-        Event event = new Event();
-        //event.setTimestamp(createEventCommand.getTimestamp());
-        event.setType(createEventCommand.getType());
-
-        return event;
-    }
 }

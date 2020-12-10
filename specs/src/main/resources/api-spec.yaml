@@ -11,6 +11,7 @@ security:
   - bearerAuth: []
   - apiKeyAuth: []
   - apiKeySecret: []
+
 paths:
   /applications:
     post:
