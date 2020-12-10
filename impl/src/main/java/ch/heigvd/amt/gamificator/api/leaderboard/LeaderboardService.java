@@ -29,7 +29,7 @@ public class LeaderboardService {
     @Autowired
     private SecurityContextService securityContextService;
 
-    public LeaderBoardDTO getLeaderboardOnPointScale(long pointScaleId) {
+    public LeaderBoardDTO getLeaderboardOnPointScale(String pointScaleName) {
         List<UserDTO> userDTOs = userService.findAllUserOfApplication(
                 securityContextService.getApplicationIdFromAuthentifiedApp()
         );
@@ -42,7 +42,7 @@ public class LeaderboardService {
                         .stream()
                         .filter(reward -> reward instanceof PointsReward)
                         .map(reward -> (PointsReward) reward)
-                        .filter(pointsReward -> pointsReward.getPointScale().getId() == pointScaleId)
+                        .filter(pointsReward -> pointsReward.getPointScale().getName().equals(pointScaleName))
                         .reduce(0, (subtotal, pointsReward) -> subtotal + pointsReward.getPoints(), Integer::sum);
 
                 UserScoreDTO userScoreDTO = new UserScoreDTO();

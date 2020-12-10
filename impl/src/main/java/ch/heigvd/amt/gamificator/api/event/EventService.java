@@ -24,12 +24,14 @@ public class EventService {
     private final EventProcessor eventProcessor;
 
     public void createEvent(@Valid CreateEventCommand createEventCommand) throws NotFoundException {
+
         Event event = EventMapper.toEntity(createEventCommand);
         Optional<User> oUser = userRepository.findByUUID(createEventCommand.getUserUUID().toString());
+
         User user = new User();
 
         if(oUser.isEmpty()){
-            user.setUUID(UUID.randomUUID());
+            user.setUUID(createEventCommand.getUserUUID().toString());
             userRepository.save(user);
         }else{
             user =  oUser.get();
