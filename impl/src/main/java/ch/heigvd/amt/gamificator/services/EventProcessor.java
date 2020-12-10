@@ -25,11 +25,9 @@ public class EventProcessor {
 
     private final RuleRepository ruleRepository;
     private final RewardRepository rewardRepository;
-    private final BadgeRepository badgeRepository;
-    private final PointScaleRepository pointScaleRepository;
 
-    public void process(Event event) {
-        List<Rule> rules = (List<Rule>) ruleRepository.findAll();
+    public void process(Event event, long applicationId) {
+        List<Rule> rules = ruleRepository.findAllByApplicationId(applicationId);
 
         rules = rules.stream().filter(rule ->  {
             ConditionDTO conditionDTO = RuleMapper.toDTO(rule).getCondition();
@@ -38,7 +36,7 @@ public class EventProcessor {
         }).collect(Collectors.toList());
 
         for (Rule rule: rules) {
-            List<Reward> rewards = rewardRepository.findByRule(rule);
+            List<Reward> rewards = rewardRepository.findByRuleId(rule.getId());
             reputationService.addRewardToUser(rewards, event.getUser());
         }
     }

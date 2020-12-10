@@ -5,6 +5,7 @@ import ch.heigvd.amt.gamificator.api.model.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
 import ch.heigvd.amt.gamificator.entities.Application;
 import ch.heigvd.amt.gamificator.entities.PointScale;
+import ch.heigvd.amt.gamificator.exceptions.AlreadyExistException;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import ch.heigvd.amt.gamificator.repositories.PointScaleRepository;
@@ -84,7 +85,7 @@ public class PointScaleServiceTest {
 
         try {
             createdPointScaleDTO = pointScaleService.createPointScale(pointScaleCreateCommand, applicationId);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | AlreadyExistException e) {
             e.printStackTrace();
         }
 
@@ -109,7 +110,7 @@ public class PointScaleServiceTest {
 
         try {
             pointScaleService.createPointScale(oldPointScaleCreateCommand, applicationId);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException | AlreadyExistException e) {
             e.printStackTrace();
         }
 

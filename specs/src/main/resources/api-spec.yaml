@@ -11,7 +11,6 @@ security:
   - bearerAuth: []
   - apiKeyAuth: []
   - apiKeySecret: []
-
 paths:
   /applications:
     post:
@@ -127,7 +126,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDTO'
   /users/{uuid}:
     get:
       description: get one user, by uuid
@@ -145,20 +144,8 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/User'
-  /leaderboards:
-    get:
-      description: get a leaderboard
-      operationId: getLeaderBoard
-      responses:
-        '200':
-          description: success
-          content:
-            'application/json':
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDTO'
+
   /rules:
     post:
       description: create a rule
@@ -291,6 +278,26 @@ paths:
       responses:
         '201':
           description: created
+
+  /leaderboard/{pointScaleName}:
+    parameters:
+      - in: path
+        name: pointScaleName
+        schema:
+          type: string
+        required: true
+    get:
+      description: get the leaderboard of a point scale
+      operationId: getLeaderboard
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/LeaderBoardDTO'
+
+
 components:
   securitySchemes:
     bearerAuth:
@@ -344,12 +351,15 @@ components:
         imageUrl:
           type: string
           format: uri
-    User:
+    UserDTO:
       type: object
       properties:
-        id:
+        uuid:
           type: string
           format: uuid
+        applicationId:
+          type: integer
+          format: int64
     RuleCreateCommand:
       type: object
       properties:
@@ -434,3 +444,16 @@ components:
           type: string
         description:
           type: string
+    UserScoreDTO:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserDTO'
+        score:
+          type: integer
+    LeaderBoardDTO:
+      type: object
+      properties:
+        leaderboard:
+          items:
+            $ref: '#/components/schemas/UserScoreDTO'
