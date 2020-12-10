@@ -8,7 +8,12 @@ import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.ApplicationRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import org.apache.commons.codec.digest.HmacAlgorithms;
+import org.apache.commons.codec.digest.HmacUtils;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Optional;
 
 import static ch.heigvd.amt.gamificator.api.application.ApplicationMapper.toDTO;
@@ -54,11 +59,25 @@ public class ApplicationService {
     }
 
     public boolean canBeAuthenticated(String[] creds) {
-        Optional<Application> oApplication = applicationRepository.findByKey(creds[0]);
+
+        String key = creds[0];
+        String url = creds[1];
+        String signature = creds[2];
+
+
+
+        Optional<Application> oApplication = applicationRepository.findByKey(key);
         if(oApplication.isEmpty()){
             return false;
         }
-        return oApplication.get().getSecret().equals(creds[1]);
+
+        String data = String.format("%s%s",key,url);
+
+
+        String hmac = new HmacUtils(HmacAlgorithms.HMAC_SHA_1, oApplication.get().getSecret()).hmacHex(data);
+        String calculatedSignature = Base64.getEncoder().encodeToString(hmac.getBytes(StandardCharsets.UTF_8));
+
+        return signature.equals(calculatedSignature);
     }
 
     public long getApplicationIdFromApiKey(String apiKey) throws NotFoundException {
