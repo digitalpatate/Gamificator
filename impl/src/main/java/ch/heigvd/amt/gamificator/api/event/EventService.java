@@ -39,7 +39,6 @@ public class EventService {
         event.setUser(user);
 
         eventProcessor.process(event);
-
         eventRepository.save(event);
     }
 

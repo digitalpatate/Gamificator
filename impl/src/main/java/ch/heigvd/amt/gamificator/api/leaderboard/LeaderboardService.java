@@ -52,7 +52,7 @@ public class LeaderboardService {
             });
         });
 
-        userScoreDTOs.sort(Comparator.comparing(UserScoreDTO::getScore));
+        userScoreDTOs.sort(Comparator.comparing(UserScoreDTO::getScore).reversed());
 
         LeaderBoardDTO leaderBoardDTO = new LeaderBoardDTO();
         leaderBoardDTO.setLeaderboard(userScoreDTOs);
