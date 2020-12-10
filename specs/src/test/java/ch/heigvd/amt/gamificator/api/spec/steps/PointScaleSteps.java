@@ -5,14 +5,16 @@ import ch.heigvd.amt.gamificator.api.dto.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.dto.PointScaleDTO;
 import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
 import ch.heigvd.amt.gamificator.ApiException;
+import ch.heigvd.amt.gamificator.api.spec.helpers.Signature;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import lombok.extern.java.Log;
 
 import java.util.List;
 
 import static org.junit.Assert.*;
-
+@Log
 public class PointScaleSteps extends Steps {
     PointScaleCreateCommand pointScaleCreateCommand;
 
@@ -23,6 +25,7 @@ public class PointScaleSteps extends Steps {
     @When("I POST the point scale payload to the /pointScales endpoint$")
     public void iPOSTThePointScalePayloadToThePointScalesEndpoint() {
         try {
+            getEnvironment().addSignature("/pointScales");
             ApiResponse apiResponse = getApi().createPointScaleWithHttpInfo(pointScaleCreateCommand);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
@@ -40,6 +43,7 @@ public class PointScaleSteps extends Steps {
     @When("I GET the point scale with the id {long}")
     public void iGETThePointScaleWithTheId(long id) {
         try {
+            getEnvironment().addSignature("/pointScales");
             ApiResponse apiResponse = getApi().getPointScaleWithHttpInfo(id);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
@@ -56,6 +60,7 @@ public class PointScaleSteps extends Steps {
     @When("I send a GET to the pointscales endpoint")
     public void iSendAGETToThePointscalesEndpoint() {
         try {
+            getEnvironment().addSignature("/pointScales");
             ApiResponse apiResponse = getApi().getAllPointScalesWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {

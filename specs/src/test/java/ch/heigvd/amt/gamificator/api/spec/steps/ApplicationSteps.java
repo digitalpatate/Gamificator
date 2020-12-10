@@ -41,6 +41,7 @@ public class ApplicationSteps extends Steps {
     @When("^I send a GET to the /applications endpoint$")
     public void iSendAGETToTheApplicationEndpoint() {
         try {
+            getEnvironment().addSignature("/applications");
             ApiResponse apiResponse = getApi().getApplicationWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
@@ -54,6 +55,7 @@ public class ApplicationSteps extends Steps {
                 .substring(getEnvironment().getLastReceivedLocationHeader().lastIndexOf('/') + 1));
 
         try {
+            getEnvironment().addSignature("/applications");
             ApiResponse apiResponse = getApi().getApplicationWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
             applicationCreateDTO = (ApplicationCreateDTO) getEnvironment().getLastApiResponse().getData();

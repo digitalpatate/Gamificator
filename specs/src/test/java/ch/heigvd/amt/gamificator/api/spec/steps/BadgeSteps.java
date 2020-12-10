@@ -27,6 +27,8 @@ public class BadgeSteps extends Steps {
     @Given("I POST the badge payload one to the /badges endpoints")
     public void iPOSTTheBadgePayloadOneToTheBadgesEndpoints() throws Throwable {
         try {
+            getEnvironment().addSignature("/badges");
+
             ApiResponse apiResponse =
                     getApi().createBadgeWithHttpInfo(badgeCreateCommand_1);
             getEnvironment().processApiResponse(apiResponse);
@@ -38,6 +40,7 @@ public class BadgeSteps extends Steps {
     @Given("I POST the badge payload two to the /badges endpoints")
     public void iPOSTTheBadgePayloadTwoToTheBadgesEndpoints() throws Throwable {
         try {
+            getEnvironment().addSignature("/badges");
             ApiResponse apiResponse =
                     getApi().createBadgeWithHttpInfo(badgeCreateCommand_2);
             getEnvironment().processApiResponse(apiResponse);
@@ -73,6 +76,7 @@ public class BadgeSteps extends Steps {
     @When("I GET the badge with the id {long}")
     public void iGETTheBadgeWithTheId(long id) {
         try {
+            getEnvironment().addSignature("/badges");
             ApiResponse apiResponse = getApi().getBadgeWithHttpInfo(id);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
@@ -90,6 +94,7 @@ public class BadgeSteps extends Steps {
     @When("I send a GET to the badge endpoint")
     public void iSendAGETToTheBadgeEndpoint() {
         try {
+            getEnvironment().addSignature("/badges");
             ApiResponse apiResponse = getApi().getAllbadgesWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
@@ -117,6 +122,7 @@ public class BadgeSteps extends Steps {
     @Given("I PUT the second badge payload to the /badges endpoints")
     public void iPUTTheSecondBadgePayloadToTheBadgesEndpoints() {
         try {
+            getEnvironment().addSignature("/badges");
             BadgeDTO badgeDTO = new BadgeDTO();
             badgeDTO.setName(badgeCreateCommand_2.getName());
             badgeDTO.setImageUrl(badgeCreateCommand_2.getImageUrl());
