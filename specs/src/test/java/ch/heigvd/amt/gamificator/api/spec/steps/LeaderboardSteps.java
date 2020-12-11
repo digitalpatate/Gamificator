@@ -13,7 +13,7 @@ import ch.heigvd.amt.gamificator.api.dto.UserScoreDTO;
 import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
 import io.cucumber.java.en.And;
 
-
+import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -37,6 +37,7 @@ public class LeaderboardSteps extends Steps {
 
         scores.forEach((k,v) -> {
             try {
+                getEnvironment().addSignature("/users/" + k.toString());
                 ApiResponse apiResponse = getApi().getUserWithHttpInfo(k);
                 getEnvironment().processApiResponse(apiResponse);
             } catch (ApiException e) {
@@ -61,6 +62,7 @@ public class LeaderboardSteps extends Steps {
     @And("I get the leaderboard of the last created point scale")
     public void iGetTheLeaderboardOfTheLastCreatedPointScale() {
         try {
+            getEnvironment().addSignature("/leaderboard/" + lastCreatedPointScaleName);
             ApiResponse apiResponse = getApi().getLeaderboardWithHttpInfo(lastCreatedPointScaleName);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
@@ -76,6 +78,8 @@ public class LeaderboardSteps extends Steps {
 
         int initialNbOfUsers = scores.size();
 
+        getEnvironment().addSignature("/events");
+
         for(int user = initialNbOfUsers; user < initialNbOfUsers + nbUsers; ++user) {
             UUID uuid = UUID.fromString("22d89507-be5b-48fc-8779-" + String.format("%012d", user));
 
@@ -86,9 +90,10 @@ public class LeaderboardSteps extends Steps {
                 createEventCommand.setTimestamp(OffsetDateTime.now());
 
                 try {
-                    getApi().createEvent(createEventCommand);
+                    ApiResponse apiResponse = getApi().createEventWithHttpInfo(createEventCommand);
+                    getEnvironment().processApiResponse(apiResponse);
                 } catch (ApiException e) {
-                    e.printStackTrace();
+                    getEnvironment().processApiException(e);
                 }
             }
 
