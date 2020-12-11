@@ -8,76 +8,64 @@ import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import lombok.extern.java.Log;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
+@Log
 public class BadgeSteps extends Steps {
 
-    BadgeCreateCommand badgeCreateCommand_1;
-    BadgeCreateCommand badgeCreateCommand_2;
+    List<BadgeCreateCommand> badgeCreateCommands;
+    int counter;
 
     public BadgeSteps(Environment environment) {
         super(environment);
     }
 
-    @Given("I POST the badge payload one to the /badges endpoints")
-    public void iPOSTTheBadgePayloadOneToTheBadgesEndpoints() throws Throwable {
-        try {
-            getEnvironment().addSignature("/badges");
-
-            ApiResponse apiResponse =
-                    getApi().createBadgeWithHttpInfo(badgeCreateCommand_1);
-            getEnvironment().processApiResponse(apiResponse);
-        } catch (ApiException e) {
-            getEnvironment().processApiException(e);
+    @And("I POST the badge payload to the \\/badges endpoints$")
+    public void iPOSTTheBadgePayloadToTheBadgesEndpoints() {
+        for (BadgeCreateCommand badgeCreateCommand : badgeCreateCommands) {
+            try {
+                ApiResponse apiResponse =
+                        getApi().createBadgeWithHttpInfo(badgeCreateCommand);
+                getEnvironment().processApiResponse(apiResponse);
+            } catch (ApiException e) {
+                getEnvironment().processApiException(e);
+            }
         }
     }
 
-    @Given("I POST the badge payload two to the /badges endpoints")
-    public void iPOSTTheBadgePayloadTwoToTheBadgesEndpoints() throws Throwable {
-        try {
-            getEnvironment().addSignature("/badges");
-            ApiResponse apiResponse =
-                    getApi().createBadgeWithHttpInfo(badgeCreateCommand_2);
-            getEnvironment().processApiResponse(apiResponse);
-        } catch (ApiException e) {
-            getEnvironment().processApiException(e);
+    @Given("there is {int} badge payload")
+    public void thereIsBadgePayload(int nbBadges) throws URISyntaxException {
+        badgeCreateCommands = new ArrayList<>();
+        for (int i = 0; i < nbBadges; i++) {
+            counter = i;
+            BadgeCreateCommand badgeCreateCommand = new BadgeCreateCommand();
+            badgeCreateCommand.setName("batman " + counter);
+            badgeCreateCommand.setImageUrl(new URI("https://external-content.duckduckgo.com/iu/" +
+                    "?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.5PHxSPT-OxxSWoYBFuD-GAHaLV%26pid%3DApi&f=1"));
+            badgeCreateCommands.add(badgeCreateCommand);
         }
-    }
-
-    @Given("there is a badge payload")
-    public void thereIsABadgePayload() throws URISyntaxException {
-        badgeCreateCommand_1 = new BadgeCreateCommand();
-        badgeCreateCommand_1.setName("SuperMan");
-        badgeCreateCommand_1.setImageUrl(new URI("https://external-content.duckduckgo.com" +
-                "/iu/?u=https%3A%2F%2Fwww.zsl.org%2Fsites%2Fdefault%2Ffiles%2Fmedia%2F2017-12" +
-                "%2FFoage%2520male%2520badger.jpg&f=1&nofb=1"));
-    }
-
-    @Given("there is a second badge payload")
-    public void thereIsASecondBadgePayload() throws URISyntaxException {
-        badgeCreateCommand_2 = new BadgeCreateCommand();
-        badgeCreateCommand_2.setName("Batman");
-        badgeCreateCommand_2.setImageUrl(new URI("https://external-content.duckduckgo.com/iu/" +
-                "?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%3Fid%3DOIP.5PHxSPT-OxxSWoYBFuD-GAHaLV%26pid%3DApi&f=1"));
     }
 
     @And("I receive the created badge")
     public void iReceiveTheCreatedBadge() {
         BadgeDTO badgeDTO = (BadgeDTO) getEnvironment().getLastApiResponse().getData();
-        assertEquals(badgeDTO.getName(), badgeCreateCommand_1.getName());
-        assertEquals(badgeDTO.getImageUrl(), badgeCreateCommand_1.getImageUrl());
+        assertEquals(badgeDTO.getName(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getName());
+        assertEquals(badgeDTO.getImageUrl(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getImageUrl());
     }
 
-    @When("I GET the badge with the id {long}")
-    public void iGETTheBadgeWithTheId(long id) {
+    @When("I GET the badge previously created")
+    public void iGETTheBadgePreviouslyCreated() {
         try {
-            getEnvironment().addSignature("/badges");
-            ApiResponse apiResponse = getApi().getBadgeWithHttpInfo(id);
+            BadgeDTO badgeDTO = ((BadgeDTO) getEnvironment().getLastApiResponse().getData());
+            log.info(String.valueOf(badgeDTO.getId()));
+            ApiResponse apiResponse = getApi().getBadgeWithHttpInfo(badgeDTO.getId());
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
@@ -86,10 +74,9 @@ public class BadgeSteps extends Steps {
 
     @And("I don't receive a badge")
     public void iDonTReceiveABadge() {
-        Object data = getEnvironment().getLastApiResponse();
+        Object data = getEnvironment().getLastApiResponse().getData();
         assertNull(data);
     }
-
 
     @When("I send a GET to the badge endpoint")
     public void iSendAGETToTheBadgeEndpoint() {
@@ -103,31 +90,33 @@ public class BadgeSteps extends Steps {
     }
 
     @And("I receive {int} badges with different id")
-    public void iReceiveTwoBadgesWithDifferentId(int nbBadge) {
+    public void iReceiveTwoBadgesWithDifferentId(int nbBadges) {
         List<BadgeDTO> badgeDTOList = (List<BadgeDTO>) getEnvironment().getLastApiResponse().getData();
-        assertEquals(nbBadge, badgeDTOList.size());
-        assertNotNull(badgeDTOList.get(0));
-        assertNotNull(badgeDTOList.get(1));
-        assertNotEquals(badgeDTOList.get(0).getId(), badgeDTOList.get(1).getId());
+        assertEquals(nbBadges, badgeDTOList.size());
+        for (int i = 0; i < nbBadges; i++) {
+            for (int j = i + 1; j < nbBadges; j++) {
+                assertNotEquals(badgeDTOList.get(i).getId(), badgeDTOList.get(j).getId());
+            }
+        }
     }
-
 
     @And("I receive the updated badge")
     public void iReceiveTheUpdatedBadge() {
         BadgeDTO badgeDTO = (BadgeDTO) getEnvironment().getLastApiResponse().getData();
-        assertEquals(badgeDTO.getName(), badgeCreateCommand_2.getName());
-        assertEquals(badgeDTO.getImageUrl(), badgeCreateCommand_2.getImageUrl());
+        assertEquals(badgeDTO.getName(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getName());
+        assertEquals(badgeDTO.getImageUrl(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getImageUrl());
     }
 
-    @Given("I PUT the second badge payload to the /badges endpoints")
-    public void iPUTTheSecondBadgePayloadToTheBadgesEndpoints() {
+    @And("I PUT the last created badge payload to the \\/badges endpoints")
+    public void iPUTTheLastCreatedBadgePayloadToTheBadgesEndpoints() {
         try {
             getEnvironment().addSignature("/badges");
             BadgeDTO badgeDTO = new BadgeDTO();
-            badgeDTO.setName(badgeCreateCommand_2.getName());
-            badgeDTO.setImageUrl(badgeCreateCommand_2.getImageUrl());
+            badgeDTO.setName(badgeCreateCommands.get(badgeCreateCommands.size() - 1).getName());
+            badgeDTO.setImageUrl(badgeCreateCommands.get(badgeCreateCommands.size() - 1).getImageUrl());
+            long badgeId = ((BadgeDTO) getEnvironment().getLastApiResponse().getData()).getId();
             ApiResponse apiResponse =
-                    getApi().updateBadgeWithHttpInfo(5L, badgeDTO);
+                    getApi().updateBadgeWithHttpInfo(badgeId, badgeDTO);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);

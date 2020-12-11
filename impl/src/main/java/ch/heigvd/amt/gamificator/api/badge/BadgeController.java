@@ -26,7 +26,7 @@ public class BadgeController implements BadgesApi {
     private SecurityContextService securityContextService;
 
     @Override
-    public ResponseEntity<Void> createBadge(BadgeCreateCommand badgeCreateCommand) {
+    public ResponseEntity<BadgeDTO> createBadge(BadgeCreateCommand badgeCreateCommand) {
         long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 
         BadgeDTO badgeRegistrationDTO = null;
@@ -62,7 +62,7 @@ public class BadgeController implements BadgesApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateBadge(Long id, BadgeDTO badge) {
+    public ResponseEntity<BadgeDTO> updateBadge(Long id, BadgeDTO badge) {
         long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 
         BadgeDTO badgeDTO = null;

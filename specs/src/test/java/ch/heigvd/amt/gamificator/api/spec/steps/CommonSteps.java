@@ -24,7 +24,7 @@ public class CommonSteps extends Steps {
         assertEquals(expectedStatusCode, getEnvironment().getLastStatusCode());
     }
 
-    @Then("the I have an API key")
+    @Then("I have an API key")
     public void theIHaveAnAPIKey() {
         ApplicationCreateDTO applicationCreateDTO = (ApplicationCreateDTO) getEnvironment().getLastApiResponse().getData();
         getEnvironment().setApiKey(applicationCreateDTO.getKey());
