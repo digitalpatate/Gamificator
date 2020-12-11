@@ -29,17 +29,17 @@ public class RuleController implements RulesApi {
 
 
     @Override
-    public ResponseEntity<Long> createRule(@Valid RuleCreateCommand ruleCreateCommand) {
+    public ResponseEntity<RuleDTO> createRule(@Valid RuleCreateCommand ruleCreateCommand) {
         Long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
+        RuleDTO ruleDTO;
 
-        Long ruleId;
         try {
-            ruleId = ruleService.create(ruleCreateCommand, applicationId);
+            ruleDTO = ruleService.create(ruleCreateCommand, applicationId);
         } catch (RelatedObjectNotFound e) {
             return new ResponseEntity(e.getMessage(), e.getCode());
 
         }
-        return new ResponseEntity(ruleId, HttpStatus.CREATED);
+        return new ResponseEntity(ruleDTO, HttpStatus.CREATED);
     }
 
     @Override

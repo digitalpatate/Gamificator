@@ -25,7 +25,7 @@ public class CommonSteps extends Steps {
     }
 
     @Then("I have an API key")
-    public void theIHaveAnAPIKey() {
+    public void IHaveAnAPIKey() {
         ApplicationCreateDTO applicationCreateDTO = (ApplicationCreateDTO) getEnvironment().getLastApiResponse().getData();
         getEnvironment().setApiKey(applicationCreateDTO.getKey());
         getEnvironment().setApiSecret(applicationCreateDTO.getSecret());
