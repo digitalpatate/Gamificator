@@ -3,6 +3,8 @@ package ch.heigvd.amt.gamificator.api.rule;
 import ch.heigvd.amt.gamificator.api.model.*;
 import ch.heigvd.amt.gamificator.entities.Rule;
 
+import javax.swing.*;
+
 public class RuleMapper {
 
     public static Rule toEntity(RuleCreateCommand command){

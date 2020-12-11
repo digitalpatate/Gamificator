@@ -7,5 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface RewardRepository<T extends Reward> extends CrudRepository<T, Long> {
-    List<T> findByRule(Rule rule);
+    List<Reward> findByRuleId(long ruleId);
 }
+

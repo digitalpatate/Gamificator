@@ -44,7 +44,7 @@ public class RuleService {
         }
 
         for(AwardPointDTO awardPointDTO : ruleCreateCommand.getThen().getAwardPoints()){
-            PointScale pointScale = pointScaleRepository.findByName(awardPointDTO.getPointScaleName()).orElseThrow(() -> new RelatedObjectNotFound("PointScale"));
+            PointScale pointScale = pointScaleRepository.findByNameAndApplicationId(awardPointDTO.getPointScaleName(), application.getId()).orElseThrow(() -> new RelatedObjectNotFound("PointScale"));
             PointsReward pointsReward = new PointsReward();
             pointsReward.setPointScale(pointScale);
             pointsReward.setPoints(awardPointDTO.getValue());
@@ -66,7 +66,31 @@ public class RuleService {
 
         List<RuleDTO> rules = new LinkedList<>();
         for (Rule rule : ruleRepository.findAll()){
-            rules.add(RuleMapper.toDTO(rule));
+            RuleDTO ruleDTO = RuleMapper.toDTO(rule);
+
+            ActionDTO actionDTO = new ActionDTO();
+
+            List<PointsReward> pointsRewards = pointsRewardRepository.findAllByRuleId(rule.getId());
+            List<AwardPointDTO> awardPointDTOS = new LinkedList<>();
+
+            pointsRewards.forEach(pointsReward -> {
+                AwardPointDTO awardPointDTO = new AwardPointDTO(); // FIXME: should have a mapper
+                awardPointDTO.setPointScaleName(pointsReward.getPointScale().getName());
+                awardPointDTO.setValue(pointsReward.getPoints());
+                awardPointDTOS.add(awardPointDTO);
+            });
+
+            List<BadgeReward> badgeRewards = badgeRewardRepository.findAllByRuleId(rule.getId());
+            List<String> badges = new LinkedList<>();
+            badgeRewards.forEach(br -> {
+                badges.add(br.getBadge().getName());
+            });
+
+            actionDTO.setAwardPoints(awardPointDTOS);
+            actionDTO.setAwardBadges(badges);
+            ruleDTO.setThen(actionDTO);
+
+            rules.add(ruleDTO);
         }
 
         return rules;

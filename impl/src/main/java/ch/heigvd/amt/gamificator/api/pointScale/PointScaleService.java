@@ -3,6 +3,7 @@ package ch.heigvd.amt.gamificator.api.pointScale;
 import ch.heigvd.amt.gamificator.api.application.ApplicationMapper;
 import ch.heigvd.amt.gamificator.api.application.ApplicationService;
 import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
+import ch.heigvd.amt.gamificator.api.model.LeaderBoardDTO;
 import ch.heigvd.amt.gamificator.api.model.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
 import ch.heigvd.amt.gamificator.entities.Application;
@@ -42,6 +43,10 @@ public class PointScaleService {
 
         ApplicationDTO applicationDTO = applicationService.getApplicationById(applicationId);
         Application application = ApplicationMapper.toEntity(applicationDTO);
+
+        if(pointScaleRepository.findByNameAndApplicationId(pointScaleCreateCommand.getName(), applicationId).isPresent()) {
+            throw new AlreadyExistException("Point scale already exists with this name!");
+        }
 
         pointScale.setApplication(application);
 
