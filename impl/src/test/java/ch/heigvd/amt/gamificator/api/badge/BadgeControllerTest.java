@@ -1,7 +1,6 @@
 package ch.heigvd.amt.gamificator.api.badge;
 
-import ch.heigvd.amt.gamificator.api.model.BadgeCreateCommand;
-import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
+import ch.heigvd.amt.gamificator.api.model.*;
 import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.services.SecurityContextService;
@@ -144,6 +143,27 @@ public class BadgeControllerTest {
         assertNull(responseEntity.getBody());
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
+
+
+    @SneakyThrows
+    @Test
+    public void updatingABadgeThatDoesNotExistsShouldRespondNotFound() {
+        BadgeDTO newBadgeDTO = new BadgeDTO();
+        newBadgeDTO.setId(1L);
+        newBadgeDTO.setName(this.NAME);
+        newBadgeDTO.setImageUrl(this.IMG_URL);
+
+        BadgeCreateCommand badgeCreateCommand = new BadgeCreateCommand();
+        badgeCreateCommand.setName(this.NAME);
+        badgeCreateCommand.setImageUrl(this.IMG_URL);
+        when(badgeService.updateById(1L, newBadgeDTO, 1L))
+                .thenThrow(new NotFoundException("Not found"));
+
+        ResponseEntity responseEntity = badgeController.updateBadge(1L, newBadgeDTO);
+
+        assertNull(responseEntity.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+
 }
-
-
