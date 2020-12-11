@@ -39,6 +39,7 @@ public class RuleSteps extends Steps {
         awardBadges = new ArrayList<>();
 
         try {
+            getEnvironment().addSignature("/pointScales");
             ApiResponse apiResponse = getApi().getAllPointScalesWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
@@ -55,6 +56,7 @@ public class RuleSteps extends Steps {
         }
 
         try {
+            getEnvironment().addSignature("/badges");
             ApiResponse apiResponse = getApi().getAllbadgesWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
@@ -90,6 +92,8 @@ public class RuleSteps extends Steps {
 
     @When("I POST the rule payload to the \\/rules endpoint$")
     public void iPOSTTheRulePayloadToTheRulesEndpoint() {
+        getEnvironment().addSignature("/rules");
+
         for (RuleCreateCommand ruleCreateCommand : ruleCreateCommands) {
             try {
                 ApiResponse apiResponse = getApi().createRuleWithHttpInfo(ruleCreateCommand);

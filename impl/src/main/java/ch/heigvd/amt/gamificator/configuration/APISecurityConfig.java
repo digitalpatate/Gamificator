@@ -22,10 +22,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Order(1)
 public class APISecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value("X-API-KEY")
+    @Value("x-api-key")
     private String keyHeaderName;
 
-    @Value("X-API-SECRET")
+    @Value("signature")
     private String secretHeaderName;
 
     @Autowired
@@ -56,7 +56,7 @@ public class APISecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         httpSecurity.authorizeRequests()
-                    .antMatchers("/","/swagger-ui/**","/swagger-resources/**","/v3/api-docs/**","/applications")
+                    .antMatchers("/","/swagger-ui/**","/swagger-resources/**","/v3/api-docs/**","/applications","/swagger-ui.html","/swagger-**")
                     .permitAll();
 
         httpSecurity.antMatcher("/**")

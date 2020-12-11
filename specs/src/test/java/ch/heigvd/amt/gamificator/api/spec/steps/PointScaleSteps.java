@@ -5,15 +5,17 @@ import ch.heigvd.amt.gamificator.api.dto.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.dto.PointScaleDTO;
 import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
 import ch.heigvd.amt.gamificator.ApiException;
+import ch.heigvd.amt.gamificator.api.spec.helpers.Signature;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
-
+@Log
 public class PointScaleSteps extends Steps {
 
     List<PointScaleCreateCommand> pointScaleCreateCommands;
@@ -24,6 +26,7 @@ public class PointScaleSteps extends Steps {
 
     @When("I POST the point scale payload to the /pointScales endpoint$")
     public void iPOSTThePointScalePayloadToThePointScalesEndpoint() {
+        getEnvironment().addSignature("/pointScales");
         for (PointScaleCreateCommand pointScaleCreateCommand: pointScaleCreateCommands) {
             try {
                 ApiResponse apiResponse = getApi().createPointScaleWithHttpInfo(pointScaleCreateCommand);
@@ -50,6 +53,7 @@ public class PointScaleSteps extends Steps {
     @When("I send a GET to the point scales endpoint")
     public void iSendAGETToThePointscalesEndpoint() {
         try {
+            getEnvironment().addSignature("/pointScales");
             ApiResponse apiResponse = getApi().getAllPointScalesWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
@@ -83,7 +87,9 @@ public class PointScaleSteps extends Steps {
     @When("I GET a previously created point scale with his id")
     public void iGETAPreviouslyCreatedPointScaleWithHisId() {
         try {
-            ApiResponse apiResponse = getApi().getPointScaleWithHttpInfo(((PointScaleDTO) getEnvironment().getLastApiResponse().getData()).getId());
+            long id = ((PointScaleDTO) getEnvironment().getLastApiResponse().getData()).getId();
+            getEnvironment().addSignature(String.format("/pointScales/%d",id));
+            ApiResponse apiResponse = getApi().getPointScaleWithHttpInfo(id);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
