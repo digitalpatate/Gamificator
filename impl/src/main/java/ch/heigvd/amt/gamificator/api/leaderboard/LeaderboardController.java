@@ -15,7 +15,7 @@ public class LeaderboardController implements LeaderboardApi {
     @Autowired
     LeaderboardService leaderboardService;
 
-    public ResponseEntity<LeaderBoardDTO> getLeaderboard(@ApiParam(value = "",required=true) @PathVariable("pointScaleName") String pointScaleName) {
+    public ResponseEntity<LeaderBoardDTO> getLeaderboard(String pointScaleName) {
         LeaderBoardDTO leaderBoardDTO = leaderboardService.getLeaderboardOnPointScale(pointScaleName);
 
         return new ResponseEntity<>(leaderBoardDTO, HttpStatus.OK);
