@@ -5,12 +5,13 @@ import ch.heigvd.amt.gamificator.api.DefaultApi;
 import ch.heigvd.amt.gamificator.ApiException;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
-
+@Log
 public class Environment {
 
     @Getter private DefaultApi api;
@@ -47,6 +48,10 @@ public class Environment {
         lastStatusCode = lastApiException.getCode();
     }
 
+    public void addSignature(String url){
+        String signature = Signature.generateSignature(String.format("%s%s%s",apiKey,this.api.getApiClient().getBasePath(),url),apiSecret);
+        this.api.getApiClient().addDefaultHeader("signature", signature);
+    }
     public void reset() {
 
     }

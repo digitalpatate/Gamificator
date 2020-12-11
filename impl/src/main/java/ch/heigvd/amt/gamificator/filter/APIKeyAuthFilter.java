@@ -1,7 +1,6 @@
 package ch.heigvd.amt.gamificator.filter;
 
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,14 +8,17 @@ import javax.servlet.http.HttpServletRequest;
 public class APIKeyAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
 
     private String keyHeaderName;
-    private String secretHeaderName;
+    private String signatureHeaderName;
 
     @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
+
+
         String key = request.getHeader(keyHeaderName);
-        String secret = request.getHeader(secretHeaderName);
-        
-        return new String[]{key,secret};
+        String url = request.getRequestURL().toString();
+        String signature = request.getHeader(signatureHeaderName);
+
+        return new String[]{key,url,signature};
     }
 
     @Override
