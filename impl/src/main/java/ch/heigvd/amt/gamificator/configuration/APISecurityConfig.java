@@ -56,7 +56,7 @@ public class APISecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         httpSecurity.authorizeRequests()
-                    .antMatchers("/","/swagger-ui/**","/swagger-resources/**","/v3/api-docs/**","/applications","/swagger-ui.html","/swagger-**")
+                    .antMatchers("/","/swagger-ui/**","/swagger-resources/**","/v3/api-docs/**","/applications","/swagger-ui.html","/swagger-**","/healthcheck")
                     .permitAll();
 
         httpSecurity.antMatcher("/**")
