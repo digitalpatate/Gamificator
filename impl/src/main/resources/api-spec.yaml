@@ -68,6 +68,10 @@ paths:
       responses:
         '201':
           description: created
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/BadgeDTO'
     get:
       description: get the list of all badge
       operationId: getAllbadges
@@ -116,6 +120,10 @@ paths:
       responses:
         '200':
           description: updated
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/BadgeDTO'
   /users:
     get:
       description: get all users

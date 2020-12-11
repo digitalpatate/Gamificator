@@ -7,6 +7,7 @@ import ch.heigvd.amt.gamificator.api.model.LeaderBoardDTO;
 import ch.heigvd.amt.gamificator.api.model.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.PointScaleDTO;
 import ch.heigvd.amt.gamificator.entities.Application;
+import ch.heigvd.amt.gamificator.entities.Badge;
 import ch.heigvd.amt.gamificator.entities.PointScale;
 import ch.heigvd.amt.gamificator.exceptions.AlreadyExistException;
 import ch.heigvd.amt.gamificator.exceptions.NotAuthorizedException;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +35,11 @@ public class PointScaleService {
 
     public PointScaleDTO createPointScale(PointScaleCreateCommand pointScaleCreateCommand, long applicationId) throws NotFoundException, AlreadyExistException {
         PointScale pointScale = PointScaleMapper.toEntity(pointScaleCreateCommand);
+
+        Optional<PointScale> p = pointScaleRepository.findByNameAndApplicationId(pointScaleCreateCommand.getName(), applicationId);
+        if (p.isPresent()){
+            throw new AlreadyExistException("PointScale already exist");
+        }
 
         ApplicationDTO applicationDTO = applicationService.getApplicationById(applicationId);
         Application application = ApplicationMapper.toEntity(applicationDTO);
