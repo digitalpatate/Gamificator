@@ -29,6 +29,8 @@ public class BadgeSteps extends Steps {
 
     @And("I POST the badge payload to the \\/badges endpoints$")
     public void iPOSTTheBadgePayloadToTheBadgesEndpoints() {
+        getEnvironment().addSignature("/badges");
+
         for (BadgeCreateCommand badgeCreateCommand : badgeCreateCommands) {
             try {
                 ApiResponse apiResponse =
@@ -64,8 +66,10 @@ public class BadgeSteps extends Steps {
     public void iGETTheBadgePreviouslyCreated() {
         try {
             BadgeDTO badgeDTO = ((BadgeDTO) getEnvironment().getLastApiResponse().getData());
-            log.info(String.valueOf(badgeDTO.getId()));
-            ApiResponse apiResponse = getApi().getBadgeWithHttpInfo(badgeDTO.getId());
+            long id = badgeDTO.getId();
+            getEnvironment().addSignature(String.format("/badges/%d",id));
+            log.info(String.valueOf(id));
+            ApiResponse apiResponse = getApi().getBadgeWithHttpInfo(id);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
@@ -110,11 +114,12 @@ public class BadgeSteps extends Steps {
     @And("I PUT the last created badge payload to the \\/badges endpoints")
     public void iPUTTheLastCreatedBadgePayloadToTheBadgesEndpoints() {
         try {
-            getEnvironment().addSignature("/badges");
             BadgeDTO badgeDTO = new BadgeDTO();
             badgeDTO.setName(badgeCreateCommands.get(badgeCreateCommands.size() - 1).getName());
             badgeDTO.setImageUrl(badgeCreateCommands.get(badgeCreateCommands.size() - 1).getImageUrl());
             long badgeId = ((BadgeDTO) getEnvironment().getLastApiResponse().getData()).getId();
+            getEnvironment().addSignature(String.format("/badges/%d",badgeId));
+
             ApiResponse apiResponse =
                     getApi().updateBadgeWithHttpInfo(badgeId, badgeDTO);
             getEnvironment().processApiResponse(apiResponse);

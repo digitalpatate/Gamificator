@@ -26,6 +26,7 @@ public class PointScaleSteps extends Steps {
 
     @When("I POST the point scale payload to the /pointScales endpoint$")
     public void iPOSTThePointScalePayloadToThePointScalesEndpoint() {
+        getEnvironment().addSignature("/pointScales");
         for (PointScaleCreateCommand pointScaleCreateCommand: pointScaleCreateCommands) {
             try {
                 ApiResponse apiResponse = getApi().createPointScaleWithHttpInfo(pointScaleCreateCommand);
@@ -86,7 +87,9 @@ public class PointScaleSteps extends Steps {
     @When("I GET a previously created point scale with his id")
     public void iGETAPreviouslyCreatedPointScaleWithHisId() {
         try {
-            ApiResponse apiResponse = getApi().getPointScaleWithHttpInfo(((PointScaleDTO) getEnvironment().getLastApiResponse().getData()).getId());
+            long id = ((PointScaleDTO) getEnvironment().getLastApiResponse().getData()).getId();
+            getEnvironment().addSignature(String.format("/pointScales/%d",id));
+            ApiResponse apiResponse = getApi().getPointScaleWithHttpInfo(id);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
