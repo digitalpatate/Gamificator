@@ -49,7 +49,6 @@ public class BadgeController implements BadgesApi {
     }
 
     @Override
-
     public ResponseEntity<BadgeDTO> getBadge(Long id) {
         long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 
@@ -57,7 +56,7 @@ public class BadgeController implements BadgesApi {
             BadgeDTO badgeDTO = badgeService.getById(id, applicationId);
             return new ResponseEntity(badgeDTO, HttpStatus.OK);
         } catch (ApiException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -69,7 +68,7 @@ public class BadgeController implements BadgesApi {
         try {
             badgeDTO = badgeService.updateById(id, badge, applicationId);
         } catch (RelatedObjectNotFound | NotFoundException e) {
-            return new ResponseEntity(e.getMessage(), e.getCode());
+            return ResponseEntity.notFound().build();
         }
 
         return new ResponseEntity(badgeDTO, HttpStatus.OK);

@@ -78,7 +78,7 @@ public class PointScaleSteps extends Steps {
         pointScaleCreateCommands = new ArrayList<>();
         for (int i = 0; i < nbPointScales; i++) {
             PointScaleCreateCommand pointScaleCreateCommand = new PointScaleCreateCommand();
-            pointScaleCreateCommand.setName("CommunityScore " + i);
+            pointScaleCreateCommand.setName("CommunityScore" + i);
             pointScaleCreateCommand.setDescription("Rewards users help to the community");
             pointScaleCreateCommands.add(pointScaleCreateCommand);
         }

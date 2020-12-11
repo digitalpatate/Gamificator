@@ -26,7 +26,7 @@ public class RuleService {
     private final PointScaleRepository pointScaleRepository;
 
     @Synchronized
-    public Long create(RuleCreateCommand ruleCreateCommand, Long applicationId) throws RelatedObjectNotFound {
+    public RuleDTO create(RuleCreateCommand ruleCreateCommand, Long applicationId) throws RelatedObjectNotFound {
         Rule rule = RuleMapper.toEntity(ruleCreateCommand);
         Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new RelatedObjectNotFound("Application"));
 
@@ -34,7 +34,8 @@ public class RuleService {
         rule = ruleRepository.save(rule);
 
         List<Reward> rewards = new LinkedList<>();
-        for(String badgeName : ruleCreateCommand.getThen().getAwardBadges()){
+        List<String> awardBadges = ruleCreateCommand.getThen().getAwardBadges();
+        for(String badgeName : awardBadges){
             Badge badge = badgeRepository.findByNameAndApplicationId(badgeName, application.getId()).orElseThrow(() -> new RelatedObjectNotFound("Badge"));
             BadgeReward badgeReward = new BadgeReward();
             badgeReward.setBadge(badge);
@@ -43,7 +44,8 @@ public class RuleService {
             badgeRewardRepository.save(badgeReward);
         }
 
-        for(AwardPointDTO awardPointDTO : ruleCreateCommand.getThen().getAwardPoints()){
+        List<AwardPointDTO> awardPointDTOS = ruleCreateCommand.getThen().getAwardPoints();
+        for(AwardPointDTO awardPointDTO : awardPointDTOS){
             PointScale pointScale = pointScaleRepository.findByNameAndApplicationId(awardPointDTO.getPointScaleName(), application.getId()).orElseThrow(() -> new RelatedObjectNotFound("PointScale"));
             PointsReward pointsReward = new PointsReward();
             pointsReward.setPointScale(pointScale);
@@ -53,10 +55,15 @@ public class RuleService {
             pointsRewardRepository.save(pointsReward);
         }
 
-        //rewardRepository.saveAll(rewards);
+        ActionDTO actionDTO = new ActionDTO();
+        actionDTO.setAwardPoints(awardPointDTOS);
+        actionDTO.setAwardBadges(awardBadges);
 
-        return rule.getId();
+        RuleDTO ruleDTO = RuleMapper.toDTO(rule);
+        ruleDTO.setThen(actionDTO);
+        return ruleDTO;
     }
+
 
     public void delete(Long id) {
         ruleRepository.deleteById(id);
@@ -67,8 +74,6 @@ public class RuleService {
         List<RuleDTO> rules = new LinkedList<>();
         for (Rule rule : ruleRepository.findAll()){
             RuleDTO ruleDTO = RuleMapper.toDTO(rule);
-
-            ActionDTO actionDTO = new ActionDTO();
 
             List<PointsReward> pointsRewards = pointsRewardRepository.findAllByRuleId(rule.getId());
             List<AwardPointDTO> awardPointDTOS = new LinkedList<>();
@@ -86,6 +91,7 @@ public class RuleService {
                 badges.add(br.getBadge().getName());
             });
 
+            ActionDTO actionDTO = new ActionDTO();
             actionDTO.setAwardPoints(awardPointDTOS);
             actionDTO.setAwardBadges(badges);
             ruleDTO.setThen(actionDTO);
