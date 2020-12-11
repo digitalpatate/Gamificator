@@ -169,8 +169,7 @@ paths:
           content:
             'application/json':
               schema:
-                type: integer
-                format: int64
+                $ref: '#/components/schemas/RuleDTO'
 
     get:
       description: get the list of all rule

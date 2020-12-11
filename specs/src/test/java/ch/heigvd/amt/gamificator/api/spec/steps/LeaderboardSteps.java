@@ -3,20 +3,16 @@ package ch.heigvd.amt.gamificator.api.spec.steps;
 
 import ch.heigvd.amt.gamificator.ApiException;
 import ch.heigvd.amt.gamificator.ApiResponse;
-import ch.heigvd.amt.gamificator.api.dto.*;
-import ch.heigvd.amt.gamificator.api.dto.ActionDTO;
 import ch.heigvd.amt.gamificator.api.dto.AwardPointDTO;
-import ch.heigvd.amt.gamificator.api.dto.ConditionDTO;
 import ch.heigvd.amt.gamificator.api.dto.CreateEventCommand;
 import ch.heigvd.amt.gamificator.api.dto.LeaderBoardDTO;
-import ch.heigvd.amt.gamificator.api.dto.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.dto.PointScaleDTO;
-import ch.heigvd.amt.gamificator.api.dto.RuleCreateCommand;
+import ch.heigvd.amt.gamificator.api.dto.RuleDTO;
+import ch.heigvd.amt.gamificator.api.dto.UserDTO;
+import ch.heigvd.amt.gamificator.api.dto.UserScoreDTO;
 import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -25,7 +21,8 @@ import static org.junit.Assert.*;
 
 public class LeaderboardSteps extends Steps {
     private String lastCreatedPointScaleName;
-    private HashMap<String, Long> scores;
+    private HashMap<UUID, Integer> scores = new HashMap<>();
+    private RuleDTO lastCreatedRule;
 
     public LeaderboardSteps(Environment environment) {
         super(environment);
@@ -34,8 +31,31 @@ public class LeaderboardSteps extends Steps {
     @And("I receive the correct leaderboard")
     public void iReceiveTheCorrectLeaderboard() {
         LeaderBoardDTO leaderBoardDTO = (LeaderBoardDTO) getEnvironment().getLastApiResponse().getData();
-
         assertNotNull(leaderBoardDTO);
+
+        List<UserScoreDTO> userScoreDTOS = new LinkedList<>();
+
+        scores.forEach((k,v) -> {
+            try {
+                ApiResponse apiResponse = getApi().getUserWithHttpInfo(k);
+                getEnvironment().processApiResponse(apiResponse);
+            } catch (ApiException e) {
+                getEnvironment().processApiException(e);
+            }
+
+            UserDTO userDTO = (UserDTO) getEnvironment().getLastApiResponse().getData();
+
+            UserScoreDTO userScoreDTO = new UserScoreDTO();
+            userScoreDTO.setUser(userDTO);
+            userScoreDTO.setScore(v);
+            userScoreDTOS.add(userScoreDTO);
+        });
+
+        userScoreDTOS.sort(Comparator.comparing(UserScoreDTO::getScore).reversed().thenComparing(u -> u.getUser().getUuid()));
+        LeaderBoardDTO expectedLeaderboardDTO = new LeaderBoardDTO();
+        expectedLeaderboardDTO.setLeaderboard(userScoreDTOS);
+
+        assertEquals(expectedLeaderboardDTO, leaderBoardDTO);
     }
 
     @And("I get the leaderboard of the last created point scale")
@@ -50,13 +70,19 @@ public class LeaderboardSteps extends Steps {
 
     @And("I create {int} events triggering this rule for {int} differents users")
     public void iCreateEventsTriggeringThisRuleForDifferentsUsers(int nbEvents, int nbUsers) {
-        for(int user = 0; user < nbUsers; ++user) {
-            String uuid = "9723f086-a2f5-41af-b8a1-" + String.format("%016d", user);
+        List<AwardPointDTO> awardPointDTOs = lastCreatedRule.getThen().getAwardPoints();
+        AwardPointDTO awardPointDTO = awardPointDTOs.get(awardPointDTOs.size() - 1);
+        int pointsAwarded = awardPointDTO.getValue();
+
+        int initialNbOfUsers = scores.size();
+
+        for(int user = initialNbOfUsers; user < initialNbOfUsers + nbUsers; ++user) {
+            UUID uuid = UUID.fromString("22d89507-be5b-48fc-8779-" + String.format("%012d", user));
 
             for(int event = 0; event < nbEvents; ++event) {
                 CreateEventCommand createEventCommand = new CreateEventCommand();
-                createEventCommand.setUserUUID(UUID.fromString(uuid));
-                createEventCommand.setType("my first post "/* + counter*/);
+                createEventCommand.setUserUUID(uuid);
+                createEventCommand.setType(lastCreatedRule.getCondition().getType());
                 createEventCommand.setTimestamp(OffsetDateTime.now());
 
                 try {
@@ -64,13 +90,16 @@ public class LeaderboardSteps extends Steps {
                 } catch (ApiException e) {
                     e.printStackTrace();
                 }
-
-                long currentScore = scores.get(uuid);
-
-                /*if(currentScore != null) {
-
-                }*/
             }
+
+            int score = nbEvents * pointsAwarded;
+            Integer currentScore = scores.get(uuid);
+
+            if(currentScore != null) {
+                score += currentScore;
+            }
+
+            scores.put(uuid, score);
         }
     }
 
@@ -82,6 +111,6 @@ public class LeaderboardSteps extends Steps {
 
     @And("I retrieve the last created rule")
     public void iRetrieveTheLastCreatedRule() {
-        //getApi().getR
+        lastCreatedRule = (RuleDTO) getEnvironment().getLastApiResponse().getData();
     }
 }

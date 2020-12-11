@@ -138,7 +138,7 @@ paths:
   /users/{uuid}:
     get:
       description: get one user, by uuid
-      operationId: getUser
+      operationId: getUserByUUID
       parameters:
         - in: path
           name: uuid
@@ -169,8 +169,7 @@ paths:
           content:
             'application/json':
               schema:
-                type: integer
-                format: int64
+                $ref: '#/components/schemas/RuleDTO'
 
     get:
       description: get the list of all rule
@@ -310,7 +309,6 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/LeaderBoardDTO'
-
 
 components:
   securitySchemes:

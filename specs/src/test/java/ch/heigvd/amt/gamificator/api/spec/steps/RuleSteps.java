@@ -1,16 +1,18 @@
 package ch.heigvd.amt.gamificator.api.spec.steps;
 
+import ch.heigvd.amt.gamificator.api.dto.*;
+import ch.heigvd.amt.gamificator.api.dto.ActionDTO;
+import ch.heigvd.amt.gamificator.api.dto.AwardPointDTO;
+import ch.heigvd.amt.gamificator.api.dto.BadgeDTO;
+import ch.heigvd.amt.gamificator.api.dto.ConditionDTO;
+import ch.heigvd.amt.gamificator.api.dto.PointScaleDTO;
+import ch.heigvd.amt.gamificator.api.dto.RuleCreateCommand;
+import ch.heigvd.amt.gamificator.api.dto.RuleDTO;
 import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import ch.heigvd.amt.gamificator.ApiException;
 import ch.heigvd.amt.gamificator.ApiResponse;
-import ch.heigvd.amt.gamificator.api.dto.BadgeDTO;
-import ch.heigvd.amt.gamificator.api.dto.PointScaleDTO;
-import ch.heigvd.amt.gamificator.api.dto.AwardPointDTO;
-import ch.heigvd.amt.gamificator.api.dto.ActionDTO;
-import ch.heigvd.amt.gamificator.api.dto.RuleCreateCommand;
-import ch.heigvd.amt.gamificator.api.dto.ConditionDTO;
 import io.cucumber.java.en.When;
 import lombok.extern.java.Log;
 
@@ -100,9 +102,9 @@ public class RuleSteps extends Steps {
         }
     }
 
-    @And("I receive the last created rule id")
-    public void iReceiveTheLastCreatedRuleId() {
-        Long ruleDTOId = (Long) getEnvironment().getLastApiResponse().getData();
-        assertNotNull(ruleDTOId);
+    @And("I receive the last created rule")
+    public void iReceiveTheLastCreatedRule() {
+        RuleDTO ruleDTO = (RuleDTO) getEnvironment().getLastApiResponse().getData();
+        assertNotNull(ruleDTO);
     }
 }
