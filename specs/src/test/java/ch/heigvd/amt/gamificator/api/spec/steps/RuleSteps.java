@@ -31,7 +31,9 @@ public class RuleSteps extends Steps {
 
     @Given("I GET all point scales and badges created")
     public void iGETAllPointScalesAndBadgesCreated() {
-        List<PointScaleDTO> pointScaleDTOAPI = new ArrayList<>();
+        awardPoints = new ArrayList<>();
+        awardBadges = new ArrayList<>();
+
         try {
             ApiResponse apiResponse = getApi().getAllPointScalesWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
@@ -39,7 +41,7 @@ public class RuleSteps extends Steps {
             getEnvironment().processApiException(e);
         }
 
-        pointScaleDTOAPI = (List<PointScaleDTO>) getEnvironment().getLastApiResponse().getData();
+        List<PointScaleDTO> pointScaleDTOAPI = (List<PointScaleDTO>) getEnvironment().getLastApiResponse().getData();
 
         for (PointScaleDTO pointScaleDTO : pointScaleDTOAPI){
             AwardPointDTO awardPointDTO = new AwardPointDTO();
@@ -48,7 +50,6 @@ public class RuleSteps extends Steps {
             awardPoints.add(awardPointDTO);
         }
 
-        List<BadgeDTO> badgeDTOAPI = new ArrayList<>();
         try {
             ApiResponse apiResponse = getApi().getAllbadgesWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
@@ -56,7 +57,7 @@ public class RuleSteps extends Steps {
             getEnvironment().processApiException(e);
         }
 
-        badgeDTOAPI = (List<BadgeDTO>) getEnvironment().getLastApiResponse().getData();
+        List<BadgeDTO> badgeDTOAPI = (List<BadgeDTO>) getEnvironment().getLastApiResponse().getData();
 
         for (BadgeDTO badgeDTO : badgeDTOAPI){
             awardBadges.add(badgeDTO.getName());
