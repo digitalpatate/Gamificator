@@ -19,4 +19,4 @@ Feature: Basic operations on rules
     And there is 1 rule payload
     When I POST the rule payload to the /rules endpoint
     Then I receive a 201 status code
-    And I receive the last created rule id
+    And I receive the last created rule

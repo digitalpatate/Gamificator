@@ -49,9 +49,10 @@ public class Environment {
     }
 
     public void addSignature(String url){
-        String signature = Signature.generateSignature(String.format("%s%s%s",apiKey,this.api.getApiClient().getBasePath(),url),apiSecret);
+        String signature = Signature.generateSignature(String.format("%s%s%s",apiKey,this.api.getApiClient().getBasePath(),url), apiSecret);
         this.api.getApiClient().addDefaultHeader("signature", signature);
     }
+
     public void reset() {
 
     }
