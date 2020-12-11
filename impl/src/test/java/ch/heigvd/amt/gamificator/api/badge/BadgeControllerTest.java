@@ -107,5 +107,24 @@ public class BadgeControllerTest {
         assertNotNull(badgeDTOsGot.get(1));
     }
 
+    @SneakyThrows
+    @Test
+    public void gettingABadgeShouldRespondItsDTO() {
+        BadgeDTO BadgeDTO = new BadgeDTO();
+        BadgeDTO.setId(1L);
+        BadgeDTO.setName(this.NAME);
+        BadgeDTO.setImageUrl(this.IMG_URL);
 
+
+        when(badgeService.getById(any(Long.class), any(Long.class))).thenReturn(BadgeDTO);
+
+        ResponseEntity responseEntity = badgeController.getBadge(1L);
+        BadgeDTO BadgeDTOGot = (BadgeDTO) responseEntity.getBody();
+
+        assertNotNull(BadgeDTOGot);
+        assertEquals(BadgeDTO.getId(), BadgeDTOGot.getId());
+        assertEquals(BadgeDTO.getName(), BadgeDTOGot.getName());
+        assertEquals(BadgeDTO.getImageUrl(), BadgeDTOGot.getImageUrl());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
 }
