@@ -2,6 +2,8 @@ package ch.heigvd.amt.gamificator.api.badge;
 
 import ch.heigvd.amt.gamificator.api.model.BadgeCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
+import ch.heigvd.amt.gamificator.api.model.BadgeDTO;
+import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.services.SecurityContextService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +21,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -127,4 +128,22 @@ public class BadgeControllerTest {
         assertEquals(BadgeDTO.getImageUrl(), BadgeDTOGot.getImageUrl());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
+
+    @SneakyThrows
+    @Test
+    public void gettingABadgeThatDoesNotExistsShouldRespondNotFound() {
+        BadgeDTO badgeDTO = new BadgeDTO();
+        badgeDTO.setId(1L);
+        badgeDTO.setName(this.NAME);
+        badgeDTO.setImageUrl(this.IMG_URL);
+
+        when(badgeService.getById(1L, 1L))
+                .thenThrow(new NotFoundException("Not found"));
+
+        ResponseEntity responseEntity = badgeController.getBadge(1L);
+        assertNull(responseEntity.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
 }
+
+
