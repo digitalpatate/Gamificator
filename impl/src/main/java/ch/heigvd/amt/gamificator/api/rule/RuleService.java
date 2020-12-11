@@ -26,7 +26,7 @@ public class RuleService {
     private final PointScaleRepository pointScaleRepository;
 
     @Synchronized
-    public long create(RuleCreateCommand ruleCreateCommand, Long applicationId) throws RelatedObjectNotFound {
+    public Long create(RuleCreateCommand ruleCreateCommand, Long applicationId) throws RelatedObjectNotFound {
         Rule rule = RuleMapper.toEntity(ruleCreateCommand);
         Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new RelatedObjectNotFound("Application"));
 
