@@ -27,7 +27,7 @@ public class BadgeSteps extends Steps {
         super(environment);
     }
 
-    @And("I POST the badge payload to the \\/badges endpoints$")
+    @And("I POST the badge payload to the /badges endpoints$")
     public void iPOSTTheBadgePayloadToTheBadgesEndpoints() {
         for (BadgeCreateCommand badgeCreateCommand : badgeCreateCommands) {
             try {

@@ -88,7 +88,7 @@ public class RuleSteps extends Steps {
         }
     }
 
-    @When("I POST the rule payload to the \\/rules endpoint$")
+    @When("I POST the rule payload to the /rules endpoint$")
     public void iPOSTTheRulePayloadToTheRulesEndpoint() {
         for (RuleCreateCommand ruleCreateCommand : ruleCreateCommands) {
             try {
