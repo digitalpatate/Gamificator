@@ -12,12 +12,16 @@ import ch.heigvd.amt.gamificator.api.dto.ActionDTO;
 import ch.heigvd.amt.gamificator.api.dto.RuleCreateCommand;
 import ch.heigvd.amt.gamificator.api.dto.ConditionDTO;
 import io.cucumber.java.en.When;
+import lombok.extern.java.Log;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 
+import static org.junit.Assert.assertNotNull;
+
+@Log
 public class RuleSteps extends Steps {
 
     List<String> awardBadges;
@@ -70,17 +74,21 @@ public class RuleSteps extends Steps {
         for (int i = 0; i < nbRules; i++) {
             counter = i;
             RuleCreateCommand ruleCreateCommand = new RuleCreateCommand();
+
             ConditionDTO conditionDTO = new ConditionDTO();
             conditionDTO.setType("my first post " + counter);
             ruleCreateCommand.setCondition(conditionDTO);
+
             ActionDTO actionDTO = new ActionDTO();
             actionDTO.setAwardBadges(awardBadges);
             actionDTO.setAwardPoints(awardPoints);
             ruleCreateCommand.setThen(actionDTO);
+
+            ruleCreateCommands.add(ruleCreateCommand);
         }
     }
 
-    @When("I POST the rule payload to the \\/rules endpoint")
+    @When("I POST the rule payload to the \\/rules endpoint$")
     public void iPOSTTheRulePayloadToTheRulesEndpoint() {
         for (RuleCreateCommand ruleCreateCommand : ruleCreateCommands) {
             try {
@@ -92,8 +100,9 @@ public class RuleSteps extends Steps {
         }
     }
 
-    @And("I receive the last created rule")
-    public void iReceiveTheCreatedRule() {
-
+    @And("I receive the last created rule id")
+    public void iReceiveTheLastCreatedRuleId() {
+        Long ruleDTOId = (Long) getEnvironment().getLastApiResponse().getData();
+        assertNotNull(ruleDTOId);
     }
 }

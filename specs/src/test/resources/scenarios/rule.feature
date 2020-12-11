@@ -18,5 +18,5 @@ Feature: Basic operations on rules
     Given I GET all point scales and badges created
     And there is 1 rule payload
     When I POST the rule payload to the /rules endpoint
-    Then I receive a 200 status code
-    And I receive the last created rule
+    Then I receive a 201 status code
+    And I receive the last created rule id
