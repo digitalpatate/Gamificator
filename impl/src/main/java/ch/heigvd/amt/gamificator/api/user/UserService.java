@@ -8,6 +8,7 @@ import ch.heigvd.amt.gamificator.repositories.UserRepository;
 import ch.heigvd.amt.gamificator.services.SecurityContextService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -45,5 +46,16 @@ public class UserService {
 
         return userDTOs;
     }
+    public List<UserDTO> findAllPageable(long applicationId, Pageable pageable) {
+        Iterable<User> users = userRepository.findAllByApplicationId(applicationId,pageable);
+        List<UserDTO> userDTOs = new LinkedList<>();
+
+        users.forEach(user -> {
+            userDTOs.add(UserMapper.toDTO(user));
+        });
+
+        return userDTOs;
+    }
+
 
 }
