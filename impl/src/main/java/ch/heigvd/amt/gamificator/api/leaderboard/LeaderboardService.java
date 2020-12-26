@@ -11,6 +11,7 @@ import ch.heigvd.amt.gamificator.repositories.ReputationRepository;
 import ch.heigvd.amt.gamificator.services.SecurityContextService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -33,6 +34,37 @@ public class LeaderboardService {
         List<UserDTO> userDTOs = userService.findAllUserOfApplication(
                 securityContextService.getApplicationIdFromAuthentifiedApp()
         );
+
+        List<UserScoreDTO> userScoreDTOs = new LinkedList<>();
+
+        userDTOs.forEach(userDTO -> {
+            reputationRepository.findByUser(UserMapper.toEntity(userDTO)).ifPresent(reputation -> {
+                int userPoints = reputation.getReward()
+                        .stream()
+                        .filter(reward -> reward instanceof PointsReward)
+                        .map(reward -> (PointsReward) reward)
+                        .filter(pointsReward -> pointsReward.getPointScale().getName().equals(pointScaleName))
+                        .reduce(0, (subtotal, pointsReward) -> subtotal + pointsReward.getPoints(), Integer::sum);
+
+                UserScoreDTO userScoreDTO = new UserScoreDTO();
+                userScoreDTO.setUser(userDTO);
+                userScoreDTO.setScore(userPoints);
+                userScoreDTOs.add(userScoreDTO);
+            });
+        });
+
+        userScoreDTOs.sort(Comparator.comparing(UserScoreDTO::getScore).reversed().thenComparing(u -> u.getUser().getUuid()));
+
+        LeaderBoardDTO leaderBoardDTO = new LeaderBoardDTO();
+        leaderBoardDTO.setLeaderboard(userScoreDTOs);
+
+        return leaderBoardDTO;
+    }
+
+    public LeaderBoardDTO getLeaderboardOnPointScale(String pointScaleName, Pageable pageable) {
+        long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
+
+        List<UserDTO> userDTOs = userService.findAllByApplicationPageable(applicationId,pageable);
 
         List<UserScoreDTO> userScoreDTOs = new LinkedList<>();
 

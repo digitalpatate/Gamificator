@@ -60,7 +60,7 @@ public class UserController implements UsersApi {
         Pageable pageable = PageRequest.of(page,perPage);
         long id = securityContextService.getApplicationIdFromAuthentifiedApp();
 
-        List<UserDTO> usersDTO = userService.findAllPageable(id,pageable);
+        List<UserDTO> usersDTO = userService.findAllByApplicationPageable(id,pageable);
         return new ResponseEntity(usersDTO,HttpStatus.OK);
     }
 }

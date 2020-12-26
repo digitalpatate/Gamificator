@@ -2,6 +2,7 @@ package ch.heigvd.amt.gamificator.repositories;
 
 import ch.heigvd.amt.gamificator.entities.User;
 import ch.heigvd.amt.gamificator.entities.UserId;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
     Iterable<User> findAllByApplicationId(long applicationId);
-    List<User> findAllByApplicationId(long applicationId, Pageable pageable);
+    Page<User> findAllByApplicationId(long applicationId, Pageable pageable);
     Optional<User> findByUserId(UserId userId);
 }
 

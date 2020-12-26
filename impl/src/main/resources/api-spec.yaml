@@ -303,6 +303,14 @@ paths:
 
   /leaderboard/{pointScaleName}:
     parameters:
+      - in: query
+        name: per_page
+        schema:
+          type: integer
+      - in: query
+        name: page
+        schema:
+          type: integer
       - in: path
         name: pointScaleName
         schema:
