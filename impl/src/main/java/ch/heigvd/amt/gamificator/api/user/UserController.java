@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -60,7 +61,8 @@ public class UserController implements UsersApi {
         Pageable pageable = PageRequest.of(page,perPage);
         long id = securityContextService.getApplicationIdFromAuthentifiedApp();
 
-        List<UserDTO> usersDTO = userService.findAllByApplicationPageable(id,pageable);
+        PagedUserDTO usersDTO = userService.findAllByApplicationPageable(id,pageable);
+        usersDTO.setNextPage(page+1);
         return new ResponseEntity(usersDTO,HttpStatus.OK);
     }
 }

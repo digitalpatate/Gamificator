@@ -1,6 +1,7 @@
 package ch.heigvd.amt.gamificator.api.user;
 
 import ch.heigvd.amt.gamificator.api.model.UserDTO;
+import ch.heigvd.amt.gamificator.api.model.UserScoreDTO;
 import ch.heigvd.amt.gamificator.entities.User;
 import ch.heigvd.amt.gamificator.entities.UserId;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
@@ -47,15 +48,9 @@ public class UserService {
 
         return userDTOs;
     }
-    public List<UserDTO> findAllByApplicationPageable(long applicationId, Pageable pageable) {
+    public PagedUserDTO findAllByApplicationPageable(long applicationId, Pageable pageable) {
         Page<User> users = userRepository.findAllByApplicationId(applicationId,pageable);
-        List<UserDTO> userDTOs = new LinkedList<>();
-
-        users.forEach(user -> {
-            userDTOs.add(UserMapper.toDTO(user));
-        });
-
-        return userDTOs;
+        return new PagedUserDTO(users);
     }
 
 

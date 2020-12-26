@@ -28,7 +28,7 @@ public class LeaderboardController implements LeaderboardApi {
         Pageable pageable = PageRequest.of(page,perPage);
 
         LeaderBoardDTO leaderBoardDTO = leaderboardService.getLeaderboardOnPointScale(pointScaleName,pageable);
-
+        leaderBoardDTO.setNextPage((long) (page+1));
 
         return new ResponseEntity<>(leaderBoardDTO, HttpStatus.OK);
     }

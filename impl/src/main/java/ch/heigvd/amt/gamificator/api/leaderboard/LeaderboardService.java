@@ -3,6 +3,7 @@ package ch.heigvd.amt.gamificator.api.leaderboard;
 import ch.heigvd.amt.gamificator.api.model.LeaderBoardDTO;
 import ch.heigvd.amt.gamificator.api.model.UserDTO;
 import ch.heigvd.amt.gamificator.api.model.UserScoreDTO;
+import ch.heigvd.amt.gamificator.api.user.PagedUserDTO;
 import ch.heigvd.amt.gamificator.api.user.UserMapper;
 import ch.heigvd.amt.gamificator.api.user.UserService;
 import ch.heigvd.amt.gamificator.entities.PointsReward;
@@ -64,11 +65,11 @@ public class LeaderboardService {
     public LeaderBoardDTO getLeaderboardOnPointScale(String pointScaleName, Pageable pageable) {
         long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 
-        List<UserDTO> userDTOs = userService.findAllByApplicationPageable(applicationId,pageable);
+        PagedUserDTO userDTOs = userService.findAllByApplicationPageable(applicationId,pageable);
 
         List<UserScoreDTO> userScoreDTOs = new LinkedList<>();
 
-        userDTOs.forEach(userDTO -> {
+        userDTOs.getUsers().forEach(userDTO -> {
             reputationRepository.findByUser(UserMapper.toEntity(userDTO)).ifPresent(reputation -> {
                 int userPoints = reputation.getReward()
                         .stream()
@@ -88,7 +89,8 @@ public class LeaderboardService {
 
         LeaderBoardDTO leaderBoardDTO = new LeaderBoardDTO();
         leaderBoardDTO.setLeaderboard(userScoreDTOs);
-
+        leaderBoardDTO.setNumberOfPage(userDTOs.getNumberOfPage());
+        leaderBoardDTO.setTotal(userDTOs.getTotal());
         return leaderBoardDTO;
     }
 }

@@ -483,6 +483,15 @@ components:
     LeaderBoardDTO:
       type: object
       properties:
+        total:
+          type: integer
+          format: int64
+        nextPage:
+          type: integer
+          format: int64
+        numberOfPage:
+          type: integer
+          format: int64
         leaderboard:
           items:
             $ref: '#/components/schemas/UserScoreDTO'
