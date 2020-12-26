@@ -18,8 +18,8 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">10</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">10</stringProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
@@ -28,7 +28,7 @@
       <hashTree>
         <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">true</boolProp>
-          <stringProp name="LoopController.loops">100</stringProp>
+          <stringProp name="LoopController.loops">1</stringProp>
         </LoopController>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="addApplication" enabled="true">
@@ -148,6 +148,61 @@
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree>
+            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="badgeName" elementType="Argument">
+                  <stringProp name="Argument.name">badgeName</stringProp>
+                  <stringProp name="Argument.value">java</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </Arguments>
+            <hashTree/>
+            <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="true">
+              <boolProp name="resetInterpreter">false</boolProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="script">try {
+	
+	String key = vars.get(&quot;applicationKey&quot;);
+	String secret = vars.get(&quot;applicationSecret&quot;);
+	String url = sampler.getUrl().toString();
+	
+	String data = key+url;
+	
+	
+	String hmacSha1 = org.apache.commons.codec.digest.HmacUtils.hmacSha1Hex(secret, data);
+	byte[] b64Signature = org.apache.commons.codec.binary.Base64.encodeBase64(hmacSha1.getBytes());
+	String signature = new String(b64Signature);
+	vars.put(&quot;signature&quot;,signature);
+}
+catch (Throwable ex) {
+    log.error(&quot;Beanshell failure: &quot;, ex);
+    throw ex;
+}</stringProp>
+            </BeanShellPreProcessor>
+            <hashTree/>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-type</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">X-API-KEY</stringProp>
+                  <stringProp name="Header.value">${applicationKey}</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">X-API-SECRET</stringProp>
+                  <stringProp name="Header.value">${applicationSecret}</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">signature</stringProp>
+                  <stringProp name="Header.value">${signature}</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
             <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Result" enabled="true">
               <boolProp name="ResultCollector.error_logging">false</boolProp>
               <objProp>
@@ -184,43 +239,6 @@
               </objProp>
               <stringProp name="filename">/home/dpage/Desktop/POST on application result.jmx</stringProp>
             </ResultCollector>
-            <hashTree/>
-            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="badgeName" elementType="Argument">
-                  <stringProp name="Argument.name">badgeName</stringProp>
-                  <stringProp name="Argument.value">java</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </Arguments>
-            <hashTree/>
-            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-              <collectionProp name="HeaderManager.headers">
-                <elementProp name="" elementType="Header">
-                  <stringProp name="Header.name">Content-type</stringProp>
-                  <stringProp name="Header.value">application/json</stringProp>
-                </elementProp>
-                <elementProp name="" elementType="Header">
-                  <stringProp name="Header.name">X-API-KEY</stringProp>
-                  <stringProp name="Header.value">${applicationKey}</stringProp>
-                </elementProp>
-                <elementProp name="" elementType="Header">
-                  <stringProp name="Header.name">X-API-SECRET</stringProp>
-                  <stringProp name="Header.value">${applicationSecret}</stringProp>
-                </elementProp>
-              </collectionProp>
-            </HeaderManager>
-            <hashTree/>
-            <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="false">
-              <stringProp name="filename"></stringProp>
-              <stringProp name="parameters"></stringProp>
-              <boolProp name="resetInterpreter">false</boolProp>
-              <stringProp name="script">import org.apache.jmeter.protocol.http.control.Header;
-ampler.getHeaderManager().clear();
-sampler.getHeaderManager().add(new Header(&quot;X-API-KEY&quot;,vars.get(&quot;applicationKey&quot;)));
-sampler.getHeaderManager().add(new Header(&quot;X-API-SECRET&quot;,vars.get(&quot;applicationSecret&quot;)));</stringProp>
-            </BeanShellPreProcessor>
             <hashTree/>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="addPointsScale" enabled="true">
@@ -262,6 +280,51 @@ sampler.getHeaderManager().add(new Header(&quot;X-API-SECRET&quot;,vars.get(&quo
               </collectionProp>
             </Arguments>
             <hashTree/>
+            <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="true">
+              <boolProp name="resetInterpreter">false</boolProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="script">try {
+	
+	String key = vars.get(&quot;applicationKey&quot;);
+	String secret = vars.get(&quot;applicationSecret&quot;);
+	String url = sampler.getUrl().toString();
+	
+	String data = key+url;
+	
+	
+	String hmacSha1 = org.apache.commons.codec.digest.HmacUtils.hmacSha1Hex(secret, data);
+	byte[] b64Signature = org.apache.commons.codec.binary.Base64.encodeBase64(hmacSha1.getBytes());
+	String signature = new String(b64Signature);
+	vars.put(&quot;signature&quot;,signature);
+}
+catch (Throwable ex) {
+    log.error(&quot;Beanshell failure: &quot;, ex);
+    throw ex;
+}</stringProp>
+            </BeanShellPreProcessor>
+            <hashTree/>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-type</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">X-API-KEY</stringProp>
+                  <stringProp name="Header.value">${applicationKey}</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">X-API-SECRET</stringProp>
+                  <stringProp name="Header.value">${applicationSecret}</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">signature</stringProp>
+                  <stringProp name="Header.value">${signature}</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
             <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Result" enabled="true">
               <boolProp name="ResultCollector.error_logging">false</boolProp>
               <objProp>
@@ -298,33 +361,6 @@ sampler.getHeaderManager().add(new Header(&quot;X-API-SECRET&quot;,vars.get(&quo
               </objProp>
               <stringProp name="filename">/home/dpage/Desktop/POST on application result.jmx</stringProp>
             </ResultCollector>
-            <hashTree/>
-            <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="false">
-              <stringProp name="filename"></stringProp>
-              <stringProp name="parameters"></stringProp>
-              <boolProp name="resetInterpreter">false</boolProp>
-              <stringProp name="script">import org.apache.jmeter.protocol.http.control.Header;
-
-sampler.getHeaderManager().add(new Header(&quot;X-API-KEY&quot;,vars.get(&quot;applicationKey&quot;)));
-sampler.getHeaderManager().add(new Header(&quot;X-API-SECRET&quot;,vars.get(&quot;applicationSecret&quot;)));</stringProp>
-            </BeanShellPreProcessor>
-            <hashTree/>
-            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-              <collectionProp name="HeaderManager.headers">
-                <elementProp name="" elementType="Header">
-                  <stringProp name="Header.name">Content-type</stringProp>
-                  <stringProp name="Header.value">application/json</stringProp>
-                </elementProp>
-                <elementProp name="" elementType="Header">
-                  <stringProp name="Header.name">X-API-KEY</stringProp>
-                  <stringProp name="Header.value">${applicationKey}</stringProp>
-                </elementProp>
-                <elementProp name="" elementType="Header">
-                  <stringProp name="Header.name">X-API-SECRET</stringProp>
-                  <stringProp name="Header.value">${applicationSecret}</stringProp>
-                </elementProp>
-              </collectionProp>
-            </HeaderManager>
             <hashTree/>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="addRule" enabled="true">
@@ -378,6 +414,51 @@ sampler.getHeaderManager().add(new Header(&quot;X-API-SECRET&quot;,vars.get(&quo
               </collectionProp>
             </Arguments>
             <hashTree/>
+            <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="true">
+              <boolProp name="resetInterpreter">false</boolProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="script">try {
+	
+	String key = vars.get(&quot;applicationKey&quot;);
+	String secret = vars.get(&quot;applicationSecret&quot;);
+	String url = sampler.getUrl().toString();
+	
+	String data = key+url;
+	
+	
+	String hmacSha1 = org.apache.commons.codec.digest.HmacUtils.hmacSha1Hex(secret, data);
+	byte[] b64Signature = org.apache.commons.codec.binary.Base64.encodeBase64(hmacSha1.getBytes());
+	String signature = new String(b64Signature);
+	vars.put(&quot;signature&quot;,signature);
+}
+catch (Throwable ex) {
+    log.error(&quot;Beanshell failure: &quot;, ex);
+    throw ex;
+}</stringProp>
+            </BeanShellPreProcessor>
+            <hashTree/>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-type</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">X-API-KEY</stringProp>
+                  <stringProp name="Header.value">${applicationKey}</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">X-API-SECRET</stringProp>
+                  <stringProp name="Header.value">${applicationSecret}</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">signature</stringProp>
+                  <stringProp name="Header.value">${signature}</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
             <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Result" enabled="true">
               <boolProp name="ResultCollector.error_logging">false</boolProp>
               <objProp>
@@ -415,36 +496,10 @@ sampler.getHeaderManager().add(new Header(&quot;X-API-SECRET&quot;,vars.get(&quo
               <stringProp name="filename">/home/dpage/Desktop/POST on application result.jmx</stringProp>
             </ResultCollector>
             <hashTree/>
-            <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="false">
-              <stringProp name="filename"></stringProp>
-              <stringProp name="parameters"></stringProp>
-              <boolProp name="resetInterpreter">false</boolProp>
-              <stringProp name="script">import org.apache.jmeter.protocol.http.control.Header;
-sampler.getHeaderManager().add(new Header(&quot;X-API-KEY&quot;,vars.get(&quot;applicationKey&quot;)));
-sampler.getHeaderManager().add(new Header(&quot;X-API-SECRET&quot;,vars.get(&quot;applicationSecret&quot;)));</stringProp>
-            </BeanShellPreProcessor>
-            <hashTree/>
-            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-              <collectionProp name="HeaderManager.headers">
-                <elementProp name="" elementType="Header">
-                  <stringProp name="Header.name">Content-type</stringProp>
-                  <stringProp name="Header.value">application/json</stringProp>
-                </elementProp>
-                <elementProp name="" elementType="Header">
-                  <stringProp name="Header.name">X-API-KEY</stringProp>
-                  <stringProp name="Header.value">${applicationKey}</stringProp>
-                </elementProp>
-                <elementProp name="" elementType="Header">
-                  <stringProp name="Header.name">X-API-SECRET</stringProp>
-                  <stringProp name="Header.value">${applicationSecret}</stringProp>
-                </elementProp>
-              </collectionProp>
-            </HeaderManager>
-            <hashTree/>
           </hashTree>
           <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
             <boolProp name="LoopController.continue_forever">true</boolProp>
-            <stringProp name="LoopController.loops">10</stringProp>
+            <stringProp name="LoopController.loops">1</stringProp>
           </LoopController>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="addEvent" enabled="true">
@@ -454,7 +509,7 @@ sampler.getHeaderManager().add(new Header(&quot;X-API-SECRET&quot;,vars.get(&quo
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">{&#xd;
-  &quot;timestamp&quot;: &quot;${__time(,curTime)}&quot;,&#xd;
+  &quot;timestamp&quot;: &quot;${__time(yyyy-MM-dd&apos;T&apos;hh:mm:ssX)}&quot;,&#xd;
   &quot;type&quot;: &quot;${conditionType}-${loop_counter}&quot;,&#xd;
   &quot;userUUID&quot;: &quot;${__UUID()}&quot;&#xd;
 }</stringProp>
@@ -477,6 +532,61 @@ sampler.getHeaderManager().add(new Header(&quot;X-API-SECRET&quot;,vars.get(&quo
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
             </HTTPSamplerProxy>
             <hashTree>
+              <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="conditionType" elementType="Argument">
+                    <stringProp name="Argument.name">conditionType</stringProp>
+                    <stringProp name="Argument.value">answerJavaQuestion</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </Arguments>
+              <hashTree/>
+              <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="true">
+                <boolProp name="resetInterpreter">false</boolProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="script">try {
+	
+	String key = vars.get(&quot;applicationKey&quot;);
+	String secret = vars.get(&quot;applicationSecret&quot;);
+	String url = sampler.getUrl().toString();
+	
+	String data = key+url;
+	
+	
+	String hmacSha1 = org.apache.commons.codec.digest.HmacUtils.hmacSha1Hex(secret, data);
+	byte[] b64Signature = org.apache.commons.codec.binary.Base64.encodeBase64(hmacSha1.getBytes());
+	String signature = new String(b64Signature);
+	vars.put(&quot;signature&quot;,signature);
+}
+catch (Throwable ex) {
+    log.error(&quot;Beanshell failure: &quot;, ex);
+    throw ex;
+}</stringProp>
+              </BeanShellPreProcessor>
+              <hashTree/>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="" elementType="Header">
+                    <stringProp name="Header.name">Content-type</stringProp>
+                    <stringProp name="Header.value">application/json</stringProp>
+                  </elementProp>
+                  <elementProp name="" elementType="Header">
+                    <stringProp name="Header.name">X-API-KEY</stringProp>
+                    <stringProp name="Header.value">${applicationKey}</stringProp>
+                  </elementProp>
+                  <elementProp name="" elementType="Header">
+                    <stringProp name="Header.name">X-API-SECRET</stringProp>
+                    <stringProp name="Header.value">${applicationSecret}</stringProp>
+                  </elementProp>
+                  <elementProp name="" elementType="Header">
+                    <stringProp name="Header.name">signature</stringProp>
+                    <stringProp name="Header.value">${signature}</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
               <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Result" enabled="true">
                 <boolProp name="ResultCollector.error_logging">false</boolProp>
                 <objProp>
@@ -513,32 +623,6 @@ sampler.getHeaderManager().add(new Header(&quot;X-API-SECRET&quot;,vars.get(&quo
                 </objProp>
                 <stringProp name="filename">/home/dpage/Desktop/POST on application result.jmx</stringProp>
               </ResultCollector>
-              <hashTree/>
-              <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="false">
-                <stringProp name="filename"></stringProp>
-                <stringProp name="parameters"></stringProp>
-                <boolProp name="resetInterpreter">false</boolProp>
-                <stringProp name="script">import org.apache.jmeter.protocol.http.control.Header;
-sampler.getHeaderManager().add(new Header(&quot;X-API-KEY&quot;,vars.get(&quot;applicationKey&quot;)));
-sampler.getHeaderManager().add(new Header(&quot;X-API-SECRET&quot;,vars.get(&quot;applicationSecret&quot;)));</stringProp>
-              </BeanShellPreProcessor>
-              <hashTree/>
-              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-                <collectionProp name="HeaderManager.headers">
-                  <elementProp name="" elementType="Header">
-                    <stringProp name="Header.name">Content-type</stringProp>
-                    <stringProp name="Header.value">application/json</stringProp>
-                  </elementProp>
-                  <elementProp name="" elementType="Header">
-                    <stringProp name="Header.name">X-API-KEY</stringProp>
-                    <stringProp name="Header.value">${applicationKey}</stringProp>
-                  </elementProp>
-                  <elementProp name="" elementType="Header">
-                    <stringProp name="Header.name">X-API-SECRET</stringProp>
-                    <stringProp name="Header.value">${applicationSecret}</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </HeaderManager>
               <hashTree/>
             </hashTree>
           </hashTree>
