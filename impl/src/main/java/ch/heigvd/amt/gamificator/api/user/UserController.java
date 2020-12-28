@@ -55,14 +55,10 @@ public class UserController implements UsersApi {
 
 
     @Override
-    public ResponseEntity<UserDTO> getAllUser(Integer perPage, Integer page) {
-        page = (page != null) ? page : 0;
-        perPage = (perPage != null) ? perPage : 10;
-        Pageable pageable = PageRequest.of(page,perPage);
+    public ResponseEntity<UserDTO> getAllUser() {
         long id = securityContextService.getApplicationIdFromAuthentifiedApp();
 
-        PagedUserDTO usersDTO = userService.findAllByApplicationPageable(id,pageable);
-        usersDTO.setNextPage(page+1);
+        List<UserDTO> usersDTO = userService.findAllUserOfApplication(id);
         return new ResponseEntity(usersDTO,HttpStatus.OK);
     }
 }
