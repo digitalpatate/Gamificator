@@ -62,7 +62,8 @@
           const shaObj = new jsSHA("SHA-1", "TEXT", {
             hmacKey: { value: secret, format: "TEXT" },
           });
-          const data = `${key}${req.url}`;
+          const url = req.url.split('?')[0];
+          const data = `${key}${url}`;
           shaObj.update(data);
           const hmacHEX = shaObj.getHash("HEX");
           const hmac64 = window.btoa(hmacHEX);
