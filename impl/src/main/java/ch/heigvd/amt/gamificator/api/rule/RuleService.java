@@ -2,6 +2,7 @@ package ch.heigvd.amt.gamificator.api.rule;
 
 import ch.heigvd.amt.gamificator.api.model.*;
 import ch.heigvd.amt.gamificator.entities.*;
+import ch.heigvd.amt.gamificator.exceptions.NotAuthorizedException;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.exceptions.RelatedObjectNotFound;
 import ch.heigvd.amt.gamificator.repositories.*;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Synchronized;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -65,14 +67,26 @@ public class RuleService {
     }
 
 
-    public void delete(Long id) {
-        ruleRepository.deleteById(id);
+    public void delete(Long id, Long applicationId) throws NotFoundException, NotAuthorizedException {
+        List<Rule> rules = ruleRepository.findAllByApplicationId(applicationId);
+        if(rules.size() > 0) {
+            for (Rule rule : rules) {
+                if(rule.getId() == id){
+                    if (rule.getApplication().getId() == applicationId) {
+                        ruleRepository.deleteById(id);
+                        return;
+                    } else {
+                        throw new NotAuthorizedException("This application isn't the owner of the rule");
+                    }
+                }
+            }
+        }
+        throw new NotFoundException("Rule doesn't exist");
     }
 
-    public List<RuleDTO> getAllRules() {
-
+    public List<RuleDTO> getAllRules(Long applicationId) {
         List<RuleDTO> rules = new LinkedList<>();
-        for (Rule rule : ruleRepository.findAll()){
+        for (Rule rule : ruleRepository.findAllByApplicationId(applicationId)){
             RuleDTO ruleDTO = RuleMapper.toDTO(rule);
 
             List<PointsReward> pointsRewards = pointsRewardRepository.findAllByRuleId(rule.getId());

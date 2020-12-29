@@ -35,7 +35,7 @@ public class EventService {
     private final UserRepository userRepository;
     private final EventProcessor eventProcessor;
 
-    public void createEvent(@Valid CreateEventCommand createEventCommand) throws NotFoundException {
+    public void createEvent(CreateEventCommand createEventCommand) throws NotFoundException {
         long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 
         Event event = EventMapper.toEntity(createEventCommand);

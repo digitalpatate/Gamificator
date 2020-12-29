@@ -4,6 +4,7 @@ import ch.heigvd.amt.gamificator.api.RulesApi;
 import ch.heigvd.amt.gamificator.api.model.RuleCreateCommand;
 import ch.heigvd.amt.gamificator.api.model.RuleDTO;
 import ch.heigvd.amt.gamificator.api.model.RuleUpdateCommand;
+import ch.heigvd.amt.gamificator.exceptions.NotAuthorizedException;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.exceptions.RelatedObjectNotFound;
 import ch.heigvd.amt.gamificator.services.SecurityContextService;
@@ -44,13 +45,19 @@ public class RuleController implements RulesApi {
 
     @Override
     public ResponseEntity<Void> deleteRule(Long id) {
-        ruleService.delete(id);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
+        try {
+            ruleService.delete(id, applicationId);
+        } catch (NotFoundException | NotAuthorizedException e) {
+            return new ResponseEntity(e.getMessage(), e.getCode());
+        }
+        return new ResponseEntity(HttpStatus.ACCEPTED);
     }
 
     @Override
     public ResponseEntity<List<RuleDTO>> getAllRules() {
-        return new ResponseEntity(ruleService.getAllRules(),HttpStatus.OK);
+        long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
+        return new ResponseEntity(ruleService.getAllRules(applicationId),HttpStatus.OK);
     }
 
     @Override

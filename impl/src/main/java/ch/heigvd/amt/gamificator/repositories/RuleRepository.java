@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface RuleRepository extends CrudRepository<Rule, Long> {
     List<Rule> findAllByApplicationId(long applicationId);
+
+    void deleteByIdAndApplicationId(Long id, Long applicationId);
 }
