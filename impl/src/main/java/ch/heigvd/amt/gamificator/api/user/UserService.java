@@ -1,6 +1,7 @@
 package ch.heigvd.amt.gamificator.api.user;
 
 import ch.heigvd.amt.gamificator.api.model.UserDTO;
+import ch.heigvd.amt.gamificator.api.model.UserScoreDTO;
 import ch.heigvd.amt.gamificator.entities.User;
 import ch.heigvd.amt.gamificator.entities.UserId;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
@@ -8,6 +9,8 @@ import ch.heigvd.amt.gamificator.repositories.UserRepository;
 import ch.heigvd.amt.gamificator.services.SecurityContextService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -45,5 +48,10 @@ public class UserService {
 
         return userDTOs;
     }
+    public PagedUserDTO findAllByApplicationPageable(long applicationId, Pageable pageable) {
+        Page<User> users = userRepository.findAllByApplicationId(applicationId,pageable);
+        return new PagedUserDTO(users);
+    }
+
 
 }

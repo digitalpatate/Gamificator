@@ -15,6 +15,9 @@ import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +36,10 @@ public class UserController implements UsersApi {
     @Autowired
     private UserService userService;
 
+
+    @Autowired
+    private SecurityContextService securityContextService;
+
     @Override
     public ResponseEntity<UserDTO> getUserByUUID(UUID uuid) {
         UserDTO userDTO = null;
@@ -44,5 +51,14 @@ public class UserController implements UsersApi {
         }
 
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
+
+    @Override
+    public ResponseEntity<UserDTO> getAllUser() {
+        long id = securityContextService.getApplicationIdFromAuthentifiedApp();
+
+        List<UserDTO> usersDTO = userService.findAllUserOfApplication(id);
+        return new ResponseEntity(usersDTO,HttpStatus.OK);
     }
 }

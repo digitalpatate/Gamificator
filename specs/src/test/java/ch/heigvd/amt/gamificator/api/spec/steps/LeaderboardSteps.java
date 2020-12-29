@@ -38,7 +38,7 @@ public class LeaderboardSteps extends Steps {
         scores.forEach((k,v) -> {
             try {
                 getEnvironment().addSignature("/users/" + k.toString());
-                ApiResponse apiResponse = getApi().getUserWithHttpInfo(k);
+                ApiResponse apiResponse = getApi().getUserByUUIDWithHttpInfo(k);
                 getEnvironment().processApiResponse(apiResponse);
             } catch (ApiException e) {
                 getEnvironment().processApiException(e);
@@ -54,6 +54,10 @@ public class LeaderboardSteps extends Steps {
 
         userScoreDTOS.sort(Comparator.comparing(UserScoreDTO::getScore).reversed().thenComparing(u -> u.getUser().getUuid()));
         LeaderBoardDTO expectedLeaderboardDTO = new LeaderBoardDTO();
+        expectedLeaderboardDTO.setNextPage(2l);
+        expectedLeaderboardDTO.setNumberOfPage(1l);
+        expectedLeaderboardDTO.nextPage(1l);
+        expectedLeaderboardDTO.total(4l);
         expectedLeaderboardDTO.setLeaderboard(userScoreDTOS);
 
         assertEquals(expectedLeaderboardDTO, leaderBoardDTO);
@@ -63,7 +67,7 @@ public class LeaderboardSteps extends Steps {
     public void iGetTheLeaderboardOfTheLastCreatedPointScale() {
         try {
             getEnvironment().addSignature("/leaderboard/" + lastCreatedPointScaleName);
-            ApiResponse apiResponse = getApi().getLeaderboardWithHttpInfo(lastCreatedPointScaleName);
+            ApiResponse apiResponse = getApi().getLeaderboardWithHttpInfo(lastCreatedPointScaleName,10,0);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);

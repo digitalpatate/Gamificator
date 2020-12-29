@@ -294,6 +294,14 @@ paths:
 
   /leaderboard/{pointScaleName}:
     parameters:
+      - in: query
+        name: per_page
+        schema:
+          type: integer
+      - in: query
+        name: page
+        schema:
+          type: integer
       - in: path
         name: pointScaleName
         schema:
@@ -466,6 +474,15 @@ components:
     LeaderBoardDTO:
       type: object
       properties:
+        total:
+          type: integer
+          format: int64
+        nextPage:
+          type: integer
+          format: int64
+        numberOfPage:
+          type: integer
+          format: int64
         leaderboard:
           items:
             $ref: '#/components/schemas/UserScoreDTO'

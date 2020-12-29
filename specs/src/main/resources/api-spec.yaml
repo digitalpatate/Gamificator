@@ -138,7 +138,7 @@ paths:
   /users/{uuid}:
     get:
       description: get one user, by uuid
-      operationId: getUser
+      operationId: getUserByUUID
       parameters:
         - in: path
           name: uuid
@@ -294,6 +294,14 @@ paths:
 
   /leaderboard/{pointScaleName}:
     parameters:
+      - in: query
+        name: per_page
+        schema:
+          type: integer
+      - in: query
+        name: page
+        schema:
+          type: integer
       - in: path
         name: pointScaleName
         schema:
@@ -309,7 +317,6 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/LeaderBoardDTO'
-
 
 components:
   securitySchemes:
@@ -467,6 +474,15 @@ components:
     LeaderBoardDTO:
       type: object
       properties:
+        total:
+          type: integer
+          format: int64
+        nextPage:
+          type: integer
+          format: int64
+        numberOfPage:
+          type: integer
+          format: int64
         leaderboard:
           items:
             $ref: '#/components/schemas/UserScoreDTO'
