@@ -13,14 +13,15 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import ch.heigvd.amt.gamificator.ApiException;
 import ch.heigvd.amt.gamificator.ApiResponse;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.java.Log;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @Log
@@ -29,7 +30,8 @@ public class RuleSteps extends Steps {
     List<String> awardBadges;
     List<AwardPointDTO> awardPoints;
     List<RuleCreateCommand> ruleCreateCommands;
-    int counter;
+    RuleDTO lastCreatedRule;
+    int counter = 0;
 
     public RuleSteps(Environment environment) {
         super(environment);
@@ -73,10 +75,10 @@ public class RuleSteps extends Steps {
     }
 
     @And("there is {int} rule payload")
-    public void thereIsRulePayload(int nbRules) throws URISyntaxException {
+    public void thereIsRulePayload(int nbRules) {
         ruleCreateCommands = new ArrayList<>();
         for (int i = 0; i < nbRules; i++) {
-            counter = i;
+            counter++;
             RuleCreateCommand ruleCreateCommand = new RuleCreateCommand();
 
             ConditionDTO conditionDTO = new ConditionDTO();
@@ -108,7 +110,42 @@ public class RuleSteps extends Steps {
 
     @And("I receive the last created rule")
     public void iReceiveTheLastCreatedRule() {
-        RuleDTO ruleDTO = (RuleDTO) getEnvironment().getLastApiResponse().getData();
-        assertNotNull(ruleDTO);
+        lastCreatedRule = (RuleDTO) getEnvironment().getLastApiResponse().getData();
+        assertNotNull(lastCreatedRule);
+    }
+
+    @And("I PUT the last created rule payload to the /rules endpoint$")
+    public void iPUTTheLastCreatedRulePayloadToTheRulesEndpoint() {
+        try {
+            RuleUpdateCommand ruleUpdateCommand = new RuleUpdateCommand();
+            ruleUpdateCommand.setCondition(ruleCreateCommands.get(0).getCondition());
+            ruleUpdateCommand.setThen(ruleCreateCommands.get(0).getThen());
+            getEnvironment().addSignature(String.format("/rules/%d", lastCreatedRule.getId()));
+
+            ApiResponse apiResponse =
+                    getApi().updateRuleWithHttpInfo(lastCreatedRule.getId(), ruleUpdateCommand);
+            getEnvironment().processApiResponse(apiResponse);
+        } catch (ApiException e) {
+            getEnvironment().processApiException(e);
+        }
+    }
+
+    @When("I GET all rules")
+    public void iGETAllRules() {
+        try {
+            getEnvironment().addSignature("/rules");
+
+            ApiResponse apiResponse =
+                    getApi().getAllRulesWithHttpInfo();
+            getEnvironment().processApiResponse(apiResponse);
+        } catch (ApiException e) {
+            getEnvironment().processApiException(e);
+        }
+    }
+
+    @Then("I receive {int} rules")
+    public void iReceiveRules(int nbRules) {
+        List<RuleDTO> ruleDTOS = (List<RuleDTO>) getEnvironment().getLastApiResponse().getData();
+        assertEquals(nbRules, ruleDTOS.size());
     }
 }
