@@ -75,7 +75,7 @@ public class ApplicationSteps extends Steps {
             getEnvironment().getApi().getApiClient().addDefaultHeader("x-api-key", getEnvironment().getApiKey());
             getEnvironment().addSignature(String.format("/applications/%d", applicationCreateDTO.getId()));
 
-            ApiResponse apiResponse = getApi().getApplicationWithHttpInfo();
+            ApiResponse apiResponse = getApi().updateApplicationWithHttpInfo((long)applicationCreateDTO.getId(), applicationCreateCommand);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);

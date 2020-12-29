@@ -68,7 +68,7 @@ public class BadgeSteps extends Steps {
             BadgeDTO badgeDTO = ((BadgeDTO) getEnvironment().getLastApiResponse().getData());
             long id = badgeDTO.getId();
             getEnvironment().addSignature(String.format("/badges/%d",id));
-            log.info(String.valueOf(id));
+
             ApiResponse apiResponse = getApi().getBadgeWithHttpInfo(id);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
