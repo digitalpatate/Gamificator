@@ -148,4 +148,18 @@ public class RuleSteps extends Steps {
         List<RuleDTO> ruleDTOS = (List<RuleDTO>) getEnvironment().getLastApiResponse().getData();
         assertEquals(nbRules, ruleDTOS.size());
     }
+
+    @When("I DELETE the previously created rule")
+    public void iDELETEThePreviouslyCreatedRule() {
+        try {
+            long id = ((RuleDTO) getEnvironment().getLastApiResponse().getData()).getId();
+            getEnvironment().addSignature(String.format("/rules/%d", id));
+
+            ApiResponse apiResponse =
+                    getApi().deleteRuleWithHttpInfo(id);
+            getEnvironment().processApiResponse(apiResponse);
+        } catch (ApiException e) {
+            getEnvironment().processApiException(e);
+        }
+    }
 }
