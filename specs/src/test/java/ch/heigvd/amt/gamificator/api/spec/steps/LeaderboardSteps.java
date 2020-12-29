@@ -12,6 +12,7 @@ import ch.heigvd.amt.gamificator.api.dto.UserDTO;
 import ch.heigvd.amt.gamificator.api.dto.UserScoreDTO;
 import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
 import io.cucumber.java.en.And;
+import lombok.extern.java.Log;
 
 import java.net.URI;
 import java.time.OffsetDateTime;

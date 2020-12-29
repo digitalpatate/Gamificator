@@ -30,6 +30,7 @@ public class CommonSteps extends Steps {
         getEnvironment().setApiKey(applicationCreateDTO.getKey());
         getEnvironment().setApiSecret(applicationCreateDTO.getSecret());
         getEnvironment().getApi().getApiClient().addDefaultHeader("x-api-key", getEnvironment().getApiKey());
-        //getEnvironment().getApi().getApiClient().addDefaultHeader("X-API-SECRET", getEnvironment().getApiSecret());
     }
+
+
 }

@@ -111,7 +111,7 @@ public class BadgeSteps extends Steps {
         assertEquals(badgeDTO.getImageUrl(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getImageUrl());
     }
 
-    @And("I PUT the last created badge payload to the \\/badges endpoints")
+    @And("I PUT the last created badge payload to the /badges endpoints$")
     public void iPUTTheLastCreatedBadgePayloadToTheBadgesEndpoints() {
         try {
             BadgeDTO badgeDTO = new BadgeDTO();

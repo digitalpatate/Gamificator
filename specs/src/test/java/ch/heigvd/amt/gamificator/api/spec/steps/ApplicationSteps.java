@@ -51,9 +51,6 @@ public class ApplicationSteps extends Steps {
 
     @When("I send a GET to the URL in the location header")
     public void iSendAGETToTheURLInTheLocationHeader() {
-        Long id = Long.valueOf(getEnvironment().getLastReceivedLocationHeader()
-                .substring(getEnvironment().getLastReceivedLocationHeader().lastIndexOf('/') + 1));
-
         try {
             getEnvironment().addSignature("/applications");
             ApiResponse apiResponse = getApi().getApplicationWithHttpInfo();
@@ -69,14 +66,16 @@ public class ApplicationSteps extends Steps {
         assertEquals(applicationCreateCommand, applicationCreateDTO);
     }
 
-    @And("there is an application with the id 1")
-    public void thereIsAnApplicationWithTheId1() throws URISyntaxException {
-        ApplicationCreateCommand applicationCreateCommand = new ApplicationCreateCommand()
-                .name("Test app")
-                .url(new URI("http://localhost:9090"));
-
+    @And("I PUT the last created application payload to the /applications endpoint$")
+    public void iPUTTheLastCreatedApplicationPayloadToTheApplicationsEndpoint() {
         try {
-            ApiResponse apiResponse = getApi().createApplicationWithHttpInfo(applicationCreateCommand);
+            ApplicationCreateDTO applicationCreateDTO = (ApplicationCreateDTO) getEnvironment().getLastApiResponse().getData();
+            getEnvironment().setApiKey(applicationCreateDTO.getKey());
+            getEnvironment().setApiSecret(applicationCreateDTO.getSecret());
+            getEnvironment().getApi().getApiClient().addDefaultHeader("x-api-key", getEnvironment().getApiKey());
+            getEnvironment().addSignature(String.format("/applications/%d", applicationCreateDTO.getId()));
+
+            ApiResponse apiResponse = getApi().getApplicationWithHttpInfo();
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);

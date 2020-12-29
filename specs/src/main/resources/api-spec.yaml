@@ -38,6 +38,7 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/ApplicationDTO'
+  /applications/{id}:
     put:
       description: Update an application
       operationId: updateApplication
