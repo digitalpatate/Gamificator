@@ -19,14 +19,12 @@ Feature: Basic operations on badges
     Then I receive a 201 status code
     And I receive the created badge
 
-
-  Scenario: get all badge
-    Given there is 2 badge payload
+  Scenario: get all badges
+    Given there is 20 badge payload
     And I POST the badge payload to the /badges endpoints
     When I send a GET to the badge endpoint
     Then I receive a 200 status code
-    And I receive 2 badges with different id
-
+    And I receive 20 badges with different id
 
   Scenario: update a badge
     Given there is 1 badge payload

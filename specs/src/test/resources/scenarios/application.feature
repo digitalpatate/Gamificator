@@ -13,7 +13,10 @@ Feature: Basic operations on application
     When I POST the application payload to the /applications endpoint
     Then I receive a 201 status code
 
-#
-#  Scenario: Delete an application
-#    When I send a DELETE to the application endpoint
-#    Then I receive a 204 status code
+  Scenario: update an application
+    Given I have a application payload
+    When I POST the application payload to the /applications endpoint
+    Then I receive a 201 status code
+    Given I have a application payload
+    And I PUT the last created application payload to the /applications endpoint
+    Then I receive a 200 status code
