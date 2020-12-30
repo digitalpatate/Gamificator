@@ -61,11 +61,10 @@ public class RuleController implements RulesApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateRule(Long id, @Valid RuleUpdateCommand ruleUpdateCommand) {
-
+    public ResponseEntity<Void> updateRule(Long id, RuleUpdateCommand ruleUpdateCommand) {
         try {
             RuleDTO ruleDTO = ruleService.update(id, ruleUpdateCommand);
-            return new ResponseEntity(ruleDTO,HttpStatus.OK);
+            return new ResponseEntity(ruleDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity(e.getMessage(), e.getCode());
         }

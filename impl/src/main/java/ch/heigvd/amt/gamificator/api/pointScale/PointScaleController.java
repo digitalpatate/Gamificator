@@ -96,6 +96,6 @@ public class PointScaleController implements PointScalesApi {
             return ResponseEntity.notFound().build();
         }
 
-        return new ResponseEntity<>(pointScaleDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(pointScaleDTO, HttpStatus.OK);
     }
 }
