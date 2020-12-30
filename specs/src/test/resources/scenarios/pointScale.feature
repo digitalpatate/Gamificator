@@ -26,3 +26,13 @@ Feature: Basic operations on point scale
     Then I receive a 200 status code
     And I receive 2 point scales with different id
 
+  Scenario: update a point scale
+    Given there is 1 point scale payload
+    And I POST the point scale payload to the /pointScales endpoint
+    Then I receive a 201 status code
+    And I receive the created point scale
+    Given there is 1 point scale payload
+    And I PUT the last created point scale payload to the /pointScales endpoint
+    Then I receive a 201 status code
+    And I receive the updated point scale
+

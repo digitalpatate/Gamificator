@@ -104,13 +104,6 @@ public class BadgeSteps extends Steps {
         }
     }
 
-    @And("I receive the updated badge")
-    public void iReceiveTheUpdatedBadge() {
-        BadgeDTO badgeDTO = (BadgeDTO) getEnvironment().getLastApiResponse().getData();
-        assertEquals(badgeDTO.getName(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getName());
-        assertEquals(badgeDTO.getImageUrl(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getImageUrl());
-    }
-
     @And("I PUT the last created badge payload to the /badges endpoints$")
     public void iPUTTheLastCreatedBadgePayloadToTheBadgesEndpoints() {
         try {
@@ -126,5 +119,12 @@ public class BadgeSteps extends Steps {
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
         }
+    }
+
+    @And("I receive the updated badge")
+    public void iReceiveTheUpdatedBadge() {
+        BadgeDTO badgeDTO = (BadgeDTO) getEnvironment().getLastApiResponse().getData();
+        assertEquals(badgeDTO.getName(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getName());
+        assertEquals(badgeDTO.getImageUrl(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getImageUrl());
     }
 }
