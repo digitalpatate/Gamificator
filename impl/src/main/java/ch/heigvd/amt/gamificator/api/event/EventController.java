@@ -18,7 +18,7 @@ public class EventController implements EventsApi {
     private final EventService eventService;
 
     @Override
-    public ResponseEntity<Void> createEvent(@Valid CreateEventCommand createEventCommand) {
+    public ResponseEntity<Void> createEvent(CreateEventCommand createEventCommand) {
 
         try {
             eventService.createEvent(createEventCommand);

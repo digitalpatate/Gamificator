@@ -3,6 +3,7 @@ package ch.heigvd.amt.gamificator.services;
 import ch.heigvd.amt.gamificator.api.model.ConditionDTO;
 import ch.heigvd.amt.gamificator.api.rule.RuleMapper;
 import ch.heigvd.amt.gamificator.entities.*;
+import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.BadgeRepository;
 import ch.heigvd.amt.gamificator.repositories.PointScaleRepository;
 import ch.heigvd.amt.gamificator.repositories.RewardRepository;
@@ -26,7 +27,7 @@ public class EventProcessor {
     private final RuleRepository ruleRepository;
     private final RewardRepository rewardRepository;
 
-    public void process(Event event, long applicationId) {
+    public void process(Event event, long applicationId) throws NotFoundException {
         List<Rule> rules = ruleRepository.findAllByApplicationId(applicationId);
 
         rules = rules.stream().filter(rule ->  {
@@ -34,6 +35,10 @@ public class EventProcessor {
 
             return conditionDTO.getType().equals(event.getType());
         }).collect(Collectors.toList());
+
+        if(rules.size() < 0){
+            throw new NotFoundException("No rules have been found with the given name");
+        }
 
         for (Rule rule: rules) {
             List<Reward> rewards = rewardRepository.findByRuleId(rule.getId());

@@ -53,7 +53,7 @@ public class EventService {
             user.setApplication(ApplicationMapper.toEntity(applicationDTO));
             userRepository.save(user);
         } else {
-            user =  oUser.get();
+            user = oUser.get();
         }
 
         event.setUser(user);
