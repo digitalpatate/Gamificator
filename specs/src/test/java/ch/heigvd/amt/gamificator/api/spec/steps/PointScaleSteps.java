@@ -1,6 +1,7 @@
 package ch.heigvd.amt.gamificator.api.spec.steps;
 
 import ch.heigvd.amt.gamificator.ApiResponse;
+import ch.heigvd.amt.gamificator.api.dto.BadgeDTO;
 import ch.heigvd.amt.gamificator.api.dto.PointScaleCreateCommand;
 import ch.heigvd.amt.gamificator.api.dto.PointScaleDTO;
 import ch.heigvd.amt.gamificator.api.spec.helpers.Environment;
@@ -19,6 +20,8 @@ import static org.junit.Assert.*;
 public class PointScaleSteps extends Steps {
 
     List<PointScaleCreateCommand> pointScaleCreateCommands;
+    PointScaleDTO lastCreatedPointScale;
+    int counter = 0;
 
     public PointScaleSteps(Environment environment) {
         super(environment);
@@ -39,9 +42,9 @@ public class PointScaleSteps extends Steps {
 
     @And("I receive the created point scale")
     public void iReceiveTheCreatedPointScale() {
-        PointScaleDTO pointScaleDTO = (PointScaleDTO) getEnvironment().getLastApiResponse().getData();
-        assertEquals(pointScaleDTO.getName(), pointScaleCreateCommands.get(pointScaleCreateCommands.size() - 1).getName());
-        assertEquals(pointScaleDTO.getDescription(), pointScaleCreateCommands.get(pointScaleCreateCommands.size() - 1).getDescription());
+        lastCreatedPointScale = (PointScaleDTO) getEnvironment().getLastApiResponse().getData();
+        assertEquals(lastCreatedPointScale.getName(), pointScaleCreateCommands.get(pointScaleCreateCommands.size() - 1).getName());
+        assertEquals(lastCreatedPointScale.getDescription(), pointScaleCreateCommands.get(pointScaleCreateCommands.size() - 1).getDescription());
     }
 
     @And("I don't receive a point scale")
@@ -77,8 +80,9 @@ public class PointScaleSteps extends Steps {
     public void thereIsPointScalePayload(int nbPointScales) {
         pointScaleCreateCommands = new ArrayList<>();
         for (int i = 0; i < nbPointScales; i++) {
+            counter++;
             PointScaleCreateCommand pointScaleCreateCommand = new PointScaleCreateCommand();
-            pointScaleCreateCommand.setName("CommunityScore" + i);
+            pointScaleCreateCommand.setName("CommunityScore" + counter);
             pointScaleCreateCommand.setDescription("Rewards users help to the community");
             pointScaleCreateCommands.add(pointScaleCreateCommand);
         }
@@ -88,11 +92,34 @@ public class PointScaleSteps extends Steps {
     public void iGETAPreviouslyCreatedPointScaleWithHisId() {
         try {
             long id = ((PointScaleDTO) getEnvironment().getLastApiResponse().getData()).getId();
-            getEnvironment().addSignature(String.format("/pointScales/%d",id));
+            getEnvironment().addSignature(String.format("/pointScales/%d", id));
             ApiResponse apiResponse = getApi().getPointScaleWithHttpInfo(id);
             getEnvironment().processApiResponse(apiResponse);
         } catch (ApiException e) {
             getEnvironment().processApiException(e);
         }
+    }
+
+    @And("I PUT the last created point scale payload to the /pointScales endpoint$")
+    public void iPUTTheLastCreatedPointScalePayloadToThePointScalesEndpoint() {
+        try {
+            PointScaleCreateCommand pointScaleCreateCommand = pointScaleCreateCommands.get(pointScaleCreateCommands.size() - 1);
+            long pointScaleId = lastCreatedPointScale.getId();
+            getEnvironment().addSignature(String.format("/pointScales/%d", pointScaleId));
+
+            ApiResponse apiResponse =
+                    getApi().updatePointScaleWithHttpInfo(pointScaleId, pointScaleCreateCommand);
+            getEnvironment().processApiResponse(apiResponse);
+        } catch (ApiException e) {
+            getEnvironment().processApiException(e);
+        }
+    }
+
+    @And("I receive the updated point scale")
+    public void iReceiveTheUpdatedPointScale() {
+        PointScaleDTO pointScaleDTO = ((PointScaleDTO) getEnvironment().getLastApiResponse().getData());
+        PointScaleCreateCommand pointScaleCreateCommand = pointScaleCreateCommands.get(pointScaleCreateCommands.size() - 1);
+        assertEquals(pointScaleCreateCommand.getName(), pointScaleDTO.getName());
+        assertEquals(pointScaleCreateCommand.getDescription(), pointScaleDTO.getDescription());
     }
 }

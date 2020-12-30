@@ -161,7 +161,7 @@ public class PointScaleControllerTest {
         assertEquals(newPointScaleDTO.getId(), pointScaleDTOGot.getId());
         assertEquals(newPointScaleDTO.getName(), pointScaleDTOGot.getName());
         assertEquals(newPointScaleDTO.getDescription(), pointScaleDTOGot.getDescription());
-        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
 

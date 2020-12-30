@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 public class LeaderboardSteps extends Steps {
     private String lastCreatedPointScaleName;
     private HashMap<UUID, Integer> scores = new HashMap<>();
-    private RuleDTO lastCreatedRule;
+    public RuleDTO lastCreatedRule;
 
     public LeaderboardSteps(Environment environment) {
         super(environment);
