@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 public class BadgeSteps extends Steps {
 
     List<BadgeCreateCommand> badgeCreateCommands;
+    BadgeDTO lastCreatedBadge;
     int counter;
 
     public BadgeSteps(Environment environment) {
@@ -55,11 +56,11 @@ public class BadgeSteps extends Steps {
         }
     }
 
-    @And("I receive the created badge")
-    public void iReceiveTheCreatedBadge() {
-        BadgeDTO badgeDTO = (BadgeDTO) getEnvironment().getLastApiResponse().getData();
-        assertEquals(badgeDTO.getName(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getName());
-        assertEquals(badgeDTO.getImageUrl(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getImageUrl());
+    @And("I receive the last created badge")
+    public void iReceiveTheLastCreatedBadge() {
+        lastCreatedBadge = (BadgeDTO) getEnvironment().getLastApiResponse().getData();
+        assertEquals(lastCreatedBadge.getName(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getName());
+        assertEquals(lastCreatedBadge.getImageUrl(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getImageUrl());
     }
 
     @When("I GET the badge previously created")
@@ -126,5 +127,18 @@ public class BadgeSteps extends Steps {
         BadgeDTO badgeDTO = (BadgeDTO) getEnvironment().getLastApiResponse().getData();
         assertEquals(badgeDTO.getName(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getName());
         assertEquals(badgeDTO.getImageUrl(), badgeCreateCommands.get(badgeCreateCommands.size() - 1).getImageUrl());
+    }
+
+    @When("I GET the badge previously created from another application")
+    public void iGETTheBadgePreviouslyCreatedFromAnotherApplication() {
+        try {
+            long id = lastCreatedBadge.getId();
+            getEnvironment().addSignature(String.format("/badges/%d",id));
+
+            ApiResponse apiResponse = getApi().getBadgeWithHttpInfo(id);
+            getEnvironment().processApiResponse(apiResponse);
+        } catch (ApiException e) {
+            getEnvironment().processApiException(e);
+        }
     }
 }
