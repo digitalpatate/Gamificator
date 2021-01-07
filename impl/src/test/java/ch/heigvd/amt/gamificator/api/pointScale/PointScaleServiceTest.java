@@ -176,28 +176,15 @@ public class PointScaleServiceTest {
 
         List<PointScaleDTO> pointScalesDTOsOfApplication1Got = null;
 
-        try {
-            pointScalesDTOsOfApplication1Got = pointScaleService.getAllPointScaleOfApplication(1L);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
+        pointScalesDTOsOfApplication1Got = pointScaleService.getAllPointScaleOfApplication(1L);
 
         List<PointScaleDTO> pointScalesDTOsOfApplication2Got = null;
 
-        try {
-            pointScalesDTOsOfApplication2Got = pointScaleService.getAllPointScaleOfApplication(2L);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
+        pointScalesDTOsOfApplication2Got = pointScaleService.getAllPointScaleOfApplication(2L);
 
         List<PointScaleDTO> pointScalesDTOsOfApplication3Got = null;
 
-        try {
-            pointScalesDTOsOfApplication3Got = pointScaleService.getAllPointScaleOfApplication(3L);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
-
+        pointScalesDTOsOfApplication3Got = pointScaleService.getAllPointScaleOfApplication(3L);
 
         assertEquals(1, pointScalesDTOsOfApplication1Got.size());
         assertNotNull(pointScalesDTOsOfApplication1Got.get(0));

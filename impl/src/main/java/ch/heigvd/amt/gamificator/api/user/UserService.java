@@ -33,7 +33,7 @@ public class UserService {
         userId.setApplicationId(applicationId);
         userId.setUUID(uuid.toString());
 
-        User user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("User not found!"));
+        User user = userRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("No user found with the given id"));
 
         return UserMapper.toDTO(user);
     }

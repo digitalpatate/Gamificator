@@ -22,8 +22,6 @@ public class ApplicationController implements ApplicationsApi {
     @Override
     public ResponseEntity<ApplicationCreateDTO> createApplication(@Valid @RequestBody ApplicationCreateCommand applicationCreate) {
 
-        log.info(String.format("POST /applications with [%s]",applicationCreate));
-
         ApplicationCreateDTO applicationRegistrationDTO = applicationService.create(applicationCreate);
 
         return new ResponseEntity(applicationRegistrationDTO,HttpStatus.CREATED);

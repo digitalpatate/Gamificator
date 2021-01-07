@@ -38,14 +38,14 @@ public class PointScaleService {
 
         Optional<PointScale> p = pointScaleRepository.findByNameAndApplicationId(pointScaleCreateCommand.getName(), applicationId);
         if (p.isPresent()){
-            throw new AlreadyExistException("PointScale already exist");
+            throw new AlreadyExistException("A PointScale, with the same name as the given one, already exist");
         }
 
         ApplicationDTO applicationDTO = applicationService.getApplicationById(applicationId);
         Application application = ApplicationMapper.toEntity(applicationDTO);
 
         if(pointScaleRepository.findByNameAndApplicationId(pointScaleCreateCommand.getName(), applicationId).isPresent()) {
-            throw new AlreadyExistException("Point scale already exists with this name!");
+            throw new AlreadyExistException("A PointScale, with the same name as the given one, already exist");
         }
 
         pointScale.setApplication(application);
@@ -58,7 +58,7 @@ public class PointScaleService {
 
     public PointScaleDTO updatePointScale(Long id, PointScaleCreateCommand pointScaleCreateCommand, long applicationId) throws NotFoundException {
         if(!pointScaleRepository.existsById(id)) {
-            throw new NotFoundException("Not found");
+            throw new NotFoundException("No PointScale found with given id");
         }
 
         PointScale pointScale = PointScaleMapper.toEntity(pointScaleCreateCommand);
@@ -73,8 +73,8 @@ public class PointScaleService {
         return PointScaleMapper.toDTO(updatedPointScale);
     }
 
-    public List<PointScaleDTO> getAllPointScaleOfApplication(Long applicationId) throws NotFoundException {
-        Iterable<PointScale> pointScales = new ArrayList<>();
+    public List<PointScaleDTO> getAllPointScaleOfApplication(Long applicationId) {
+        Iterable<PointScale> pointScales;
 
         pointScales = pointScaleRepository.findByApplicationId(applicationId);
 
@@ -97,14 +97,14 @@ public class PointScaleService {
 
     public PointScaleDTO getPointScaleById(Long id) throws NotFoundException {
         PointScale pointScale = pointScaleRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Not found"));
+                .orElseThrow(() -> new NotFoundException("No PointScale found with given id"));
 
         return PointScaleMapper.toDTO(pointScale);
     }
 
     public boolean isPointScaleFromThisApplication(long pointScaleId, long applicationId) throws NotFoundException {
         PointScale pointScale = pointScaleRepository.findById(pointScaleId)
-                .orElseThrow(() -> new NotFoundException("Not found"));
+                .orElseThrow(() -> new NotFoundException("No PointScale found with given id"));
 
         return pointScale.getApplication().getId() == applicationId;
     }
