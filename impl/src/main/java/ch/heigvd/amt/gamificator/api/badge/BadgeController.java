@@ -67,7 +67,7 @@ public class BadgeController implements BadgesApi {
         BadgeDTO badgeDTO = null;
         try {
             badgeDTO = badgeService.updateById(id, badge, applicationId);
-        } catch (RelatedObjectNotFound | NotFoundException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
 

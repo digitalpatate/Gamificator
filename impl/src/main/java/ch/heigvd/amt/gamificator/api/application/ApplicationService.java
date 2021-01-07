@@ -59,12 +59,9 @@ public class ApplicationService {
     }
 
     public boolean canBeAuthenticated(String[] creds) {
-
         String key = creds[0];
         String url = creds[1];
         String signature = creds[2];
-
-
 
         Optional<Application> oApplication = applicationRepository.findByKey(key);
         if(oApplication.isEmpty()){
@@ -72,7 +69,6 @@ public class ApplicationService {
         }
 
         String data = String.format("%s%s",key,url);
-
 
         String hmac = new HmacUtils(HmacAlgorithms.HMAC_SHA_1, oApplication.get().getSecret()).hmacHex(data);
         String calculatedSignature = Base64.getEncoder().encodeToString(hmac.getBytes(StandardCharsets.UTF_8));

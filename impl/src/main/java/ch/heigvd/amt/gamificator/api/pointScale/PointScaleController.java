@@ -43,12 +43,7 @@ public class PointScaleController implements PointScalesApi {
         List<PointScaleDTO> pointScaleDTOs = null;
 
         long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
-
-        try {
-            pointScaleDTOs = pointScaleService.getAllPointScaleOfApplication(applicationId);
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        pointScaleDTOs = pointScaleService.getAllPointScaleOfApplication(applicationId);
 
         return new ResponseEntity<>(pointScaleDTOs, HttpStatus.OK);
     }

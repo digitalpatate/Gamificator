@@ -28,10 +28,10 @@ public class BadgeService {
 
         Optional<Badge> b = badgeRepository.findByNameAndApplicationId(newBadge.getName(), applicationId);
         if (b.isPresent()){
-            throw new AlreadyExistException("Badge already exist");
+            throw new AlreadyExistException("This badge already exist");
         }
 
-        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new RelatedObjectNotFound("Application not found"));
+        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new RelatedObjectNotFound("Your application isn't registered"));
         newBadge.setApplication(application);
         newBadge = badgeRepository.save(newBadge);
 
@@ -50,22 +50,21 @@ public class BadgeService {
     }
 
     public BadgeDTO getById(Long id, Long applicationId) throws NotFoundException {
-        Badge badge = badgeRepository.findByIdAndApplicationId(id, applicationId).orElseThrow(() -> new NotFoundException("Not found"));
+        Badge badge = badgeRepository.findByIdAndApplicationId(id, applicationId).orElseThrow(() -> new NotFoundException("No badge found with the given id"));
 
         return BadgeMapper.toDTO(badge);
     }
 
-    public BadgeDTO updateById(Long id, BadgeDTO badgeDTO, Long applicationId) throws RelatedObjectNotFound, NotFoundException {
+    public BadgeDTO updateById(Long id, BadgeDTO badgeDTO, Long applicationId) throws NotFoundException {
         Badge badge = BadgeMapper.toEntity(badgeDTO);
         badge.setId(id);
 
         Optional<Badge> b = badgeRepository.findByIdAndApplicationId(id, applicationId);
         if (b.isEmpty()){
-            throw new NotFoundException("Badge not found");
+            throw new NotFoundException("No badge found with given id");
         }
 
-        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new RelatedObjectNotFound("Application not found"));
-        badge.setApplication(application);
+        badge.setApplication(b.get().getApplication());
 
         badgeRepository.save(badge);
 

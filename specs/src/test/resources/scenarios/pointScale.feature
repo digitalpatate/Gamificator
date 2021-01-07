@@ -11,13 +11,25 @@ Feature: Basic operations on point scale
     And I POST the point scale payload to the /pointScales endpoint
     When I GET a previously created point scale with his id
     Then I receive a 200 status code
-    And I receive the created point scale
+    And I receive the last created point scale
 
   Scenario: create a point scale
     Given there is 1 point scale payload
     When I POST the point scale payload to the /pointScales endpoint
     Then I receive a 201 status code
-    And I receive the created point scale
+    And I receive the last created point scale
+
+  Scenario: create a point scale from one application and try to get this point scale from another application
+    Given there is 1 point scale payload
+    And I POST the point scale payload to the /pointScales endpoint
+    Then I receive a 201 status code
+    And I receive the last created point scale
+    Given there is a Gamificator server
+    And I have a application payload
+    When I POST the application payload to the /applications endpoint
+    Then I have an API key
+    When I GET the point scale previously created from another application
+    Then I receive a 404 status code
 
   Scenario: get all point scale
     Given there is 2 point scale payload
@@ -30,7 +42,7 @@ Feature: Basic operations on point scale
     Given there is 1 point scale payload
     And I POST the point scale payload to the /pointScales endpoint
     Then I receive a 201 status code
-    And I receive the created point scale
+    And I receive the last created point scale
     Given there is 1 point scale payload
     And I PUT the last created point scale payload to the /pointScales endpoint
     Then I receive a 200 status code

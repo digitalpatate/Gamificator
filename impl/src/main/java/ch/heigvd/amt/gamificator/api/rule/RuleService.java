@@ -30,7 +30,7 @@ public class RuleService {
     @Synchronized
     public RuleDTO create(RuleCreateCommand ruleCreateCommand, Long applicationId) throws RelatedObjectNotFound {
         Rule rule = RuleMapper.toEntity(ruleCreateCommand);
-        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new RelatedObjectNotFound("Application"));
+        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new RelatedObjectNotFound("Your application isn't registered"));
 
         rule.setApplication(application);
         rule = ruleRepository.save(rule);
@@ -38,7 +38,7 @@ public class RuleService {
         List<Reward> rewards = new LinkedList<>();
         List<String> awardBadges = ruleCreateCommand.getThen().getAwardBadges();
         for(String badgeName : awardBadges){
-            Badge badge = badgeRepository.findByNameAndApplicationId(badgeName, application.getId()).orElseThrow(() -> new RelatedObjectNotFound("Badge"));
+            Badge badge = badgeRepository.findByNameAndApplicationId(badgeName, application.getId()).orElseThrow(() -> new RelatedObjectNotFound("No badge found with the given name"));
             BadgeReward badgeReward = new BadgeReward();
             badgeReward.setBadge(badge);
             badgeReward.setRule(rule);
@@ -48,7 +48,7 @@ public class RuleService {
 
         List<AwardPointDTO> awardPointDTOS = ruleCreateCommand.getThen().getAwardPoints();
         for(AwardPointDTO awardPointDTO : awardPointDTOS){
-            PointScale pointScale = pointScaleRepository.findByNameAndApplicationId(awardPointDTO.getPointScaleName(), application.getId()).orElseThrow(() -> new RelatedObjectNotFound("PointScale"));
+            PointScale pointScale = pointScaleRepository.findByNameAndApplicationId(awardPointDTO.getPointScaleName(), application.getId()).orElseThrow(() -> new RelatedObjectNotFound("No PointScale found with the given name"));
             PointsReward pointsReward = new PointsReward();
             pointsReward.setPointScale(pointScale);
             pointsReward.setPoints(awardPointDTO.getValue());
@@ -81,7 +81,7 @@ public class RuleService {
                 }
             }
         }
-        throw new NotFoundException("Rule doesn't exist");
+        throw new NotFoundException("This rule does not exist");
     }
 
     public List<RuleDTO> getAllRules(Long applicationId) {
@@ -119,7 +119,7 @@ public class RuleService {
 
     public RuleDTO update(Long id,RuleUpdateCommand command) throws NotFoundException {
         if(!ruleExists(id)){
-            throw new NotFoundException("asd");
+            throw new NotFoundException("This rule does not exist");
         }
         Rule rule = RuleMapper.toEntity(command,id);
 

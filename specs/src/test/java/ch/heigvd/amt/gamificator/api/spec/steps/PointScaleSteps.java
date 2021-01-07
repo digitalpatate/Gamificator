@@ -40,8 +40,8 @@ public class PointScaleSteps extends Steps {
         }
     }
 
-    @And("I receive the created point scale")
-    public void iReceiveTheCreatedPointScale() {
+    @And("I receive the last created point scale")
+    public void iReceiveTheLastCreatedPointScale() {
         lastCreatedPointScale = (PointScaleDTO) getEnvironment().getLastApiResponse().getData();
         assertEquals(lastCreatedPointScale.getName(), pointScaleCreateCommands.get(pointScaleCreateCommands.size() - 1).getName());
         assertEquals(lastCreatedPointScale.getDescription(), pointScaleCreateCommands.get(pointScaleCreateCommands.size() - 1).getDescription());
@@ -121,5 +121,18 @@ public class PointScaleSteps extends Steps {
         PointScaleCreateCommand pointScaleCreateCommand = pointScaleCreateCommands.get(pointScaleCreateCommands.size() - 1);
         assertEquals(pointScaleCreateCommand.getName(), pointScaleDTO.getName());
         assertEquals(pointScaleCreateCommand.getDescription(), pointScaleDTO.getDescription());
+    }
+
+    @When("I GET the point scale previously created from another application")
+    public void iGETThePointScalePreviouslyCreatedFromAnotherApplication() {
+        try {
+            long id = lastCreatedPointScale.getId();
+            getEnvironment().addSignature(String.format("/pointScales/%d",id));
+
+            ApiResponse apiResponse = getApi().getPointScaleWithHttpInfo(id);
+            getEnvironment().processApiResponse(apiResponse);
+        } catch (ApiException e) {
+            getEnvironment().processApiException(e);
+        }
     }
 }
