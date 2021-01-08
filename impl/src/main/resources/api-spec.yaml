@@ -319,6 +319,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/LeaderBoardDTO'
 
+  /reputations/{uuid}:
+    get:
+      description: get reputation by user uuid
+      operationId: getReputationByUserUUID
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ReputationDTO'
+
 components:
   securitySchemes:
     bearerAuth:
@@ -487,3 +506,34 @@ components:
         leaderboard:
           items:
             $ref: '#/components/schemas/UserScoreDTO'
+
+    ReputationDTO:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        user:
+          $ref: '#/components/schemas/UserDTO'
+        reward:
+          type: array
+          items:
+            $ref: '#/components/schemas/RewardDTO'
+        applicationId:
+          type: integer
+          format: int64
+
+    RewardDTO:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        user:
+          $ref: '#/components/schemas/UserDTO'
+        rule:
+          items:
+            $ref: '#/components/schemas/RuleDTO'
+        applicationId:
+          type: integer
+          format: int64
