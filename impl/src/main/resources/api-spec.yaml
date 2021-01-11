@@ -510,30 +510,24 @@ components:
     ReputationDTO:
       type: object
       properties:
-        uuid:
-          type: string
-          format: uuid
-        user:
-          $ref: '#/components/schemas/UserDTO'
-        reward:
+        badgesReward:
           type: array
           items:
-            $ref: '#/components/schemas/RewardDTO'
-        applicationId:
-          type: integer
-          format: int64
+            $ref: '#/components/schemas/BadgeDTO'
+        PointsReward:
+          type: array
+          items:
+            $ref: '#/components/schemas/PointRewardDTO'
 
-    RewardDTO:
+    PointRewardDTO:
       type: object
       properties:
-        uuid:
+        pointScaleName:
           type: string
-          format: uuid
-        user:
-          $ref: '#/components/schemas/UserDTO'
-        rule:
-          items:
-            $ref: '#/components/schemas/RuleDTO'
-        applicationId:
+        nbPoint:
           type: integer
-          format: int64
+        pointScaleDescription:
+          type: string
+
+
+

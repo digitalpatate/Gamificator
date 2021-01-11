@@ -1,11 +1,10 @@
 package ch.heigvd.amt.gamificator.services;
 
 import ch.heigvd.amt.gamificator.api.model.ConditionDTO;
+import ch.heigvd.amt.gamificator.api.reputation.ReputationService;
 import ch.heigvd.amt.gamificator.api.rule.RuleMapper;
 import ch.heigvd.amt.gamificator.entities.*;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
-import ch.heigvd.amt.gamificator.repositories.BadgeRepository;
-import ch.heigvd.amt.gamificator.repositories.PointScaleRepository;
 import ch.heigvd.amt.gamificator.repositories.RewardRepository;
 import ch.heigvd.amt.gamificator.repositories.RuleRepository;
 import lombok.AllArgsConstructor;
