@@ -36,7 +36,7 @@ public class ReputationController implements ReputationsApi {
         long applicationId = securityContextService.getApplicationIdFromAuthentifiedApp();
 
         try {
-            reputationDTO = reputationService.getReputationByUserId(uuid);
+            reputationDTO = reputationService.getReputationByUserId(uuid, applicationId);
         } catch(NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
