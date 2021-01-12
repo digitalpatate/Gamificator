@@ -319,6 +319,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/LeaderBoardDTO'
 
+  /reputations/{uuid}:
+    get:
+      description: get reputation by user uuid
+      operationId: getReputationByUserUUID
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: success
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ReputationDTO'
+
 components:
   securitySchemes:
     bearerAuth:
@@ -487,3 +506,25 @@ components:
         leaderboard:
           items:
             $ref: '#/components/schemas/UserScoreDTO'
+
+    ReputationDTO:
+      type: object
+      properties:
+        badgesReward:
+          type: array
+          items:
+            $ref: '#/components/schemas/BadgeDTO'
+        PointsReward:
+          type: array
+          items:
+            $ref: '#/components/schemas/PointRewardDTO'
+
+    PointRewardDTO:
+      type: object
+      properties:
+        pointScaleName:
+          type: string
+        nbPoint:
+          type: integer
+        pointScaleDescription:
+          type: string
