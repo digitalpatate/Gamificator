@@ -514,7 +514,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BadgeDTO'
-        PointsReward:
+        pointsReward:
           type: array
           items:
             $ref: '#/components/schemas/PointRewardDTO'
@@ -528,3 +528,6 @@ components:
           type: integer
         pointScaleDescription:
           type: string
+
+
+
