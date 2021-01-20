@@ -4,12 +4,10 @@ import ch.heigvd.amt.gamificator.api.application.ApplicationMapper;
 import ch.heigvd.amt.gamificator.api.application.ApplicationService;
 import ch.heigvd.amt.gamificator.api.model.ApplicationDTO;
 import ch.heigvd.amt.gamificator.api.model.CreateEventCommand;
-import ch.heigvd.amt.gamificator.entities.Application;
-import ch.heigvd.amt.gamificator.entities.Event;
-import ch.heigvd.amt.gamificator.entities.User;
-import ch.heigvd.amt.gamificator.entities.UserId;
+import ch.heigvd.amt.gamificator.entities.*;
 import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import ch.heigvd.amt.gamificator.repositories.EventRepository;
+import ch.heigvd.amt.gamificator.repositories.ReputationRepository;
 import ch.heigvd.amt.gamificator.repositories.UserRepository;
 import ch.heigvd.amt.gamificator.services.EventProcessor;
 import ch.heigvd.amt.gamificator.services.SecurityContextService;
@@ -33,6 +31,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final ReputationRepository reputationRepository;
     private final EventProcessor eventProcessor;
 
     public void createEvent(CreateEventCommand createEventCommand) throws NotFoundException {
@@ -52,6 +51,9 @@ public class EventService {
             ApplicationDTO applicationDTO = applicationService.getApplicationById(applicationId);
             user.setApplication(ApplicationMapper.toEntity(applicationDTO));
             userRepository.save(user);
+            Reputation reputation = new Reputation();
+            reputation.setUser(user);
+            reputationRepository.save(reputation);
         } else {
             user = oUser.get();
         }
