@@ -380,6 +380,9 @@ components:
           format: int64
         name:
           type: string
+        occurence:
+          type: integer
+          format: int32
         imageUrl:
           type: string
           format: uri

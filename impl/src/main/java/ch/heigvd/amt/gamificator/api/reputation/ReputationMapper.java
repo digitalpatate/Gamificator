@@ -17,21 +17,12 @@ public class ReputationMapper {
         for (Reward reward : reputation.getReward()) {
             if (reward instanceof BadgeReward) {
 
-                BadgeReward badgeReward = (BadgeReward) reward;
-                reputationDTO.addBadgesRewardItem(
-                        (BadgeMapper.toDTO(badgeReward.getBadge())));
-//
-//                if(!check_if_present(reputationDTO.getBadgesReward(), badgeReward)){
-//                    reputationDTO.addBadgesRewardItem(
-//                            (BadgeMapper.toDTO(badgeReward.getBadge())));
-//                } else {
-//                    for(BadgeDTO badgeDTO : reputationDTO.getBadgesReward()){
-//                        if(badgeDTO.getName().equals(badgeReward.getBadge().getName())){
-//                            badgeDTO.setOccurence(badgeDTO.getOccurence() + 1);
-//                        }
-//                    }
-//                }
-
+                /**
+                 * init BadgeDTO and set occurrence to 1
+                 */
+                BadgeDTO badgeDTO = BadgeMapper.toDTO(((BadgeReward)reward).getBadge());
+                badgeDTO.setOccurence(1);
+                reputationDTO.addBadgesRewardItem(badgeDTO);
             }
 
 
@@ -51,10 +42,34 @@ public class ReputationMapper {
             }
         }
 
+
+        reputationDTO.setBadgesReward(sum_badges(reputationDTO.getBadgesReward()));
         reputationDTO.setPointsReward(sum_points(reputationDTO.getPointsReward()));
         return reputationDTO;
     }
 
+
+
+    /**
+     * helpers
+     */
+
+
+    private static List<BadgeDTO> sum_badges(List<BadgeDTO> list){
+        List<BadgeDTO> sum_badges = new ArrayList<>();
+
+        for(BadgeDTO badgeDTO : list){
+
+            if(sum_badges.isEmpty()){
+                sum_badges.add(badgeDTO);
+            }else if (!check_if_present(sum_badges, badgeDTO)){
+                sum_badges.add(badgeDTO);
+            } else {
+                increment(sum_badges, badgeDTO);
+            }
+        }
+        return  sum_badges;
+    }
 
     private static List<PointRewardDTO> sum_points(List<PointRewardDTO> list){
         List<PointRewardDTO> sum = new ArrayList<>();
@@ -80,14 +95,6 @@ public class ReputationMapper {
         return false;
     }
 
-    private static boolean check_if_present(List<BadgeDTO> list, BadgeReward badgeReward){
-        for(BadgeDTO badgeDTO: list){
-            if(badgeDTO.getName().equals(badgeReward.getBadge().getName())){
-                return true;
-            }
-        }
-        return false;
-    }
 
     private static PointRewardDTO empty_point(PointRewardDTO point){
         PointRewardDTO new_pt = new PointRewardDTO();
@@ -101,6 +108,23 @@ public class ReputationMapper {
         for(PointRewardDTO pt_sum : list){
             if(pt_sum.getPointScaleName().equals(pointRewardDTO.getPointScaleName())){
                 pt_sum.setNbPoint(pt_sum.getNbPoint() + pointRewardDTO.getNbPoint());
+            }
+        }
+    }
+    private static boolean check_if_present(List<BadgeDTO> list, BadgeDTO badgeDTO_1){
+        for(BadgeDTO badgeDTO_2: list){
+            if(badgeDTO_1.getName().equals(badgeDTO_2.getName())){
+                return true;
+            }
+        }
+        return false;
+    }
+    private static void increment(List<BadgeDTO> list, BadgeDTO badgeDTO_1){
+
+        for(BadgeDTO badgeDTO_2: list){
+            if(badgeDTO_2.getName().equals(badgeDTO_1.getName())){
+                badgeDTO_2.setOccurence(badgeDTO_2.getOccurence() +1);
+                break;
             }
         }
     }
