@@ -2,6 +2,8 @@ package ch.heigvd.amt.gamificator.api.leaderboard;
 
 import ch.heigvd.amt.gamificator.api.LeaderboardApi;
 import ch.heigvd.amt.gamificator.api.model.LeaderBoardDTO;
+import ch.heigvd.amt.gamificator.exceptions.Error;
+import ch.heigvd.amt.gamificator.exceptions.NotFoundException;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -27,7 +29,12 @@ public class LeaderboardController implements LeaderboardApi {
         perPage = (perPage != null) ? perPage : 10;
         Pageable pageable = PageRequest.of(page,perPage);
 
-        LeaderBoardDTO leaderBoardDTO = leaderboardService.getLeaderboardOnPointScale(pointScaleName,pageable);
+        LeaderBoardDTO leaderBoardDTO = null;
+        try {
+            leaderBoardDTO = leaderboardService.getLeaderboardOnPointScale(pointScaleName,pageable);
+        } catch (NotFoundException e) {
+            return new ResponseEntity(new Error(e.getMessage()), e.getCode());
+        }
         leaderBoardDTO.setNextPage((long) (page+1));
 
         return new ResponseEntity<>(leaderBoardDTO, HttpStatus.OK);
