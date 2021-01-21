@@ -43,8 +43,12 @@ public class ReputationMapper {
         }
 
 
-        reputationDTO.setBadgesReward(sum_badges(reputationDTO.getBadgesReward()));
-        reputationDTO.setPointsReward(sum_points(reputationDTO.getPointsReward()));
+        if(reputationDTO.getBadgesReward() != null && !reputationDTO.getBadgesReward().isEmpty()){
+            reputationDTO.setBadgesReward(sum_badges(reputationDTO.getBadgesReward()));
+        }
+        if(reputationDTO.getPointsReward() != null && !reputationDTO.getPointsReward().isEmpty()){
+            reputationDTO.setPointsReward(sum_points(reputationDTO.getPointsReward()));
+        }
         return reputationDTO;
     }
 
