@@ -1,77 +1,111 @@
 # **Gamificator**
 
-> November 2020 -January 2021
-
 ![Gamificator](images/welcome.jpg)
 
-Table of contents
-=================
+## Implémentation
 
-   * [Table of contents](#table-of-contents)
-   * [Build and run](#Build-and-run-the-Application-microservice)
-   * [Docker](#Docker)
-* [Tests](#tests)
-  * [Run test executable](#Test-the-Application-microservice-by-running-the-executable-specification)
-* [Contributors](#Contributors)
+## Signature
 
-## 
+Pour authentifier et authorisé un _client_ à faire une requête sur notre api, il dois construire une signature et l'envoyer avec sa requête.
 
-# Build and run the Application microservice
+### Calcule
 
-You can use maven to build and run the REST API implementation from the command line. After invoking the following maven goal, the Spring Boot server will be up and running, listening for connections on port 8080.
+Le calcule est inspiré de ce que fait [AWS](https://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html) pour authentifer ces clients.
 
-```bash
-cd impl/
-mvn spring-boot:run
+Pour le calcule de la signature, nous avons besoin de la _key_ et du _secret_ forunis quand on créer une appliaction.
+
+Exemple JS: 
+
+```javascript
+ const shaObj = new jsSHA("SHA-1", "TEXT", {
+            hmacKey: { value: secret, format: "TEXT" },
+ });
+ const url = req.url.split('?')[0]; // On ignore la querystring
+ const data = `${key}${url}`;
+ shaObj.update(data);
+ const hmacHEX = shaObj.getHash("HEX");
+ const hmac64 = window.btoa(hmacHEX);
 ```
 
-You can then access:
+## Transfer
 
-* the [API documentation](http://localhost:8080/swagger-ui.html), generated from annotations in the code
-* the [API endpoint](http://localhost:8080/), accepting GET and POST requests
+Pour envoyer la _key_ et la _signature_ , il faut le faire dans les headers, Dans respectivement le header `x-api-key` pour la key et `signature` pour la signature.
 
-You can use curl to invoke the endpoints:
+## Swagger
 
-* To retrieve the list of fruits previously created:
+Pour implémenter la signature dans _swagger_ , il a fallu customizer le _swagger-ui_ pour y inclure un `requestInterceptor`.
 
-```bash
-curl -X GET --header 'Accept: application/json' 'http://localhost:8080/applications'
+```javascript
+requestInterceptor: req => {
+          const apiKeyheader = req.headers['x-api-key'];
+          if(!apiKeyheader){
+            return;
+          }
+
+          const key = apiKeyheader.split(":")[0];
+          const secret = apiKeyheader.split(":")[1];
+
+          const shaObj = new jsSHA("SHA-1", "TEXT", {
+            hmacKey: { value: secret, format: "TEXT" },
+          });
+          const url = req.url.split('?')[0];
+          const data = `${key}${url}`;
+          shaObj.update(data);
+          const hmacHEX = shaObj.getHash("HEX");
+          const hmac64 = window.btoa(hmacHEX);
+
+          req.headers['x-api-key']= key;
+          req.headers.signature = hmac64;
+          return req;
+        },
 ```
 
-* To create a new Application (beware that in the live documentation, there are extra \ line separators in the JSON payload that cause issues in some shells)
-
-```bash
-curl -X POST --header 'Content-Type: application/json' --header 'Accept: */*' -d '{
-  "name": "My awesome app ",
-  "url": "http://localhost:8080/my-awesome-app"
-}' 'http://localhost:8080/applications'
-```
-
-# Docker
-
-Information is stored in a database. It must be running before launching the spring-boot server. At the root of the project run the following command :
-
-```bash
-docker-compose up -d
-```
-
-This will launch a MySQL server dockerized. The credentials and the database connection are already setup in the spring-boot server.
 
 
+Pour ce faire, on a pris la version buildé de swagger-ui et placé son dossier dans le dossier `ressources` pour qu'il soit servit statiquement par notre serveur spring. 
 
-# Tests
+## Comment ...
 
-## Test the Application microservice by running the executable specification
+### ... lancer l'application
 
-You can use the Cucumber project to validate the API implementation. Do this when the server is running.
+1. Lancer le docker-compose qui se trouve dans `docker/environment/dev` avec `docker-compose up`
 
-```bash
-cd cd specs/
-mvn clean test
-```
-You will see the test results in the console, but you can also open the file located in `./target/cucumber`
+2. Dans le dossier `impl`:
 
-## Contributors
+   ```bash
+   mvn clean package
+   mvn spring-boot:run
+   ```
+
+### ... lancer l'application avec docker
+
+1. S'assurer d'avoir la dernière version des image avec `docker-compose pull`
+2. Dans le dossier `docker/environment/prod`, lancer le docker-compose avec `docker-compose up`
+
+### ... lancer les tests Cucumber
+
+1. S'assurer d'avoir une version du serveur qui tourne (voir au dessus)
+
+2. Dans le dossier `specs`:
+
+   ```bash
+   mvn clean test
+   ```
+
+### ... lancer les tests de charges
+
+1. S'assurer d'avoir un serveur qui tourne
+2. Ouvir le ficher `gameificatorTest.jmx` du dossier `jmeter` avec _Apache Jmeter_ et lancer les tests (Avec le petit bouton play)
+
+## Problèmes connus
+
+### la pagination
+
+Le leaderboard pour un pointScale donné est paginé pour ne pas récupérer tout les utilisateurs d'un seul coup. Pour ce faire nous utilisons un `PagingAndSortingRepository` sur l'entité `User`. Le soucis est que nous calculons les scores des utilisateurs seulement après avoir récupéré les `User`. Nous nous trouvons donc dans une situation ou chaque _page_ est triée par le score décroissant des users. Mais les pages ne sont pas triès entres elles. Donc la page 3 pourrait avoir des scores de `User` supérieurs à ceux de la page 1.
+
+La correction de ce problème passerait par l'écriture d'une requête en `jpql` pour calculer directement le score des users en fonction d'un pointScale donnée et sur ce résultat on applique la pagination avec le ``PagingAndSortingRepository`.
+
+## Contributeurs
 
 - Simon Walther - simon.walther@heig-vd.ch
 - Didier Page - didier.page@heig-vd.ch
